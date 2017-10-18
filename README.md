@@ -25,8 +25,7 @@ This is a public repository which was created to keep the codes that will be dev
 
 
 #### Warning!
-It is importante be aware that all files contained within this repository are in constant development.
-
+It had better be aware that all files contained within this repository are in constant development.
 
 <p align="center">
   <img height="400" src="https://www.whiteheatdesign.co.uk/wp-content/uploads/working-on-it-large.jpg" />
