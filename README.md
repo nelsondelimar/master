@@ -11,6 +11,7 @@ This is a public repository which was created to keep the codes that will be dev
 ### 2 People involved
 
 ***Author:*** [Nelson Ribeiro Filho](http://lattes.cnpq.br/1419249921258591) - Master student
+
 ***Collaborator:*** Rodrigo Bijani - Doctor in Geophysics
 
 
