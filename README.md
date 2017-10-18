@@ -8,11 +8,11 @@ First of all: **Feel free to help us!**
 This is a public repository which was created to keep the codes that will be developed during my master's project. Computational subroutines in Fortran and Python will be implemented and it will be posted on this repository. Currently, we are developing codes for magnetic anomalies for sources with regular geometry (sphere and prism). The source codes are available in Blakely (1995).
 
 
-### 2 People involved
+### 2 Contributors
 
-***Author:*** [Nelson Ribeiro Filho](http://lattes.cnpq.br/1419249921258591) - Master student in Geophysics
+[Nelson Ribeiro Filho](http://lattes.cnpq.br/1419249921258591) - Master student in Geophysics
 
-***Collaborator:*** [Rodrigo Bijani](http://lattes.cnpq.br/2331435604103641) - Doctor in Geophysics
+[Rodrigo Bijani](http://lattes.cnpq.br/2331435604103641) - Doctor in Geophysics
 
 
 ### Source codes 
