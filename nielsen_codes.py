@@ -143,6 +143,8 @@ def dipole(x, y, z, xe, ye, ze, raio, mag, inc, dec, az):
     Ps. The value for Z can be a scalar in the case of one depth, otherwise it can be a set of points.
     
     '''
+    #assert x.size == y.size 
+    #assert x.shape[0] == x.shape[1]
     
     # Calculates some constants
     t2nt = 1.e9 # Testa to nT - conversion
@@ -162,12 +164,12 @@ def dipole(x, y, z, xe, ye, ze, raio, mag, inc, dec, az):
     m = (4.*np.pi*(raio**3)*mag)/3.    # Magnetic moment
     
     # Components calculation - Bx, By e Bz
-    Bx = ((cm*t2nt)*m*3.*dot*mx*(rx - r**2))/(r**5)
-    By = ((cm*t2nt)*m*3.*dot*my*(ry - r**2))/(r**5)
-    Bz = ((cm*t2nt)*m*3.*dot*mz*(rz - r**2))/(r**5)
-    
+    Bx = cm*m*(3.*dot*rx-(r**2*mx))/r**5
+    By = cm*m*(3.*dot*ry-(r**2*my))/r**5
+    Bz = cm*m*(3.*dot*rz-(r**2*mz))/r**5
+    # Final components calculation
+    Bx *= t2nt
+    By *= t2nt
+    Bz *= t2nt
     # Return the final output
     return Bx, By, Bz
-
-
-
