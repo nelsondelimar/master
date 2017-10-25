@@ -5,7 +5,7 @@ First of all: **Feel free to help us!**
 
 
 ### 1 Description
-This is a public repository which was created to keep the codes that will be developed during my master's project. Computational subroutines in Fortran and Python will be implemented and it will be posted on this repository. Currently, we are developing codes for magnetic anomalies for sources with regular geometry (sphere and prism). The source codes are available in Blakely (1995).
+This is a public repository which was created to keep the codes that will be developed during my master's project. Computational subroutines in Fortran and Python will be implemented and it will be posted on this repository. Currently, we are developing codes for magnetic anomalies for sources with regular geometry (sphere and prism). After we will work on a few codes for magnetic data processing. Some of those source codes are available in Blakely (1995).
 
 
 ### 2 Contributors
