@@ -15,8 +15,6 @@ import numpy as np
 #import fatiando as ft
 #import matplotlib.pyplot as plt
 
-# ------------------------------------------------------------------------------------------------------------------------------
-
 def degrees_rad(angle):
     
     '''
@@ -126,7 +124,7 @@ def dipole(x, y, z, xe, ye, ze, raio, mag, inc, dec, az):
     
     '''
     
-    This function is a Python implementation for a Fortran subroutine contained in Blakely (1995). It computes the components of the magnetic induction (Bx, By, Bz) caused by a sphere with uniform distribution of magnetization. The direction X represents the north and Z represents growth downward. This function receives the coordinates of the points of observation (X, Y, Z - arrays), the coordinates of the center of the sphere (Xe, Ye, Ze), the magnetization intensity M and the inclination and declination values (degrees). The observation values are given in meters.
+    This function is a Python implementation for a Fortran subroutine contained in Blakely (1995). It computes the components of the magnetic induction (Bx, By, Bz) caused by a sphere with uniform distribution of magnetization. The direction X represents the north and Z represents growth downward. This function receives the coordinates of the points of observation (X, Y, Z - arrays), the coordinates of the center of the sphere (Xe, Ye, Ze), the magnetization intensity M and the values for inclination and declination (in degrees). The observation values are given in meters.
     
     Inputs: 
     x, y, z - numpy arrays - position of the observation points
@@ -143,6 +141,8 @@ def dipole(x, y, z, xe, ye, ze, raio, mag, inc, dec, az):
     Ps. The value for Z can be a scalar in the case of one depth, otherwise it can be a set of points.
     
     '''
+    #assert x.size == y.size 
+    #assert x.shape[0] == x.shape[1]
     
     # Calculates some constants
     t2nt = 1.e9 # Testa to nT - conversion
@@ -162,12 +162,42 @@ def dipole(x, y, z, xe, ye, ze, raio, mag, inc, dec, az):
     m = (4.*np.pi*(raio**3)*mag)/3.    # Magnetic moment
     
     # Components calculation - Bx, By e Bz
-    Bx = ((cm*t2nt)*m*3.*dot*mx*(rx - r**2))/(r**5)
-    By = ((cm*t2nt)*m*3.*dot*my*(ry - r**2))/(r**5)
-    Bz = ((cm*t2nt)*m*3.*dot*mz*(rz - r**2))/(r**5)
-    
+    Bx = cm*m*(3.*dot*rx-(r**2*mx))/r**5
+    By = cm*m*(3.*dot*ry-(r**2*my))/r**5
+    Bz = cm*m*(3.*dot*rz-(r**2*mz))/r**5
+    # Final components calculation
+    Bx *= t2nt
+    By *= t2nt
+    Bz *= t2nt
     # Return the final output
     return Bx, By, Bz
 
-
-
+def grav_sphere(xobs, yobs, sphere):
+    '''
+    
+    This function calculates the gravity contribution due to a solid sphere. This is a Python implementation for the subroutine presented in Blakely (1995).
+    On this function, there are received the value of the initial and final observation points and the properties of the sphere. The inputs sphere is allocated as:
+    sphere[size = 5] = sphere[x center, y center, z center, radius , density]
+    
+    Inputs:
+    sphere - numpy array - elements of the sphere
+    
+    Output:
+    gz - numpy array - vertical component for the gravity signal due to a solid sphere
+    '''
+    
+    #assert xobs[0] >= sphere[0], 'Grid value in X direction must have greater than the X position for the sphere'
+    #assert xobs[0] >= sphere[1], 'Grid value in X direction must have greater than the Y position for the sphere'
+    #assert yobs[1] >= sphere[0], 'Grid value in Y direction must have greater than the X position for the sphere'
+    #assert yobs[1] >= sphere[1], 'Grid value in Y direction must have greater than the Y position for the sphere'
+    
+    # Definition for some constants
+    gamma = 6.67e-6
+    dmy = 1e-5 # Dummy value
+    
+    # Compute the constant which is result due to the product
+    C = (4./3)*np.pi*gamma*sphere[4]*(sphere[3]**3)
+    
+    gz_signal = C*sphere[2]/(((xobs + dmy - sphere[0])**2 + (yobs + dmy - sphere[1])**2 + (sphere[2]**2))**(3./2))
+    
+    return gz_signal
