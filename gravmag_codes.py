@@ -204,6 +204,8 @@ def sphere_tfa(xobs, yobs, zobs, sphere, direction, field):
     # Return the final output
     return totalfield
 
+
+
 def sphere_gz(xobs, yobs, sphere):
     
     '''    
@@ -211,6 +213,9 @@ def sphere_gz(xobs, yobs, sphere):
     
     Inputs:
     sphere - numpy array - elements of the sphere
+        sphere[0, 1, 2] - positions of the sphere center at x, y and z directions
+        sphere[3] - radius
+        sphere[4] - density value
     
     Output:
     gz - numpy array - vertical component for the gravity signal due to a solid sphere    
@@ -228,3 +233,81 @@ def sphere_gz(xobs, yobs, sphere):
     
     # Return the final output
     return gz
+
+def prism_tfa(x, y, z, prism, directions, field):
+    
+    '''
+    This function calculates the total field anomaly produced by a rectangular prism located under surface; it is a Python implementation for the Subroutin MBox which is contained on Blakely (1995). It recieves: the coordinates of the positions in all directions, the elements of the prims, the angle directions and the elements of the field. That function also uses the auxilary function DIR_COSSINE to calculate the projections due to the field F and the source S.
+    
+    Inputs:
+    x, y - numpy arrays - observation points in x and y directions
+    z - numpy array/float - height for the observation
+    prism - numpy array - all elements for the prims
+        prism[0, 1] - initial and final coordinates at X (dimension at X axis!)
+        prism[2, 3] - initial and final coordinates at Y (dimension at Y axis!)
+        prism[4, 5] - initial and final coordinates at Z (dimension at Z axis!)
+        prism[6] - magnetic intensity
+        
+    Output:
+    tfa - numpy array - calculated total field anomaly
+    
+    X and Y represents North and East; Z is positive downward.
+    Ps. Z can be a array with all elements for toppography or a float point as a flight height (for example!).
+    '''    
+    
+    # Stablish some constants
+    t2nt = 1.e9 # Testa to nT - conversion
+    cm = 1.e-7  # Magnetization constant
+
+    # Calculate the directions for the source magnetization and for the field
+    Ma, Mb, Mc = dir_cossine(directions[0], directions[1], directions[2]) # s -> source
+    Fa, Fb, Fc = dir_cossine(field[0], field[1], field[2]) # f -> field
+
+    # Aranges all values as a vector
+    MF = np.array([Ma*Fb + Mb*Fa, 
+                   Ma*Fc + Mc*Fa, 
+                   Mb*Fc + Mc*Fb, 
+                   Ma*Fa, 
+                   Mb*Fb, 
+                   Mc*Fc])
+    
+    # Limits for initial and final position along the directions
+    A = [prism[0] - x, prism[1] - x]
+    B = [prism[2] - y, prism[3] - y]
+    H = [prism[5] - z, prism[4] - z]
+    
+    # Create the zero array to allocate the total field result
+    tfa = np.zeros_like(x)
+    
+    # Loop for controling the signal of the function    
+    mag = prism[6]
+    for k in range(2):
+        mag *= -1
+        H2 = H[k]**2
+        for j in range(2):
+            Y2 = B[j]**2
+            for i in range(2):
+                X2 = A[i]**2
+                AxB = A[i]*B[j]
+                R2 = X2 + Y2 + H2
+                R = np.sqrt(R2)
+                HxR = H[k]*R
+                #tfa += ((-1.)**(i + j))*INT*(
+                #    0.5*(MF[2]) *
+                #    np.log((r - Alfa[i]) / (r + Alfa[i])) +
+                #    0.5*(MF[1]) *
+                #    np.log((r - Beta[j]) / (r + Beta[j])) -
+                #    (MF[0])*np.log(r + Z[k]) -
+                #    (MF[3])*np.arctan2(AB, x_sqr + zr + z_sqr) -
+                #    (MF[4])*np.arctan2(AB, r_sqr + zr - x_sqr) +
+                #    (MF[5])*np.arctan2(AB, zr))
+                tfa += ((-1.)**(i + j))*mag*(0.5*(MF[2])*np.log((R - A[i])/(R + A[i])) + 0.5*(MF[1])*
+                                             np.log((R - B[j])/(R + B[j])) - (MF[0])*np.log(R + H[k]) -
+                                             (MF[3])*np.arctan2(AxB, X2 + HxR + H2) -
+                                             (MF[4])*np.arctan2(AxB, R2 + HxR - X2) +
+                                             (MF[5])*np.arctan2(AxB, HxR))        
+        
+        tfa *= t2nt*cm
+        
+        # Return the final output
+        return tfa
