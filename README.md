@@ -17,10 +17,11 @@ This is a public repository which was created to keep the codes that will be dev
 
 ### Source codes 
 * Magnetization for a solid sphere (**Done!**);
-* Magnetization for a rectangular prism (Working on it!);
-* Discrete Fourier Transform;
+* Magnetization for a rectangular prism (**Done!**);
+* Discrete Fourier Transform (Working on it...);
 * Fast Fourier Transform;
 * Horizontal e vertical derivatives;
+* Reduction to Pole filtering
 * (...)
 
 
