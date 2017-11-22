@@ -292,15 +292,6 @@ def prism_tfa(x, y, z, prism, directions, field):
                 R2 = X2 + Y2 + H2
                 R = np.sqrt(R2)
                 HxR = H[k]*R
-                #tfa += ((-1.)**(i + j))*INT*(
-                #    0.5*(MF[2]) *
-                #    np.log((r - Alfa[i]) / (r + Alfa[i])) +
-                #    0.5*(MF[1]) *
-                #    np.log((r - Beta[j]) / (r + Beta[j])) -
-                #    (MF[0])*np.log(r + Z[k]) -
-                #    (MF[3])*np.arctan2(AB, x_sqr + zr + z_sqr) -
-                #    (MF[4])*np.arctan2(AB, r_sqr + zr - x_sqr) +
-                #    (MF[5])*np.arctan2(AB, zr))
                 tfa += ((-1.)**(i + j))*mag*(0.5*(MF[2])*np.log((R - A[i])/(R + A[i])) + 0.5*(MF[1])*
                                              np.log((R - B[j])/(R + B[j])) - (MF[0])*np.log(R + H[k]) -
                                              (MF[3])*np.arctan2(AxB, X2 + HxR + H2) -
@@ -309,5 +300,136 @@ def prism_tfa(x, y, z, prism, directions, field):
         
         tfa *= t2nt*cm
         
-        # Return the final output
-        return tfa
+    # Return the final output
+    return tfa
+
+def DFT(vector):
+    
+    '''
+    This function compute the Discrete Fourier Transform (DFT) for a n-dimensional array, which receives a vector as an input and return the transformed vector as output.
+    
+    Input: 
+    vector - numpy array - vector that contains all values
+    
+    Output:
+    tvec - numpy array - transformed vector that contains both Real and Imag parts
+    '''
+    
+    # Converts for an array
+    vector = np.asarray(vector, dtype=float)
+    # Value for N that is used on the sum
+    N = vector.shape[0]
+    # Row and column vectors for compute the matrix
+    row = np.arange(N)
+    col = row.reshape((N, 1))
+    # Compute the transform factor W
+    W = np.exp(-2.j*np.pi*col*row/N)
+    # Compute the DFT
+    tvec = np.dot(W, vector)
+    
+    #Return the final output
+    return tvec
+
+def iDFT_1(ivector):
+    
+    '''
+    This function compute the inverse Discrete Fourier Transform (iDFT) for a n-dimensional array, which receives a vector as an input (Real and Imaginary parts) and return the inverse transformed vector as output.
+    
+    Input: 
+    ivector - numpy array - vector that contains both Real and Imag parts
+    
+    Output:
+    vector - numpy array - inverse transformed vector with all original values
+    
+    Ps. - In this function, the inverse DFT is calculated by using a simple matrix - vector product.
+    '''
+    
+    # Converts for a complex numpy array
+    ivector = np.asarray(ivector, dtype=complex)
+    # Value for N that is used on the sum
+    N = ivector.size
+    # Row and column vectors for compute the matrix
+    row = np.arange(N)
+    col = row.reshape((N, 1))
+    # Compute the transform factor W
+    W = np.exp(2.j*np.pi*col*row/N)
+    vector = np.dot(W, ivector)/N
+    
+    #Return the final output
+    return vector    
+
+def iDFT_2(ivector):
+    
+    '''
+    This function compute the inverse Discrete Fourier Transform (iDFT) for a n-dimensional array, which receives a vector as an input (Real and Imaginary parts) and return the inverse transformed vector as output.
+    
+    Input: 
+    ivector - numpy array - vector that contains both Real and Imag parts
+    
+    Output:
+    vector - numpy array - inverse transformed vector with all original values
+    
+    Ps. - In this function, the inverse DFT is calculated by using a simple matrix - vector product.
+    '''
+    
+    # Converts for a complex numpy array
+    ivector = np.asarray(ivector, dtype=complex)
+    # Value for N that is used on the sum
+    N = ivector.size
+    # Row and column vectors for compute the matrix
+    row = np.arange(N)
+    col = row.reshape((N, 1))
+    # Compute the transform factor W
+    W = np.exp(-2.j*np.pi*col*row/N)
+    vector = np.linalg.solve(W, ivector)
+    
+    #Return the final output
+    return vector
+
+def prism_gz(xo, yo, zo, prism):
+    
+    '''
+    This function is a Python implementation for the vertical component for the gravity field due to a rectangular prism, which has initial and final positions equals to xi and xf, yi and yf, for the X and Y directions. This function also recieve the obsevation points for an array or a grid and also the value for height of the observation, which can be a simple float number (as a level value) or a 1D array.
+    
+    Inputs:
+    x, y - numpy arrays - observation points in x and y directions
+    z - numpy array/float - height for the observation
+    prism - numpy array - all elements for the prims
+        prism[0, 1] - initial and final coordinates at X (dimension at X axis!)
+        prism[2, 3] - initial and final coordinates at Y (dimension at Y axis!)
+        prism[4, 5] - initial and final coordinates at Z (dimension at Z axis!)
+        prism[6] - density value
+        
+    Output:
+    gz - numpy array - vertical component for the gravity atraction
+    
+    '''
+    
+    # Definitions for all distances
+    x = [prism[1] - xo, prism[0] - xo]
+    y = [prism[3] - yo, prism[2] - yo]
+    z = [prism[5] - zo, prism[4] - zo]
+    
+    # Definition for density
+    rho = prism[6]
+    
+    # Definition - some constants
+    G = 6.673e-11
+    si2mGal = 10.e5
+    
+    # Numpy zeros array to update the result
+    gz = np.zeros_like(xo)
+    
+    # Compute the value for Gz
+    for k in range(2):
+        for j in range(2):
+            for i in range(2):
+                r = np.sqrt(x[i]**2 + y[j]**2 + z[k]**2)
+                result = -(x[i]*np.log(y[j] + r) + y[j]*np.log(x[i] + r) - z[k]*np.arctan2(x[i]*y[j], z[k]*r))
+                gz += ((-1.)**(i + j + k))*result*rho
+                
+    # Multiplication for all constants and conversion to mGal
+    gz *= G*si2mGal
+    
+    # Return the final output
+    return gz
