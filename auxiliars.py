@@ -82,10 +82,15 @@ def dircos(inc, dec, azi):
     # Return the final output
     return A, B, C
 
+# Auxiliar number 04
 def regional(field):
     
     '''
-    This fucntion computes the projected components of the regional magnetic field in all directions X, Y and Z. This calculation is done by using a cossine projected function, which recieves the values for an inclination, declination and also and azimuth value. It returns all three components for a magnetic field (Fx, Fy e Fz), using a value for the regional field (F) as a reference for the calculation.
+    This fucntion computes the projected components of the regional magnetic field in all 
+    directions X, Y and Z. This calculation is done by using a cossine projected function, 
+    which recieves the values for an inclination, declination and also and azimuth value. 
+    It returns all three components for a magnetic field (Fx, Fy e Fz), using a value for 
+    the regional field (F) as a reference for the calculation.
     
     Inputs: 
     field - numpy array
@@ -117,6 +122,7 @@ def regional(field):
     # Return the final output
     return vecF
 
+# Auxiliar number 05
 def addnoise(data, std):
     
     '''
@@ -134,5 +140,84 @@ def addnoise(data, std):
     local = int((data.max() - data.min()))*(1e-2)
     noise = np.random.normal(loc = local, scale = std, size = data.shape)
     return data + noise
+
+# Auxiliar number 06 (a)
+def padzeros(vector, width, ax, kwargs):
+    
+    '''
+    This function pads an array with zeros. It should be used while converting or expanding a 
+    simple 1D array or a 2D grid, along the pad function which belongs to numpy packages.
+    
+    Inputs: 
+    vector - numpy array - input data
+    width - integer - number of values padded
+    iaxis - integer - axis which will be calculated
+    kwargs - string - keywords arguments
+    
+    Output:
+    newvec - numpy array - the new value for the vector
+    
+    '''
+    # Padding with zeros on both axis
+    vector[:width[0]] = 0.
+    vector[-width[1]:] = 0.
+    
+    return vector
+
+# Auxiliar number 06 (b)
+def padones(vector, width, ax, kwargs):
+    
+    '''
+    This function is similar to padzeros functions, but it adds the one value on the axis instead of zeros. It has the same inputs and outputs.
+    '''
+    
+    # Padding with zeros on both axis
+    vector[:width[0]] = 1.
+    vector[-width[1]:] = 1.
+    
+    return vector
+
+# Auxiliar number 07
+#def pad_data():
+#    
+#    '''
+#
+#    '''
+#    
+#    return padded_data
+
+def griddata(x, y, z, shape):
+
+    '''
+    This function creates a grid for the data input and interpolate the values using low extrapolate and cubic method.
+    '''
+
+    area=(x.min(),x.max(),y.min(),y.max())
+    x1,x2,y1,y2=area
+    nx,ny=SHAPE
+    xs=np.linspace(x1,x2,nx)
+    ys=np.linspace(y1,y2,ny)
+    xp,yp=np.meshgrid(ys,xs)[::-1]
+    xp=xp.ravel()
+    yp=yp.ravel()
+
+    extrapolate=True
+    algorithm='cubic' 
+    grid = scipy.interpolate.griddata((x, y), z, (xp, yp),
+                                      method='cubic').ravel()
+
+    if extrapolate and algorithm != 'nearest' and np.any(np.isnan(grid)):
+        if np.ma.is_masked(grid):
+            nans = grid.mask
+        else:
+            nans = np.isnan(grid)
+            notnans = np.logical_not(nans)
+            grid[nans] = scipy.interpolate.griddata((x[notnans], y[notnans]), grid[notnans],
+                                         (x[nans], y[nans]),
+                                         method='nearest').ravel()
+    xp=np.reshape(xp,SHAPE)
+    yp=np.reshape(yp,SHAPE)
+    grid=np.reshape(grid,SHAPE)
+    return(xp,yp,grid)
 
 #def noise_grav(data, std):
