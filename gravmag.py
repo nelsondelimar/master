@@ -11,7 +11,6 @@ import numpy as np
 #import matplotlib.pyplot as plt
 # Import my libraries
 import auxiliars as aux
-import constants
 
 #--------------------------------------------------------------------------------------------------------------
 # FUNCTIONS IMPLEMENTADED FOR GRAVITY AND MAGNETIC CALCULATIONS DUE TO A SOLID SPHERE
@@ -33,7 +32,7 @@ def sphere_bx(x, y, z, sphere, direction):
     sphere[0, 1, 2] - arrays - position of the center of the sphere
     sphere[3] - float - value for the spehre radius  
     sphere[4] - flaot - magnetization intensity value
-    direction - numpy array - inclination, declination and azimuth values
+    direction - numpy array - inclination and declination values
     
     Outputs:
     Bx - induced field on X direction
@@ -46,7 +45,7 @@ def sphere_bx(x, y, z, sphere, direction):
     cm = 1.e-7  # Magnetization constant
     
     # Setting the directions
-    A, B, C = direction[0], direction[1], direction[2]
+    A, B = direction[0], direction[1]
     
     # Distances in all axis directions - x, y e z
     rx = x - sphere[0]
@@ -57,16 +56,16 @@ def sphere_bx(x, y, z, sphere, direction):
     r = np.sqrt((rx**2)+(ry**2)+(rz**2))
     
     # Computes the magnetization values for all directions
-    mx, my, mz = aux.dircos(A, B, C)
+    mx, my, mz = aux.dircos(A, B)
     
     # Auxiliars calculations
     dot = (rx*mx) + (ry*my) + (rz*mz)  # Scalar product
     m = (4.*np.pi*(sphere[3]**3)*sphere[4])/3.    # Magnetic moment
     
     # Component calculation - Bx
-    Bx = cm*m*(3.*dot*rx-(r**2*mx))/r**5
+    Bx = (3.*dot*rx-(r**2*mx))/r**5
     # Final component calculation
-    Bx *= t2nt
+    Bx *= cm * m * t2nt
     
     # Return the final output
     return Bx
@@ -87,10 +86,10 @@ def sphere_by(x, y, z, sphere, direction):
     sphere[0, 1, 2] - arrays - position of the center of the sphere
     sphere[3] - float - value for the spehre radius  
     sphere[4] - flaot - magnetization intensity value
-    direction - numpy array - inclination, declination and azimuth values
+    direction - numpy array - inclination, declination values
     
     Outputs:
-    By - induced field on X direction
+    By - induced field on Y direction
      
     Ps. The value for Z can be a scalar in the case of one depth, otherwise it can be a set of points.    
     '''
@@ -100,7 +99,7 @@ def sphere_by(x, y, z, sphere, direction):
     cm = 1.e-7  # Magnetization constant
     
     # Setting the directions
-    A, B, C = direction[0], direction[1], direction[2]
+    A, B = direction[0], direction[1]
     
     # Distances in all axis directions - x, y e z
     rx = x - sphere[0]
@@ -111,17 +110,17 @@ def sphere_by(x, y, z, sphere, direction):
     r = np.sqrt((rx**2)+(ry**2)+(rz**2))
     
     # Computes the magnetization values for all directions
-    mx, my, mz = aux.dircos(A, B, C)
+    mx, my, mz = aux.dircos(A, B)
     
     # Auxiliars calculations
     dot = (rx*mx) + (ry*my) + (rz*mz)  # Scalar product
     m = (4.*np.pi*(sphere[3]**3)*sphere[4])/3.    # Magnetic moment
     
     # Component calculation - By
-    By = cm*m*(3.*dot*ry-(r**2*my))/r**5
+    By = (3.*dot*ry-(r**2*my))/r**5
     
     # Final component calculation
-    By *= t2nt
+    By *= cm * m * t2nt
     
     # Return the final output
     return By
@@ -142,10 +141,10 @@ def sphere_bz(x, y, z, sphere, direction):
     sphere[0, 1, 2] - arrays - position of the center of the sphere
     sphere[3] - float - value for the spehre radius  
     sphere[4] - flaot - magnetization intensity value
-    direction - numpy array - inclination, declination and azimuth values
+    direction - numpy array - inclination and declination values
     
     Outputs:
-    Bz - induced field on X direction
+    Bz - induced field on Z direction
      
     Ps. The value for Z can be a scalar in the case of one depth, otherwise it can be a set of points.
     '''
@@ -155,7 +154,7 @@ def sphere_bz(x, y, z, sphere, direction):
     cm = 1.e-7  # Magnetization constant
     
     # Setting the directions
-    A, B, C = direction[0], direction[1], direction[2]
+    A, B = direction[0], direction[1]
     
     # Distances in all axis directions - x, y e z
     rx = x - sphere[0]
@@ -166,17 +165,17 @@ def sphere_bz(x, y, z, sphere, direction):
     r = np.sqrt((rx**2)+(ry**2)+(rz**2))
     
     # Computes the magnetization values for all directions
-    mx, my, mz = aux.dircos(A, B, C)
+    mx, my, mz = aux.dircos(A, B)
     
     # Auxiliars calculations
     dot = (rx*mx) + (ry*my) + (rz*mz)  # Scalar product
     m = (4.*np.pi*(sphere[3]**3)*sphere[4])/3.    # Magnetic moment
     
     # Component calculation - Bz
-    Bz = cm*m*(3.*dot*rz-(r**2*mz))/r**5
+    Bz = (3.*dot*rz-(r**2*mz))/r**5
     
     # Final component calculation
-    Bz *= t2nt
+    Bz *= cm * m * t2nt
 
     # Return the final output
     return Bz
@@ -197,8 +196,8 @@ def sphere_tf(x, y, z, sphere, direction, field):
     x, y, z - numpy arrays - position of the observation points
     sphere[0, 1, 2] - arrays - position of the center of the sphere
     sphere[3] - float - value for the spehre radius  
-    sphere[4] - flaot - magnetization intensity value
-    direction - numpy array - inclination, declination and azimuth values
+    sphere[4] - float - magnetization intensity value
+    direction - numpy array - inclination and declination values
     field - numpy array - values for the field and its orientations
     
     Outputs:
@@ -207,19 +206,60 @@ def sphere_tf(x, y, z, sphere, direction, field):
     Ps. The value for Z can be a scalar in the case of one depth, otherwise it can be a set of points.    
     '''
        
+    # Setting contants
+    F, inc, dec = field[0], field[1], field[2]
+    
     # Compute de regional field    
     reg = aux.regional(field)
     
     # Computing the components and the regional field
     Bx = sphere_bx(x, y, z, sphere, direction) + reg[0]
-    By = sphere_bx(x, y, z, sphere, direction) + reg[1]
-    Bz = sphere_bx(x, y, z, sphere, direction) + reg[2]
+    By = sphere_by(x, y, z, sphere, direction) + reg[1]
+    Bz = sphere_zx(x, y, z, sphere, direction) + reg[2]
     
     # Final value for the total field anomaly
-    tf = np.sqrt(((Bx**2)+(By**2)+(Bz**2))) - field[0]
+    tf = np.sqrt(((Bx**2)+(By**2)+(Bz**2))) - F
     
     # Return the final output
     return tf
+
+def sphere_tf_aprox(x, y, z, sphere, direction, field):
+    
+    '''    
+    This function computes the total field anomaly produced due to a solid sphere, which has its center 
+    located in xe, ye and ze, radius equals to r and also the magnetic property (magnetic intensity). 
+    This function receives the coordinates of the points of observation (X, Y, Z - arrays), the elements 
+    of the sphere, the values for inclination, declination and azimuth (in one array only!) and the elements 
+    of the field (intensity, inclination, declination and azimuth - IN THAT ORDER!). The observation values 
+    are given in meters.
+    
+    Inputs: 
+    x, y, z - numpy arrays - position of the observation points
+    sphere[0, 1, 2] - arrays - position of the center of the sphere
+    sphere[3] - float - value for the spehre radius  
+    sphere[4] - flaot - magnetization intensity value
+    direction - numpy array - inclination and declination values
+    field - numpy array - inclination and declination values for the field
+    
+    Outputs:
+    totalfield - numpy array - calculated total field anomaly
+    
+    Ps. The value for Z can be a scalar in the case of one depth, otherwise it can be a set of points.    
+    '''
+    
+    # Compute de regional field    
+    fx, fy, fz = aux.dircos(field)
+    
+    # Computing the components and the regional field
+    bx = sphere_bx(x, y, z, sphere, direction)
+    by = sphere_by(x, y, z, sphere, direction)
+    bz = sphere_bz(x, y, z, sphere, direction)
+    
+    # Final value for the total field anomaly
+    tf_aprox = fx*bx + fy*by + fz*bz
+    
+    # Return the final output
+    return tf_aprox
 
 #--------------------------------------------------------------------------------------------------------------
 # Function 5
@@ -280,13 +320,10 @@ def prism_tf(x, y, z, prism, directions, field):
         prism[6] - magnetic intensity
     directions - numpy array - elements for source directions
         directions[0] - float - source inclination
-        directions[0] - float - source declination
-        directions[0] - float - source azimuth
+        directions[1] - float - source declination
     field - numpy array - elementes for regional field
-        field[0] - float - value of the magnetic field
-        field[1] - float - magnetic field inclination
-        field[2] - float - magnetic field declination
-        field[3] - float - magnetic field azimuth
+        field[0] - float - magnetic field inclination
+        field[1] - float - magnetic field declination
         
     Output:
     tfa - numpy array - calculated total field anomaly
@@ -300,12 +337,14 @@ def prism_tf(x, y, z, prism, directions, field):
     cm = 1.e-7  # Magnetization constant
 
     # Setting some values
-    D1, D2, D3 = directions[0], directions[1], directions[2]
-    F1, F2, F3 = field[1], field[2], field[3]
+    D1 = directions[0]
+    D2 = directions[1]
+    F1 = field[0]
+    F2 = field[1] 
     
     # Calculate the directions for the source magnetization and for the field
-    Ma, Mb, Mc = aux.dircos(D1, D2, D3) # s -> source
-    Fa, Fb, Fc = aux.dircos(F1, F2, F3) # f -> field
+    Ma, Mb, Mc = aux.dircos(D1, D2) # s -> source
+    Fa, Fb, Fc = aux.dircos(F1, F2) # f -> field
 
     # Aranges all values as a vector
     MF = [Ma*Fb + Mb*Fa, 
@@ -348,14 +387,10 @@ def prism_tf(x, y, z, prism, directions, field):
     return tfa
 
 #--------------------------------------------------------------------------------------------------------------
-# Function number 02
-def prism_gz(x, y, z, prism):
+def potential(xo, yo, zo, prism):
     
     '''
-    This function is a Python implementation for the vertical component for the gravity field due to a 
-    rectangular prism, which has initial and final positions equals to xi and xf, yi and yf, for the X and Y 
-    directions. This function also recieve the obsevation points for an array or a grid and also the value for 
-    height of the observation, which can be a simple float number (as a level value) or a 1D array.
+    This function calculates the gravitational potential due to a rectangular prism. It is calculated solving a numerical integral approximated by using the gravity field G(x,y,z), once G can be written as minus the gradient of the gravitational potential. This function recieves all obsevation points for an array or a grid and also the value for height of the observation, which can be a simple float number (as a level value) or a 1D array. It recieves the values for the prism dimension in X, Y and Z directions.
     
     Inputs:
     x, y - numpy arrays - observation points in x and y directions
@@ -364,16 +399,168 @@ def prism_gz(x, y, z, prism):
         prism[0, 1] - initial and final coordinates at X (dimension at X axis!)
         prism[2, 3] - initial and final coordinates at Y (dimension at Y axis!)
         prism[4, 5] - initial and final coordinates at Z (dimension at Z axis!)
-        prism[6] - density value        
+        prism[6] - density value
+        
+    Output:
+    potential - numpy array - gravitational potential due to a solid prism
+    
+    '''
+       
+    # Definitions for all distances
+    x = [prism[1] - xo, prism[0] - xo]
+    y = [prism[3] - yo, prism[2] - yo]
+    z = [prism[5] - zo, prism[4] - zo]
+    
+    # Definition for density
+    rho = prism[6]
+    
+    # Definition - some constants
+    G = 6.673e-11
+    si2mGal = 100000.
+    
+    # Creating the zeros vector to allocate the result
+    potential = numpy.zeros_like(xp)
+    
+    # Solving the integral as a numerical approximation
+    for k in range(2):
+        for j in range(2):
+            for i in range(2):
+                r = sqrt(x[i]**2 + y[j]**2 + z[k]**2)
+                result = (x[i]*y[j]*np.log(z[k] + r)
+                          + y[j]*z[k]*np.log(x[i] + r)
+                          + x[i]*z[k]*np.log(y[j] + r)
+                          - 0.5*x[i]**2 *
+                          np.arctan2(z[k]*y[j], x[i]*r)
+                          - 0.5*y[j]**2 *
+                          np.arctan2(z[k]*x[i], y[j]*r)
+                          - 0.5*z[k]**2*np.arctan2(x[i]*y[j], z[k]*r))
+                potential += ((-1.)**(i + j + k))*result*rho
+    
+    # Multiplying the values for 
+    potential *= G
+        
+    # Return the final output
+    return potential
+
+def prism_gx(xo, yo, zo, prism):
+    
+    '''
+    This function is a Python implementation for the X horizontal component for the gravity field due to a rectangular prism, which has initial and final positions equals to xi and xf, yi and yf, for the X and Y directions. This function also recieve the obsevation points for an array or a grid and also the value for height of the observation, which can be a simple float number (as a level value) or a 1D array.
+    
+    Inputs:
+    x, y - numpy arrays - observation points in x and y directions
+    z - numpy array/float - height for the observation
+    prism - numpy array - all elements for the prims
+        prism[0, 1] - initial and final coordinates at X (dimension at X axis!)
+        prism[2, 3] - initial and final coordinates at Y (dimension at Y axis!)
+        prism[4, 5] - initial and final coordinates at Z (dimension at Z axis!)
+        prism[6] - density value
+        
+    Output:
+    gx - numpy array - vertical component for the gravity atraction
+    
+    '''
+    
+    # Definitions for all distances
+    x = [prism[1] - xo, prism[0] - xo]
+    y = [prism[3] - yo, prism[2] - yo]
+    z = [prism[5] - zo, prism[4] - zo]
+    
+    # Definition for density
+    rho = prism[6]
+    
+    # Definition - some constants
+    G = 6.673e-11
+    si2mGal = 100000.
+    
+    # Numpy zeros array to update the result
+    gx = np.zeros_like(xo)
+    
+    # Compute the value for Gz
+    for k in range(2):
+        for j in range(2):
+            for i in range(2):
+                r = np.sqrt(x[i]**2 + y[j]**2 + z[k]**2)
+                result = -(y[j]*np.log(z[k] + r) + z[k]*np.log(y[j] + r) - x[i]*np.arctan2(z[k]*y[j], x[i]*r))
+                gx += ((-1.)**(i + j + k))*result*rho
+                
+    # Multiplication for all constants and conversion to mGal
+    gx *= G*si2mGal
+    
+    # Return the final output
+    return gz
+
+def prism_gy(xo, yo, zo, prism):
+    
+    '''
+    This function is a Python implementation for the Y horizontal  component for the gravity field due to a rectangular prism, which has initial and final positions equals to xi and xf, yi and yf, for the X and Y directions. This function also recieve the obsevation points for an array or a grid and also the value for height of the observation, which can be a simple float number (as a level value) or a 1D array.
+    
+    Inputs:
+    x, y - numpy arrays - observation points in x and y directions
+    z - numpy array/float - height for the observation
+    prism - numpy array - all elements for the prims
+        prism[0, 1] - initial and final coordinates at X (dimension at X axis!)
+        prism[2, 3] - initial and final coordinates at Y (dimension at Y axis!)
+        prism[4, 5] - initial and final coordinates at Z (dimension at Z axis!)
+        prism[6] - density value
+        
+    Output:
+    gy - numpy array - vertical component for the gravity atraction
+    
+    '''
+    
+    # Definitions for all distances
+    x = [prism[1] - xo, prism[0] - xo]
+    y = [prism[3] - yo, prism[2] - yo]
+    z = [prism[5] - zo, prism[4] - zo]
+    
+    # Definition for density
+    rho = prism[6]
+    
+    # Definition - some constants
+    G = 6.673e-11
+    si2mGal = 100000.
+    
+    # Numpy zeros array to update the result
+    gy = np.zeros_like(xo)
+    
+    # Compute the value for Gz
+    for k in range(2):
+        for j in range(2):
+            for i in range(2):
+                r = np.sqrt(x[i]**2 + y[j]**2 + z[k]**2)
+                result = -(x[i]*np.log(y[j] + r) + y[j]*np.log(x[i] + r) - z[k]*np.arctan2(x[i]*y[j], z[k]*r))
+                gz += ((-1.)**(i + j + k))*result*rho
+                
+    # Multiplication for all constants and conversion to mGal
+    gy *= G*si2mGal
+    
+    # Return the final output
+    return gy
+
+def prism_gz(xo, yo, zo, prism):
+    
+    '''
+    This function is a Python implementation for the vertical component for the gravity field due to a rectangular prism, which has initial and final positions equals to xi and xf, yi and yf, for the X and Y directions. This function also recieve the obsevation points for an array or a grid and also the value for height of the observation, which can be a simple float number (as a level value) or a 1D array.
+    
+    Inputs:
+    x, y - numpy arrays - observation points in x and y directions
+    z - numpy array/float - height for the observation
+    prism - numpy array - all elements for the prims
+        prism[0, 1] - initial and final coordinates at X (dimension at X axis!)
+        prism[2, 3] - initial and final coordinates at Y (dimension at Y axis!)
+        prism[4, 5] - initial and final coordinates at Z (dimension at Z axis!)
+        prism[6] - density value
+        
     Output:
     gz - numpy array - vertical component for the gravity atraction
     
     '''
     
     # Definitions for all distances
-    xc = [prism[1] - x, prism[0] - x]
-    yc = [prism[3] - y, prism[2] - y]
-    zc = [prism[5] - z, prism[4] - z]
+    x = [prism[1] - xo, prism[0] - xo]
+    y = [prism[3] - yo, prism[2] - yo]
+    z = [prism[5] - zo, prism[4] - zo]
     
     # Definition for density
     rho = prism[6]
@@ -383,15 +570,14 @@ def prism_gz(x, y, z, prism):
     si2mGal = 10.e5
     
     # Numpy zeros array to update the result
-    gz = np.zeros_like(x)
+    gz = np.zeros_like(xo)
     
     # Compute the value for Gz
     for k in range(2):
         for j in range(2):
             for i in range(2):
-                r = np.sqrt(xc[i]**2 + yc[j]**2 + zc[k]**2)
-                result = -(xc[i]*np.log(yc[j] + r) + yc[j]*np.log(xc[i] + r) - 
-                           z[ck]*np.arctan2(xc[i]*yc[j], zc[k]*r))
+                r = np.sqrt(x[i]**2 + y[j]**2 + z[k]**2)
+                result = -(x[i]*np.log(y[j] + r) + y[j]*np.log(x[i] + r) - z[k]*np.arctan2(x[i]*y[j], z[k]*r))
                 gz += ((-1.)**(i + j + k))*result*rho
                 
     # Multiplication for all constants and conversion to mGal
