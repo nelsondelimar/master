@@ -47,28 +47,34 @@ def sphere_bx(x, y, z, sphere, direction):
     # Setting the directions
     A, B = direction[0], direction[1]
     
+    #Setting some constants
+    xe, ye, ze = sphere[0], sphere[1], sphere[2]
+    radius = sphere[3]
+    mag = sphere[4]
+    
     # Distances in all axis directions - x, y e z
-    rx = x - sphere[0]
-    ry = y - sphere[1]
-    rz = z - sphere[2]
+    rx = x - xe
+    ry = y - ye
+    rz = z - ze
     
     # Computes the distance (r) as the module of the other three components
-    r = np.sqrt((rx**2)+(ry**2)+(rz**2))
-    
+    r2 = rx**2 + ry**2 + rz**2
+        
     # Computes the magnetization values for all directions
     mx, my, mz = aux.dircos(A, B)
     
     # Auxiliars calculations
-    dot = (rx*mx) + (ry*my) + (rz*mz)  # Scalar product
-    m = (4.*np.pi*(sphere[3]**3)*sphere[4])/3.    # Magnetic moment
+    dot = rx*mx + ry*my + rz*mz  # Scalar product
+    m = (4.*np.pi*(radius**3)*mag)/3.    # Magnetic moment
     
     # Component calculation - Bx
-    Bx = (3.*dot*rx-(r**2*mx))/r**5
+    bx = cm*m*(3.*dot*rx - (r2*mx))/(r2**(2.5))
+
     # Final component calculation
-    Bx *= cm * m * t2nt
+    bx *= t2nt
     
     # Return the final output
-    return Bx
+    return bx
 
 # Function 2
 def sphere_by(x, y, z, sphere, direction):
@@ -101,29 +107,34 @@ def sphere_by(x, y, z, sphere, direction):
     # Setting the directions
     A, B = direction[0], direction[1]
     
+    #Setting some constants
+    xe, ye, ze = sphere[0], sphere[1], sphere[2]
+    radius = sphere[3]
+    mag = sphere[4]
+    
     # Distances in all axis directions - x, y e z
-    rx = x - sphere[0]
-    ry = y - sphere[1]
-    rz = z - sphere[2]
+    rx = x - xe
+    ry = y - ye
+    rz = z - ze
     
     # Computes the distance (r) as the module of the other three components
-    r = np.sqrt((rx**2)+(ry**2)+(rz**2))
-    
+    r2 = rx**2 + ry**2 + rz**2
+        
     # Computes the magnetization values for all directions
     mx, my, mz = aux.dircos(A, B)
     
     # Auxiliars calculations
-    dot = (rx*mx) + (ry*my) + (rz*mz)  # Scalar product
-    m = (4.*np.pi*(sphere[3]**3)*sphere[4])/3.    # Magnetic moment
+    dot = rx*mx + ry*my + rz*mz  # Scalar product
+    m = (4.*np.pi*(radius**3)*mag)/3.    # Magnetic moment
     
     # Component calculation - By
-    By = (3.*dot*ry-(r**2*my))/r**5
+    by = (3.*dot*ry - (r2*my))/(r2**(2.5))
     
     # Final component calculation
-    By *= cm * m * t2nt
+    by *= cm*m*t2nt
     
     # Return the final output
-    return By
+    return by
 
 # Function 3
 def sphere_bz(x, y, z, sphere, direction):
@@ -156,29 +167,34 @@ def sphere_bz(x, y, z, sphere, direction):
     # Setting the directions
     A, B = direction[0], direction[1]
     
+    #Setting some constants
+    xe, ye, ze = sphere[0], sphere[1], sphere[2]
+    radius = sphere[3]
+    mag = sphere[4]
+    
     # Distances in all axis directions - x, y e z
-    rx = x - sphere[0]
-    ry = y - sphere[1]
-    rz = z - sphere[2]
+    rx = x - xe
+    ry = y - ye
+    rz = z - ze
     
     # Computes the distance (r) as the module of the other three components
-    r = np.sqrt((rx**2)+(ry**2)+(rz**2))
+    r2 = rx**2 + ry**2 + rz**2
     
     # Computes the magnetization values for all directions
     mx, my, mz = aux.dircos(A, B)
     
     # Auxiliars calculations
     dot = (rx*mx) + (ry*my) + (rz*mz)  # Scalar product
-    m = (4.*np.pi*(sphere[3]**3)*sphere[4])/3.    # Magnetic moment
+    m = (4.*np.pi*(radius**3)*mag)/3.    # Magnetic moment
     
     # Component calculation - Bz
-    Bz = (3.*dot*rz-(r**2*mz))/r**5
-    
-    # Final component calculation
-    Bz *= cm * m * t2nt
+    bz = (3.*dot*rz - (r2*mz))/(r2**(2.5))
 
+    # Final component calculation
+    bz *= cm*m*t2nt
+    
     # Return the final output
-    return Bz
+    return bz
 
 #--------------------------------------------------------------------------------------------------------------
 # Function 4
@@ -213,17 +229,17 @@ def sphere_tf(x, y, z, sphere, direction, field):
     reg = aux.regional(field)
     
     # Computing the components and the regional field
-    Bx = sphere_bx(x, y, z, sphere, direction) + reg[0]
-    By = sphere_by(x, y, z, sphere, direction) + reg[1]
-    Bz = sphere_zx(x, y, z, sphere, direction) + reg[2]
+    bx = sphere_bx(x, y, z, sphere, direction) + reg[0]
+    by = sphere_by(x, y, z, sphere, direction) + reg[1]
+    bz = sphere_bz(x, y, z, sphere, direction) + reg[2]
     
     # Final value for the total field anomaly
-    tf = np.sqrt(((Bx**2)+(By**2)+(Bz**2))) - F
+    tf = np.sqrt(bx**2 + by**2 + bz**2) - F
     
     # Return the final output
     return tf
 
-def sphere_tf_aprox(x, y, z, sphere, direction, field):
+def sphere_tfa(x, y, z, sphere, direction, field):
     
     '''    
     This function computes the total field anomaly produced due to a solid sphere, which has its center 
@@ -242,13 +258,16 @@ def sphere_tf_aprox(x, y, z, sphere, direction, field):
     field - numpy array - inclination and declination values for the field
     
     Outputs:
-    totalfield - numpy array - calculated total field anomaly
+    tf_aprox - numpy array - approximated total field anomaly
     
     Ps. The value for Z can be a scalar in the case of one depth, otherwise it can be a set of points.    
     '''
     
+    # Setting some values
+    f, inc, dec = field[0], field[1], field[2]
+    
     # Compute de regional field    
-    fx, fy, fz = aux.dircos(field)
+    fx, fy, fz = aux.dircos(inc, dec)
     
     # Computing the components and the regional field
     bx = sphere_bx(x, y, z, sphere, direction)
