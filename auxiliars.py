@@ -69,9 +69,9 @@ def dircos(inc, dec):
     decl = deg2rad(dec)
         
     # Calculates the projected cossine values
-    A = np.cos(inc)*np.cos(dec)
-    B = np.cos(inc)*np.sin(dec)
-    C = np.sin(inc)
+    A = np.cos(incl)*np.cos(decl)
+    B = np.cos(incl)*np.sin(decl)
+    C = np.sin(incl)
     
     # Return the final output
     return A, B, C
