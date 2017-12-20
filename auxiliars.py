@@ -7,6 +7,7 @@
 
 import numpy as np # Numpy library
 import scipy as sp # Scipy library
+import warnings
 
 def deg2rad(angle):
     
@@ -76,7 +77,7 @@ def dircos(inc, dec):
     # Return the final output
     return A, B, C
 
-def regional(field):
+def regional(F, field):
     
     '''
     This fucntion computes the projected components of the regional magnetic field in all 
@@ -98,11 +99,8 @@ def regional(field):
     
     assert field[0] != 0., 'Value of the regional magnetic field must be nonzero!'
         
-    # Setting the value for the magnetic field
-    F = field[0]
-    
     # Computes the projected cossine
-    X, Y, Z = dircos(field[1], field[2])
+    X, Y, Z = dircos(field[0], field[1])
     
     # Compute all components
     Fx, Fy, Fz = F*X, F*Y, F*Z
@@ -121,12 +119,27 @@ def addnoise(data, std):
     
     assert np.min(data) <= np.mean(data), 'Mean must be greater than minimum'
     assert np.max(data) >= np.mean(data), 'Maximum must be greater than mean'
-    assert std <= 1., 'Noise must not be greater than 1'
-    assert std >= 1e-3, 'Noise should not be smaller than 0.001'
+    assert std <= 10., 'Noise must not be greater than 1'
+    assert std >= 1e-12, 'Noise should not be smaller than 1 micro unit'
     
-    local = int((data.max() - data.min()))*(1e-2)
-    noise = np.random.normal(loc = local, scale = std, size = data.shape)
-    return data + noise
+    # Define the values for size and shape of the data
+    size = data.size
+    shape = data.shape
+    
+    # Creat the zero vector such as data
+    noise = np.zeros_like(data)
+    
+    # Calculate the local number
+    local = np.abs((data.max() - data.min())*(1e-2))
+    
+    # Verify if data is a 1D or 2D array
+    if data.shape[0] == size or data.shape[1] == size:
+        noise += np.random.normal(loc = local, scale = std, size = size)
+    else:
+        noise += np.random.normal(loc = local, scale = std, size = shape)
+        
+    # Return the final output
+    return data + 2*noise - 0.5*noise.mean()
 
 def padzeros(vector, width, ax, kwargs):
     
@@ -284,4 +297,4 @@ def datagrid(x, y, zvalues, datashape):
     grid = grid.reshape(shape)
     
     # Return the final output
-    return(xp,yp,grid)
+    return (xp, yp, grid)
