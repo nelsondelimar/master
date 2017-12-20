@@ -12,11 +12,6 @@ import numpy as np
 # Import my libraries
 import auxiliars as aux
 
-#--------------------------------------------------------------------------------------------------------------
-# FUNCTIONS IMPLEMENTADED FOR GRAVITY AND MAGNETIC CALCULATIONS DUE TO A SOLID SPHERE
-#
-#--------------------------------------------------------------------------------------------------------------
-# Function 1
 def sphere_bx(x, y, z, sphere, direction):
     
     '''    
@@ -76,7 +71,6 @@ def sphere_bx(x, y, z, sphere, direction):
     # Return the final output
     return bx
 
-# Function 2
 def sphere_by(x, y, z, sphere, direction):
     
     '''    
@@ -136,7 +130,6 @@ def sphere_by(x, y, z, sphere, direction):
     # Return the final output
     return by
 
-# Function 3
 def sphere_bz(x, y, z, sphere, direction):
     
     '''    
@@ -196,9 +189,7 @@ def sphere_bz(x, y, z, sphere, direction):
     # Return the final output
     return bz
 
-#--------------------------------------------------------------------------------------------------------------
-# Function 4
-def sphere_tf(x, y, z, sphere, direction, field):
+def sphere_tf(x, y, z, sphere, direction, field, F):
     
     '''    
     This function computes the total field anomaly produced due to a solid sphere, which has its center 
@@ -223,10 +214,10 @@ def sphere_tf(x, y, z, sphere, direction, field):
     '''
        
     # Setting contants
-    F, inc, dec = field[0], field[1], field[2]
+    inc, dec = field[0], field[1]
     
     # Compute de regional field    
-    reg = aux.regional(field)
+    reg = aux.regional(F, field)
     
     # Computing the components and the regional field
     bx = sphere_bx(x, y, z, sphere, direction) + reg[0]
@@ -264,7 +255,7 @@ def sphere_tfa(x, y, z, sphere, direction, field):
     '''
     
     # Setting some values
-    f, inc, dec = field[0], field[1], field[2]
+    inc, dec = field[0], field[1]
     
     # Compute de regional field    
     fx, fy, fz = aux.dircos(inc, dec)
@@ -280,8 +271,6 @@ def sphere_tfa(x, y, z, sphere, direction, field):
     # Return the final output
     return tf_aprox
 
-#--------------------------------------------------------------------------------------------------------------
-# Function 5
 def sphere_gz(x, y, sphere):
     
     '''    
@@ -314,12 +303,8 @@ def sphere_gz(x, y, sphere):
     # Return the final output
     return gz
 
-#--------------------------------------------------------------------------------------------------------------
-#--------------------------------------------------------------------------------------------------------------
-# FUNCTIONS IMPLEMENTADED FOR GRAVITY AND MAGNETIC CALCULATIONS DUE TO A RECTANGULAR PRISM
-#
-#--------------------------------------------------------------------------------------------------------------
-# Function 1
+####################################################################################################
+
 def prism_tf(x, y, z, prism, directions, field):
     
     '''
@@ -374,8 +359,8 @@ def prism_tf(x, y, z, prism, directions, field):
           Mc*Fc]
     
     # Limits for initial and final position along the directions
-    A = [prism[0] - x, prism[1] - x]
-    B = [prism[2] - y, prism[3] - y]
+    A = [prism[1] - x, prism[0] - x]
+    B = [prism[3] - y, prism[2] - y]
     H = [prism[5] - z, prism[4] - z]
     
     # Create the zero array to allocate the total field result
@@ -398,18 +383,22 @@ def prism_tf(x, y, z, prism, directions, field):
                                              np.log((R - B[j])/(R + B[j])) - (MF[0])*np.log(R + H[k]) -
                                              (MF[3])*np.arctan2(AxB, X2 + HxR + H2) -
                                              (MF[4])*np.arctan2(AxB, R2 + HxR - X2) +
-                                             (MF[5])*np.arctan2(AxB, HxR))        
-        
-        tfa *= t2nt*cm
+                                             (MF[5])*np.arctan2(AxB, HxR))
+    # Multiplying for constants conversion
+    tfa *= t2nt*cm
     
     # Return the final output
     return tfa
 
-#--------------------------------------------------------------------------------------------------------------
 def potential(xo, yo, zo, prism):
     
     '''
-    This function calculates the gravitational potential due to a rectangular prism. It is calculated solving a numerical integral approximated by using the gravity field G(x,y,z), once G can be written as minus the gradient of the gravitational potential. This function recieves all obsevation points for an array or a grid and also the value for height of the observation, which can be a simple float number (as a level value) or a 1D array. It recieves the values for the prism dimension in X, Y and Z directions.
+    This function calculates the gravitational potential due to a rectangular prism. It is calculated 
+    solving a numerical integral approximated by using the gravity field G(x,y,z), once G can be written 
+    as minus the gradient of the gravitational potential. This function recieves all obsevation points 
+    for an array or a grid and also the value for height of the observation, which can be a simple float 
+    number (as a level value) or a 1D array. It recieves the values for the prism dimension in X, Y and Z 
+    directions.
     
     Inputs:
     x, y - numpy arrays - observation points in x and y directions
@@ -464,7 +453,10 @@ def potential(xo, yo, zo, prism):
 def prism_gx(xo, yo, zo, prism):
     
     '''
-    This function is a Python implementation for the X horizontal component for the gravity field due to a rectangular prism, which has initial and final positions equals to xi and xf, yi and yf, for the X and Y directions. This function also recieve the obsevation points for an array or a grid and also the value for height of the observation, which can be a simple float number (as a level value) or a 1D array.
+    This function is a Python implementation for the X horizontal component for the gravity field due to 
+    a rectangular prism, which has initial and final positions equals to xi and xf, yi and yf, for the X 
+    and Y directions. This function also recieve the obsevation points for an array or a grid and also the 
+    value for height of the observation, which can be a simple float number (as a level value) or a 1D array.
     
     Inputs:
     x, y - numpy arrays - observation points in x and y directions
@@ -512,7 +504,11 @@ def prism_gx(xo, yo, zo, prism):
 def prism_gy(xo, yo, zo, prism):
     
     '''
-    This function is a Python implementation for the Y horizontal  component for the gravity field due to a rectangular prism, which has initial and final positions equals to xi and xf, yi and yf, for the X and Y directions. This function also recieve the obsevation points for an array or a grid and also the value for height of the observation, which can be a simple float number (as a level value) or a 1D array.
+    This function is a Python implementation for the Y horizontal  component for the gravity field due 
+    to a rectangular prism, which has initial and final positions equals to xi and xf, yi and yf, for 
+    the X and Y directions. This function also recieve the obsevation points for an array or a grid and 
+    also the value for height of the observation, which can be a simple float number (as a level value) 
+    or a 1D array.
     
     Inputs:
     x, y - numpy arrays - observation points in x and y directions
@@ -560,7 +556,11 @@ def prism_gy(xo, yo, zo, prism):
 def prism_gz(xo, yo, zo, prism):
     
     '''
-    This function is a Python implementation for the vertical component for the gravity field due to a rectangular prism, which has initial and final positions equals to xi and xf, yi and yf, for the X and Y directions. This function also recieve the obsevation points for an array or a grid and also the value for height of the observation, which can be a simple float number (as a level value) or a 1D array.
+    This function is a Python implementation for the vertical component for the gravity field due to a 
+    rectangular prism, which has initial and final positions equals to xi and xf, yi and yf, for the X 
+    and Y directions. This function also recieve the obsevation points for an array or a grid and also 
+    the value for height of the observation, which can be a simple float number (as a level value) or a 
+    1D array.
     
     Inputs:
     x, y - numpy arrays - observation points in x and y directions
