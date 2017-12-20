@@ -18,7 +18,7 @@ import auxiliars as aux
 
 
 
-def continuation(data, H):
+def continuation(x, y, data, H):
     
     '''
     This function compute the upward or downward continuation for a potential field data. Data can be a gravity
@@ -33,17 +33,27 @@ def continuation(data, H):
     
     '''
     
-    if H == 0.:
-        print 'No continuation is applied!'
-    elif H > 0.:
-        print 'H is positive. Continuation is Downward!'
-    else:
-        print 'H is negative. Continuation is Upward!'
-        
-    return x
+    assert H != 0., 'Height must be different of zero!'
+    
+    # calculate the wavenumbers
+    kx, ky = wavenumber(x, y)
+    
+    if H > 0.:
+        print ('H is positive. Continuation is Upward!')
+        print
+        kcont = np.exp((-H) * np.sqrt(kx**2 + ky**2))
+        result = kcont * np.fft.fft2(data)
+    elif H < 0.:
+        print 'H is negative. Continuation is Downward!'
+        print
+        cont = np.exp((-H) * np.sqrt(kx**2 + ky**2))
+        result = kcont * np.fft.fft2(data)
+
+    return np.real(np.fft.ifft2(result))
 
 def reduction(x, y, data, field0, source0, field1, source1):
     '''
+    Return the reduced data giving the new directions for the geomagnetic field and source magnetization.
     '''
     # 1 - Verificar o tamanho do grid e se precisa expandir
     # 2 - Calcular os valores de nx, ny, dx e dy
@@ -86,25 +96,24 @@ def reduction(x, y, data, field0, source0, field1, source1):
 
 def theta(angle, u, v):
     '''
+    Return the operators for magnetization and field directions
     '''
-    # calculando o modulo
-    k = np.sqrt(u**2 + v**2)
+    
+    # Computes k as ()
+    k = (u**2 + v**2)**(0.5)
     
     inc, dec = angle[0], angle[1]
     x, y, z = aux.dircos(inc, dec) 
         
-    # calculando as projecoes
-    #d = (x*kx + y*ky)/k
+    # Calcutaing the projections
     theta = z + ((x*u + y*v)/k)*1j
     
     return theta
 
 def wavenumber(x, y):
-    #nx = data.shape[0]
-    #ny = data.shape[1]
-    
-    assert x.shape[0] == y.shape[0]
-    assert x.shape[1] == y.shape[1]
+    '''
+    Return the wavenumbers in X and Y directions
+    '''
     
     if x.shape[0] == x.size or x.shape[1] == x.size:
         dx = x[1] - x[0]
