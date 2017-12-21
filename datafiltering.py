@@ -40,74 +40,85 @@ def continuation(x, y, data, H):
     
     if H > 0.:
         print ('H is positive. Continuation is Upward!')
-        print
+        print ()
         kcont = np.exp((-H) * np.sqrt(kx**2 + ky**2))
         result = kcont * np.fft.fft2(data)
     elif H < 0.:
-        print 'H is negative. Continuation is Downward!'
-        print
+        print ('H is negative. Continuation is Downward!')
+        print ()
         cont = np.exp((-H) * np.sqrt(kx**2 + ky**2))
         result = kcont * np.fft.fft2(data)
 
     return np.real(np.fft.ifft2(result))
 
-def reduction(x, y, data, field0, source0, field1, source1):
+def reduction(x, y, data, oldf, olds, newf, news):
     '''
-    Return the reduced data giving the new directions for the geomagnetic field and source magnetization.
+    Return the reduced potential data giving the new directions for the geomagnetic field and source magnetization.
     '''
     # 1 - Verificar o tamanho do grid e se precisa expandir
     # 2 - Calcular os valores de nx, ny, dx e dy
-    #nx = data.shape[0]
-    #ny = data.shape[1]
-    
-    # Entra X e Y mas nao sao usados, verificar depois como fazer 
-    # para entrar somente com eespcaamento
-    #kx = 2.0*np.pi* np.fft.fftfreq(nx, dx)
-    #ky = 2.0*np.pi* np.fft.fftfreq(ny, dy)
-    #KX, KY = np.meshgrid(kx, ky)
     kx, ky = wavenumber(x, y)
-    #print(kx[0])
-    #print(ky)
-    #print(KX[0,0])
-    #print(KY[0,0])
-    
-    # calcular thetaM e thetaF - AQUI TAMBEM VAI ENTRAR OS VALORES DE KX E KY DO GRID
-    theta_f0 = theta(field0, kx, ky)
-    theta_m0 = theta(source0, kx, ky)
-    theta_f1 = theta(field1, kx, ky)
-    theta_m1 = theta(source1, kx, ky)
-    
-    #print(theta_m1)
-    #print(theta_f1)
-    
-    # CALCULANDO A TRANSFORMACAO
-    # Numerator and denominator including on the filter
-    num = theta_f0 * theta_m0
-    den = theta_f1 * theta_m1
-    
+    f0 = theta(oldf, kx, ky)
+    m0 = theta(olds, kx, ky)
+    f1 = theta(newf, kx, ky)
+    m1 = theta(news, kx, ky)
+       
     with np.errstate(divide='ignore', invalid='ignore'):
-        operator = (den/num)
-    
+        operator = (f1 * m1)/(f0 * m0)
     operator[0, 0] = 0.
-        
     res = operator*np.fft.fft2(data)
-    
     return np.real(np.fft.ifft2(res))
+
+def xderiv(x, y, data, n):
+    '''
+    Return the horizontal derivative in x direction for n order.
+    '''
+    
+    assert n > 0., 'Order of the derivative must be positive and nonzero!'
+    
+    kx, _ = wavenumber(x,y)
+    
+    xder = np.fft.fft2(data)*((kx*1j)**(n))
+    
+    return np.real(np.fft.ifft2(xder))
+
+def yderiv(x, y, data, n):
+    '''
+    Return the horizontal derivative in y direction for n order.
+    '''
+    
+    assert n > 0., 'Order of the derivative must be positive and nonzero!'
+    
+    _, ky = wavenumber(x,y)
+    
+    yder = np.fft.fft2(data)*((ky*1j)**(n))
+    
+    return np.real(np.fft.ifft2(yder))
+
+def zderiv(x, y, data, n):
+    '''
+    Return the vertical derivative in z direction for n order.
+    '''
+    
+    assert n > 0., 'Order of the derivative must be positive and nonzero!'
+    
+    kx, ky = wavenumber(x,y)
+    
+    zder = np.fft.fft2(data)*(np.sqrt(kx**2 + ky**2)**(n))
+    
+    return np.real(np.fft.ifft2(zder))
 
 def theta(angle, u, v):
     '''
     Return the operators for magnetization and field directions
     '''
     
-    # Computes k as ()
     k = (u**2 + v**2)**(0.5)
     
     inc, dec = angle[0], angle[1]
-    x, y, z = aux.dircos(inc, dec) 
-        
     # Calcutaing the projections
+    x, y, z = aux.dircos(inc, dec) 
     theta = z + ((x*u + y*v)/k)*1j
-    
     return theta
 
 def wavenumber(x, y):
@@ -131,7 +142,6 @@ def wavenumber(x, y):
       
     c = 2.*np.pi
     kx = c*np.fft.fftfreq(nx, dx)
-    ky = c*np.fft.fftfreq(ny, dy)
-    
+    ky = c*np.fft.fftfreq(ny, dy)    
     return np.meshgrid(kx, ky)
     
