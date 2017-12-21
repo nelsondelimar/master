@@ -139,7 +139,7 @@ def addnoise(data, std):
         noise += np.random.normal(loc = local, scale = std, size = shape)
         
     # Return the final output
-    return data + 2*noise - 0.5*noise.mean()
+    return data + 0.5*noise
 
 def padzeros(vector, width, ax, kwargs):
     
