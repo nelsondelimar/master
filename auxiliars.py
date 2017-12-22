@@ -108,7 +108,7 @@ def regional(F, field):
     # Set F as array and return the output
     return [Fx, Fy, Fz]
 
-def addnoise(data, std):
+def addnoise(data, v0, std):
     
     '''
     This function adds noise along the input data using a normal Gaussian distribution for each 
@@ -130,16 +130,16 @@ def addnoise(data, std):
     noise = np.zeros_like(data)
     
     # Calculate the local number
-    local = np.abs((data.max() - data.min())*(1e-2))
+    #local = np.abs((data.max() - data.min())*(1e-2))
     
     # Verify if data is a 1D or 2D array
     if data.shape[0] == size or data.shape[1] == size:
-        noise += np.random.normal(loc = local, scale = std, size = size)
+        noise = np.random.normal(loc = v0, scale = std, size = size)
     else:
-        noise += np.random.normal(loc = local, scale = std, size = shape)
+        noise = np.random.normal(loc = v0, scale = std, size = shape)
         
     # Return the final output
-    return data + 0.5*noise
+    return data + noise
 
 def padzeros(vector, width, ax, kwargs):
     
