@@ -40,13 +40,11 @@ def continuation(x, y, data, H):
     
     if H > 0.:
         print ('H is positive. Continuation is Upward!')
-        print ()
         kcont = np.exp((-H) * np.sqrt(kx**2 + ky**2))
         result = kcont * np.fft.fft2(data)
     elif H < 0.:
         print ('H is negative. Continuation is Downward!')
-        print ()
-        cont = np.exp((-H) * np.sqrt(kx**2 + ky**2))
+        kcont = np.exp((-H) * np.sqrt(kx**2 + ky**2))
         result = kcont * np.fft.fft2(data)
 
     return np.real(np.fft.ifft2(result))
