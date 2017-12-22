@@ -271,7 +271,7 @@ def sphere_tfa(x, y, z, sphere, direction, field):
     # Return the final output
     return tf_aprox
 
-def sphere_gz(x, y, sphere):
+def sphere_gz(x, y, z, sphere):
     
     '''    
     This function calculates the gravity contribution due to a solid sphere. This is a Python implementation 
@@ -288,19 +288,31 @@ def sphere_gz(x, y, sphere):
     gz - numpy array - vertical component for the gravity signal due to a solid sphere    
     '''
     
+    # Setting the initial value
+    gz = 0.
+    
+    # Setting coordinate values
+    dx = sphere[0] - x
+    dy = sphere[1] - y
+    dz = sphere[2] - z
+    radius = sphere[3]
+    rho = sphere[4]    
+    
     # Definition for some constants
     G = 6.673e-11
-    si2mGal = 10.e5
+    si2mGal = 100000.0
     
     # Compute the constant which is result due to the product
-    C = (4./3)*np.pi*G*si2mGal*sphere[4]*(sphere[3]**3)
+    const = (4./3)*np.pi*rho*(radius**3)
+    
+    # Compute the distance
+    r = np.sqrt(dx**2 + dy**2 + dz**2)
     
     # Compute the vertical component 
-    gz = C*sphere[2]/(((x - sphere[0])**2 + 
-                       (y - sphere[1])**2 + 
-                       (sphere[2]**2))**(3./2))
+    gz += const*dz/(r**3)
+    gz *= G*si2mGal
     
-    # Return the final output
+    # Return the final outpu
     return gz
 
 ####################################################################################################
@@ -424,7 +436,7 @@ def potential(xo, yo, zo, prism):
     
     # Definition - some constants
     G = 6.673e-11
-    si2mGal = 100000.
+    si2mGal = 100000.0
     
     # Creating the zeros vector to allocate the result
     potential = numpy.zeros_like(xp)
@@ -482,7 +494,7 @@ def prism_gx(xo, yo, zo, prism):
     
     # Definition - some constants
     G = 6.673e-11
-    si2mGal = 100000.
+    si2mGal = 100000.0
     
     # Numpy zeros array to update the result
     gx = np.zeros_like(xo)
@@ -534,7 +546,7 @@ def prism_gy(xo, yo, zo, prism):
     
     # Definition - some constants
     G = 6.673e-11
-    si2mGal = 100000.
+    si2mGal = 100000.0
     
     # Numpy zeros array to update the result
     gy = np.zeros_like(xo)
@@ -586,7 +598,7 @@ def prism_gz(xo, yo, zo, prism):
     
     # Definition - some constants
     G = 6.673e-11
-    si2mGal = 10.e5
+    si2mGal = 100000.0
     
     # Numpy zeros array to update the result
     gz = np.zeros_like(xo)
