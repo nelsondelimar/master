@@ -101,30 +101,38 @@ def zderiv(x, y, data, n):
     
     return np.real(np.fft.ifft2(zder))
 
-def totalgrad(x, y, data, xderivative, yderivative, zderivative):
+def totalgrad(x, y, data): #, derivx = None, derivy = None, derivz = None):
     '''
     Return the total gradient amplitude (TGA) for a potential data on a regular grid.
     '''
     
-    if xderivative, yderivative and zderivative is None:
-        dfdx = xderiv(x, y, data, 1)
-        dfdy = yderiv(x, y, data, 1)
-        dfdz = zderiv(x, y, data, 1)
-        tga = (dfdx**2 + dfdy**2 + dfdz**2)**(0.5)    
-    else:
-        tga = (xderivative**2 + yderivative**2 + zderivative**2)**(0.5)
+    #if derivx is None:
+    derivx = xderiv(x, y, data, 1)
+    #if derivx is None:
+    derivy = yderiv(x, y, data, 1)
+    #if derivx is None:
+    derivz = zderiv(x, y, data, 1)
+
+    # Calculates the total gradient
+    tga = (derivx**2 + derivy**2 + derivz**2)**(0.5)
+    
     # Return the final output
     return tga
 
-def tilt(x, y, data):
+def tilt(x, y, data): #, derivx = None, derivy = None, derivz = None):
     '''
     Return the tilt angle for a potential data.
     '''
-    xdiff = xderiv(x, y, data, 1)
-    ydiff = yderiv(x, y, data, 1)
-    zdiff = zderiv(x, y, data, 1)
+    #if derivx is None:
+    derivx = xderiv(x, y, data, 1)
+    #if derivx is None:
+    derivy = yderiv(x, y, data, 1)
+    #if derivx is None:
+    derivz = zderiv(x, y, data, 1)
+    hgrad = (derivx**2 + derivy**2)**(0.5)
+    tilt = np.arctan2(hgrad, derivz)
     # Return the final output
-    return np.arctan2(np.sqrt(xdiff**2 + ydiff**2), zdiff)
+    return tilt
 
 def theta(angle, u, v):
     '''
