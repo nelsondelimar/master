@@ -9,30 +9,25 @@
 from __future__ import division
 import warnings
 import numpy as np
-#import pandas as pd
-#import matplotlib.pyplot as plt
-# Import my libraries
 import warnings
-import gravmag as gm
 import auxiliars as aux
-
-
 
 def continuation(x, y, data, H):
     
     '''
-    This function compute the upward or downward continuation for a potential field data. Data can be a gravity
-    signal - disturbance or Bouguer anomaly, for example - or a magnetic signal - total field anomaly.
-    The value for H represents the level which the data will be continuated. If H is positive, the continuation 
-    is upward, because Dz is greater than 0 and the exponential is negative; otherwise, if H is negative, the
+    This function compute the upward or downward continuation for a potential field data,
+    which can be gravity or magnetic signal. The value for H represents the level which 
+    the data will be continuated. If H is positive, the continuation is upward, because Dz 
+    is greater than 0 and the exponential is negative; otherwise, if H is negative, the 
     continuation is downward.
     
     Input:
-    data - numpy 1D or 2D array - gravity or magnetic data
+    x - numpy 2D array - observation points on the grid in X direction
+    y - numpy 2D array - observation points on the grid in Y direction
+    data - 2D array - gravity or magnetic data
     H - float - value for the new observation level
     
     '''
-    
     assert H != 0., 'Height must be different of zero!'
     
     # calculate the wavenumbers
@@ -105,6 +100,31 @@ def zderiv(x, y, data, n):
     zder = np.fft.fft2(data)*(np.sqrt(kx**2 + ky**2)**(n))
     
     return np.real(np.fft.ifft2(zder))
+
+def totalgrad(x, y, data, xderivative, yderivative, zderivative):
+    '''
+    Return the total gradient amplitude (TGA) for a potential data on a regular grid.
+    '''
+    
+    if xderivative, yderivative and zderivative is None:
+        dfdx = xderiv(x, y, data, 1)
+        dfdy = yderiv(x, y, data, 1)
+        dfdz = zderiv(x, y, data, 1)
+        tga = (dfdx**2 + dfdy**2 + dfdz**2)**(0.5)    
+    else:
+        tga = (xderivative**2 + yderivative**2 + zderivative**2)**(0.5)
+    # Return the final output
+    return tga
+
+def tilt(x, y, data):
+    '''
+    Return the tilt angle for a potential data.
+    '''
+    xdiff = xderiv(x, y, data, 1)
+    ydiff = yderiv(x, y, data, 1)
+    zdiff = zderiv(x, y, data, 1)
+    # Return the final output
+    return np.arctan2(np.sqrt(xdiff**2 + ydiff**2), zdiff)
 
 def theta(angle, u, v):
     '''
