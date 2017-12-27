@@ -10,7 +10,6 @@ import scipy as sp # Scipy library
 import warnings
 
 def deg2rad(angle):
-    
     '''
     This function converts an angle value in degrees to an another value in radian.     
     
@@ -32,7 +31,6 @@ def deg2rad(angle):
     return argument
 
 def rad2deg(argument):
-    
     '''
     This function converts an angle value in radian to an another value in degrees.
     
@@ -50,7 +48,6 @@ def rad2deg(argument):
     return angle
 
 def dircos(inc, dec):
-    
     '''
     This function calculates the cossines projected values on directions using inclination 
     and declination values. Here, we do not considerate an azimuth as a zero value, but as 
@@ -78,7 +75,6 @@ def dircos(inc, dec):
     return A, B, C
 
 def regional(F, field):
-    
     '''
     This fucntion computes the projected components of the regional magnetic field in all 
     directions X, Y and Z. This calculation is done by using a cossine projected function, 
@@ -109,7 +105,6 @@ def regional(F, field):
     return [Fx, Fy, Fz]
 
 def addnoise(data, v0, std):
-    
     '''
     This function adds noise along the input data using a normal Gaussian distribution for each 
     point along the data set.
@@ -142,7 +137,6 @@ def addnoise(data, v0, std):
     return data + noise
 
 def padzeros(vector, width, ax, kwargs):
-    
     '''
     This function pads an array with zeros. It should be used while converting or expanding a 
     simple 1D array or a 2D grid, along the pad function which belongs to numpy packages.
@@ -165,7 +159,6 @@ def padzeros(vector, width, ax, kwargs):
     return vector
 
 def padones(vector, width, ax, kwargs):
-    
     '''
     This function is similar to padzeros functions, but it adds the one value on the axis instead 
     of zeros. It has the same inputs and outputs.
@@ -179,7 +172,6 @@ def padones(vector, width, ax, kwargs):
     return vector
 
 def ispower2(data):
-    
     '''
     Logical function that states if the data has size or shape in a power of two.
     If data is a 1D array, it returns True or False. Otherwise if data is a 2D
@@ -208,7 +200,6 @@ def ispower2(data):
         return np.allclose(a,b), np.allclose(c,d)
     
 def nextpower2(num):
-    
     '''
     This function is called in the paddata function to stablish which is
     the next power of two if the grid has no power two in the data set.    
@@ -243,7 +234,6 @@ def paddata(data, shape):
     return padded
     
 def datagrid(x, y, zvalues, datashape):
-
     '''
     This function creates a grid for the data input and interpolate the values using a 
     low extrapolate and cubic method. It receives 3 1D array vector (x, y and z) and
