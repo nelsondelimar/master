@@ -296,7 +296,7 @@ def sphere_gz(x, y, z, sphere):
     dy = sphere[1] - y
     dz = sphere[2] - z
     radius = sphere[3]
-    rho = sphere[4]    
+    rho = sphere[4]
     
     # Definition for some constants
     G = 6.673e-11
@@ -439,13 +439,13 @@ def potential(xo, yo, zo, prism):
     si2mGal = 100000.0
     
     # Creating the zeros vector to allocate the result
-    potential = numpy.zeros_like(xp)
+    potential = np.zeros_like(xo)
     
     # Solving the integral as a numerical approximation
     for k in range(2):
         for j in range(2):
             for i in range(2):
-                r = sqrt(x[i]**2 + y[j]**2 + z[k]**2)
+                r = np.sqrt(x[i]**2 + y[j]**2 + z[k]**2)
                 result = (x[i]*y[j]*np.log(z[k] + r)
                           + y[j]*z[k]*np.log(x[i] + r)
                           + x[i]*z[k]*np.log(y[j] + r)
@@ -506,12 +506,12 @@ def prism_gx(xo, yo, zo, prism):
                 r = np.sqrt(x[i]**2 + y[j]**2 + z[k]**2)
                 result = -(y[j]*np.log(z[k] + r) + z[k]*np.log(y[j] + r) - x[i]*np.arctan2(z[k]*y[j], x[i]*r))
                 gx += ((-1.)**(i + j + k))*result*rho
-                
-    # Multiplication for all constants and conversion to mGal
+
+                # Multiplication for all constants and conversion to mGal
     gx *= G*si2mGal
     
     # Return the final output
-    return gz
+    return gx
 
 def prism_gy(xo, yo, zo, prism):
     
@@ -556,8 +556,8 @@ def prism_gy(xo, yo, zo, prism):
         for j in range(2):
             for i in range(2):
                 r = np.sqrt(x[i]**2 + y[j]**2 + z[k]**2)
-                result = -(x[i]*np.log(y[j] + r) + y[j]*np.log(x[i] + r) - z[k]*np.arctan2(x[i]*y[j], z[k]*r))
-                gz += ((-1.)**(i + j + k))*result*rho
+                result = -(z[k]*np.log(x[i] + r) + x[i]*np.log(z[k] + r) - y[j]*np.arctan2(x[i]*z[k], y[j]*r))
+                gy += ((-1.)**(i + j + k))*result*rho
                 
     # Multiplication for all constants and conversion to mGal
     gy *= G*si2mGal
