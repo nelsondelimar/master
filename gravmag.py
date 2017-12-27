@@ -7,13 +7,10 @@
 
 # Import Python libraries
 import numpy as np
-#import pandas as pd
-#import matplotlib.pyplot as plt
 # Import my libraries
 import auxiliars as aux
 
 def sphere_bx(x, y, z, sphere, direction):
-    
     '''    
     This function is a Python implementation for a Fortran subroutine contained in Blakely (1995). 
     It computes the X component of the magnetic induction caused by a sphere with uniform  distribution of
@@ -58,21 +55,20 @@ def sphere_bx(x, y, z, sphere, direction):
     # Computes the magnetization values for all directions
     mx, my, mz = aux.dircos(A, B)
     
-    # Auxiliars calculations
+    # Auxiliar calculation
     dot = rx*mx + ry*my + rz*mz  # Scalar product
     m = (4.*np.pi*(radius**3)*mag)/3.    # Magnetic moment
     
     # Component calculation - Bx
-    bx = cm*m*(3.*dot*rx - (r2*mx))/(r2**(2.5))
+    bx = m*(3.*dot*rx - (r2*mx))/(r2**(2.5))
 
     # Final component calculation
-    bx *= t2nt
+    bx *= cm*t2nt
     
     # Return the final output
     return bx
 
 def sphere_by(x, y, z, sphere, direction):
-    
     '''    
     This function is a Python implementation for a Fortran subroutine contained in Blakely (1995). 
     It computes the Y component of the magnetic induction caused by a sphere with uniform  distribution of
@@ -122,16 +118,15 @@ def sphere_by(x, y, z, sphere, direction):
     m = (4.*np.pi*(radius**3)*mag)/3.    # Magnetic moment
     
     # Component calculation - By
-    by = (3.*dot*ry - (r2*my))/(r2**(2.5))
+    by = m*(3.*dot*ry - (r2*my))/(r2**(2.5))
     
     # Final component calculation
-    by *= cm*m*t2nt
+    by *= cm*t2nt
     
     # Return the final output
     return by
 
 def sphere_bz(x, y, z, sphere, direction):
-    
     '''    
     This function is a Python implementation for a Fortran subroutine contained in Blakely (1995). 
     It computes the Z component of the magnetic induction caused by a sphere with uniform  distribution of
@@ -181,16 +176,15 @@ def sphere_bz(x, y, z, sphere, direction):
     m = (4.*np.pi*(radius**3)*mag)/3.    # Magnetic moment
     
     # Component calculation - Bz
-    bz = (3.*dot*rz - (r2*mz))/(r2**(2.5))
+    bz = m*(3.*dot*rz - (r2*mz))/(r2**(2.5))
 
     # Final component calculation
-    bz *= cm*m*t2nt
+    bz *= cm*t2nt
     
     # Return the final output
     return bz
 
 def sphere_tf(x, y, z, sphere, direction, field, F):
-    
     '''    
     This function computes the total field anomaly produced due to a solid sphere, which has its center 
     located in xe, ye and ze, radius equals to r and also the magnetic property (magnetic intensity). 
@@ -231,7 +225,6 @@ def sphere_tf(x, y, z, sphere, direction, field, F):
     return tf
 
 def sphere_tfa(x, y, z, sphere, direction, field):
-    
     '''    
     This function computes the total field anomaly produced due to a solid sphere, which has its center 
     located in xe, ye and ze, radius equals to r and also the magnetic property (magnetic intensity). 
@@ -272,7 +265,6 @@ def sphere_tfa(x, y, z, sphere, direction, field):
     return tf_aprox
 
 def sphere_gz(x, y, z, sphere):
-    
     '''    
     This function calculates the gravity contribution due to a solid sphere. This is a Python implementation 
     for the subroutine presented in Blakely (1995). On this function, there are received the value of the 
@@ -316,9 +308,9 @@ def sphere_gz(x, y, z, sphere):
     return gz
 
 ####################################################################################################
+####################################################################################################
 
 def prism_tf(x, y, z, prism, directions, field):
-    
     '''
     This function calculates the total field anomaly produced by a rectangular prism located under surface; 
     it is a Python implementation for the Subroutin MBox which is contained on Blakely (1995). It recieves: 
@@ -403,7 +395,6 @@ def prism_tf(x, y, z, prism, directions, field):
     return tfa
 
 def potential(xo, yo, zo, prism):
-    
     '''
     This function calculates the gravitational potential due to a rectangular prism. It is calculated 
     solving a numerical integral approximated by using the gravity field G(x,y,z), once G can be written 
@@ -423,7 +414,6 @@ def potential(xo, yo, zo, prism):
         
     Output:
     potential - numpy array - gravitational potential due to a solid prism
-    
     '''
        
     # Definitions for all distances
@@ -463,7 +453,6 @@ def potential(xo, yo, zo, prism):
     return potential
 
 def prism_gx(xo, yo, zo, prism):
-    
     '''
     This function is a Python implementation for the X horizontal component for the gravity field due to 
     a rectangular prism, which has initial and final positions equals to xi and xf, yi and yf, for the X 
@@ -481,7 +470,6 @@ def prism_gx(xo, yo, zo, prism):
         
     Output:
     gx - numpy array - vertical component for the gravity atraction
-    
     '''
     
     # Definitions for all distances
@@ -514,7 +502,6 @@ def prism_gx(xo, yo, zo, prism):
     return gx
 
 def prism_gy(xo, yo, zo, prism):
-    
     '''
     This function is a Python implementation for the Y horizontal  component for the gravity field due 
     to a rectangular prism, which has initial and final positions equals to xi and xf, yi and yf, for 
@@ -533,7 +520,6 @@ def prism_gy(xo, yo, zo, prism):
         
     Output:
     gy - numpy array - vertical component for the gravity atraction
-    
     '''
     
     # Definitions for all distances
@@ -566,7 +552,6 @@ def prism_gy(xo, yo, zo, prism):
     return gy
 
 def prism_gz(xo, yo, zo, prism):
-    
     '''
     This function is a Python implementation for the vertical component for the gravity field due to a 
     rectangular prism, which has initial and final positions equals to xi and xf, yi and yf, for the X 
@@ -585,7 +570,6 @@ def prism_gz(xo, yo, zo, prism):
         
     Output:
     gz - numpy array - vertical component for the gravity atraction
-    
     '''
     
     # Definitions for all distances
@@ -616,3 +600,12 @@ def prism_gz(xo, yo, zo, prism):
     
     # Return the final output
     return gz
+
+def cylinder(arguments):
+    '''
+    This function is a Python implementation which computes the vertical gravitational attraction due to a cylinder. The reference is on Blakely (1996).
+    '''
+    
+    # Codes and functions
+    
+    return grav
