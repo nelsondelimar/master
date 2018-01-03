@@ -603,7 +603,8 @@ def prism_gz(xo, yo, zo, prism):
 
 def cylinder(xo, zo, model):
     '''
-    This function is a Python implementation which computes the vertical gravitational attraction due to a cylinder. The reference is on Blakely (1996).
+    This function is a Python implementation which computes the vertical gravitational attraction due 
+    to a cylinder. The reference is on Blakely (1996).
     '''
     
     # Setting some constants
