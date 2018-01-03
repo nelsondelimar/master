@@ -16,13 +16,23 @@ This is a public repository which was created to keep the codes that will be dev
 
 
 ### Source codes 
-* Magnetization for a solid sphere (**Done!**);
-* Magnetization for a rectangular prism (**Done!**);
-* 1D Discrete Fourier Transform (**Done!**);
-* Fast Fourier Transform;
-* Horizontal e vertical derivatives;
-* Reduction to Pole filtering
-* (...)
+* Solid sphere:
+  * Magnetic induced field and its components (**Done!**);
+  * Calculated total field anomaly (**Done!**);
+  * Approximated total field anomaly (**Done!**);
+
+* Rectangular prism:
+  * Total field anomaly (**Done!**);
+
+* Potential data filtering and transforms:
+  * Upward and Downward continuation (**Done!**);
+  * Horizontal and vertical derivatives (**Done!**);
+  * Total gradient amplitude (**Done!**);
+  * Reduction filter (**Done!**);
+  * Tilt angle (**Done!**);
+  
+* Data analysis
+  * Simple cross-correlation coefficient (**In progress...**).
 
 
 #### Warning!
