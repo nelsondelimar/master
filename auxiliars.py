@@ -288,3 +288,15 @@ def datagrid(x, y, zvalues, datashape):
     
     # Return the final output
     return (xp, yp, grid)
+    
+def contourf(x, y, data, levels, cmap):
+    '''
+    Return the contour map for a 2D numpy array.
+    '''
+    
+    
+    datamin, datamax = data.min(), data.max()
+    color = np.linspace(datamin, datamax, levels)
+    
+    plt.colorbar()
+    return x
