@@ -616,17 +616,17 @@ def cylinder(xo, zo, model):
     a, rho = model[2], model[3]
       
     # Calculates the distances
-    x = [xo - xc]
-    z = [zo - zc]
+    x = xo - xc
+    z = zo - zc
     # Computing r square
-    r2 = (x**2 + z**2)
+    r2 = x**2 + z**2
     
     # Calculate the constant
     mass = (np.pi) * (a**2) * rho
     
     # Computes gx and gz
-    gx = (-2.*mass*x)/r2
-    gz = (-2.*mass*z)/r2
+    gx = (-2. * mass * x)/r2
+    gz = (-2. * mass * z)/r2
     
     # Conversion to mGal
     gx *= G*si2mGal*km2m
