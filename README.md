@@ -37,7 +37,7 @@ This is a public repository which was created to keep the codes that will be dev
 ### Next step - What are we going to do?
 The next step for this project has two different sides and approaches: the first one is try to find a way to estimate the magnetization direction for a 3D source in a more efficient and faster way than the simple cross correlation; the second one is estimate this direction by using inversion, once the simple cross correlation depends not only on the inclination of the source but also on the direction.
 
-* Ok! Thinking... (**In progress...*)
+* Ok! Thinking... (**In progress...**)
 
 
 #### Warning!
