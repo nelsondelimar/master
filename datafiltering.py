@@ -170,4 +170,36 @@ def wavenumber(x, y):
     kx = c*np.fft.fftfreq(nx, dx)
     ky = c*np.fft.fftfreq(ny, dy)    
     return np.meshgrid(kx, ky)
+
+def cccoef(data1, data2):
     
+    '''
+    Returns the crosscorrelation coefficient between two data sets, 
+    which can or a single 1D array or a N-dimensional data set. It 
+    is important that both data sets have the same dimension.
+    
+    Inputs:
+    data1 - numpy array - first dataset
+    data2 - numpy array - second dataset
+    
+    Output:
+    res - scalar - cross correlation coefficient
+    '''
+    
+    # Stablish some conditions
+    assert data1.shape[0] == data2.shape[1], 'Both dataset must have the same dimension!'
+    assert data1.size == data2.size, 'Both dataset must have the same number of elements!'
+    
+    # Calculate the simple mean
+    # For the first dataset
+    mean1 = data1.mean()
+    # For the second dataset
+    mean2 = data2.mean()
+       
+    # Formulation
+    numerator = np.sum((data1 - mean1)*(data2 - mean2))
+    den1 = np.sum((data1 - mean1)**2)
+    den2 = np.sum((data2 - mean2)**2)
+    res = numerator/np.sqrt(den1*den2)
+    
+    return res
