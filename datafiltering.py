@@ -171,35 +171,47 @@ def wavenumber(x, y):
     ky = c*np.fft.fftfreq(ny, dy)    
     return np.meshgrid(kx, ky)
 
-def cccoef(data1, data2):
-    
+def pseudograv(x, y, data, field, source, rho, mag):
     '''
-    Returns the crosscorrelation coefficient between two data sets, 
-    which can or a single 1D array or a N-dimensional data set. It 
-    is important that both data sets have the same dimension.
+    This function calculate the pseudogravity anomaly due to a total field anomaly mag. It recquires the X and Y coordinates (North and East directions), the magnetic data, the values for inclination and declination for the magnetic field and the magnetization of the source.
     
     Inputs:
-    data1 - numpy array - first dataset
-    data2 - numpy array - second dataset
-    
-    Output:
-    res - scalar - cross correlation coefficient
+    x, y - numpy array - 
+    data - numpy array - magnetic field anomaly
+    field -numpy array - inclination and declination for the magnetic field
+        field[0] -> inclination
+        field[1] -> declination
+    source -numpy array - inclination and declination for the magnetic source
+        source[0] -> inclination
+        source[1] -> declination
     '''
     
-    # Stablish some conditions
-    assert data1.shape[0] == data2.shape[1], 'Both dataset must have the same dimension!'
-    assert data1.size == data2.size, 'Both dataset must have the same number of elements!'
+    # Define some constants
+    # Conversion for gravity and magnetic data
+    G = 6.673e-11
+    si2mGal = 100000.0
+    t2nt = 1000000000.0
+    cm = 0.0000001
+        
+    # Compute the constant value
+    C = G*rho*si2mGal/(cm*mag*t2nt)
     
-    # Calculate the simple mean
-    # For the first dataset
-    mean1 = data1.mean()
-    # For the second dataset
-    mean2 = data2.mean()
-       
-    # Formulation
-    numerator = np.sum((data1 - mean1)*(data2 - mean2))
-    den1 = np.sum((data1 - mean1)**2)
-    den2 = np.sum((data2 - mean2)**2)
-    res = numerator/np.sqrt(den1*den2)
+    # Converting X, Y and Z to kilometers
+    #x, y = x/1000., y/1000.
     
-    return res
+    # Calculate the wavenumber
+    kx, ky = wavenumber(x, y)
+    k = (kx**2 + ky**2)**(0.5)
+    
+    # Computing theta values for the source
+    thetaf = theta(field, kx, ky)
+    thetas = theta(source, kx, ky)
+    
+    # Calculate the product
+    with np.errstate(divide='ignore', invalid='ignore'):
+        prod = 1./(thetaf*thetas*k)
+    prod[0, 0] = 0.
+    
+    res = np.fft.fft2(data)*prod
+    
+    return C*np.real(np.fft.ifft2(res))
