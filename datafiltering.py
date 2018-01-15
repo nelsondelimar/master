@@ -12,6 +12,44 @@ import numpy as np
 import warnings
 import auxiliars as aux
 
+def statistical(data, unit=None):
+    
+    '''
+    It calculates the minimum and maximum values for a simple dataset and also
+    its mean values and variations.
+    
+    Input:
+    data - numpy array 1D - data set as a vector
+    unit - string - data unit
+    
+    Outputs:
+    datamin - float - minimun value for the data
+    datamax - float - maximun value for the data
+    datamed - float - mean value for all dataset
+    datavar - float - variation for all dataset
+    
+    '''
+    
+    assert data.size > 1, 'Data set must have more than one element!'
+    
+    datamin = np.min(data)
+    datamax = np.max(data)
+    datamed = np.mean(data)
+    datavar = datamax - datamin
+    
+    if (unit != None):
+        print 'Minimum:    %5.4f' % datamin, unit
+        print 'Maximum:    %5.4f' % datamax, unit
+        print 'Mean value: %5.4f' % datamed, unit
+        print 'Variation:  %5.4f' % datavar, unit
+    else:
+        print 'Minimum:    %5.4f' % datamin
+        print 'Maximum:    %5.4f' % datamax
+        print 'Mean value: %5.4f' % datamed
+        print 'Variation:  %5.4f' % datavar
+        
+    return datamin, datamax, datamed, datavar
+
 def continuation(x, y, data, H):
     
     '''
@@ -101,7 +139,22 @@ def zderiv(x, y, data, n):
     
     return np.real(np.fft.ifft2(zder))
 
-def totalgrad(x, y, data): #, derivx = None, derivy = None, derivz = None):
+def horzgrad(x, y, data):
+    '''
+    Return the horizontal gradient amplitude (HGA) for a potential data on a regular grid.
+    '''
+    
+    # Computes the horizontal derivatives
+    derivx = xderiv(x, y, data, 1)
+    derivy = yderiv(x, y, data, 1)
+    
+    # Calculates the total gradient
+    hga = (derivx**2 + derivy**2)**(0.5)
+    
+    # Return the final output
+    return hga
+
+def totalgrad(x, y, data):
     '''
     Return the total gradient amplitude (TGA) for a potential data on a regular grid.
     '''
@@ -119,20 +172,47 @@ def totalgrad(x, y, data): #, derivx = None, derivy = None, derivz = None):
     # Return the final output
     return tga
 
-def tilt(x, y, data): #, derivx = None, derivy = None, derivz = None):
+def tilt(x, y, data):
     '''
     Return the tilt angle for a potential data.
     '''
-    #if derivx is None:
-    derivx = xderiv(x, y, data, 1)
-    #if derivx is None:
-    derivy = yderiv(x, y, data, 1)
-    #if derivx is None:
+    
+    # Calculate the horizontal and vertical gradients
+    hgrad = horzgrad(x, y, data)
     derivz = zderiv(x, y, data, 1)
-    hgrad = (derivx**2 + derivy**2)**(0.5)
-    tilt = np.arctan2(hgrad, derivz)
+    
+    # Tilt angle calculation
+    tilt = np.arctan2(derivz, hgrad)
+    
     # Return the final output
     return tilt
+
+def thetamap(x, y, data):
+    '''
+    Return the theta map transform.
+    '''
+    
+    # Calculate the horizontal and total gradients
+    hgrad = horzgrad(x, y, data)
+    tgrad = totalgrad(x, y, data)
+   
+    # Return the final output
+    return (hgrad/tgrad)
+
+def hyperbolictilt(x, y, data):
+    '''
+    Return the tilt angle for a potential data.
+    '''
+    
+    # Calculate the horizontal and vertical gradients
+    hgrad = horzgrad(x, y, data)
+    derivz = zderiv(x, y, data, 1)
+    
+    # Compute the tilt derivative
+    htilt = np.arctan2(derivz, hgrad)
+    
+    # Return the final output
+    return np.real(htilt)
 
 def theta(angle, u, v):
     '''
