@@ -72,11 +72,11 @@ def continuation(x, y, data, H):
     kx, ky = wavenumber(x, y)
     
     if H > 0.:
-        print ('H is positive. Continuation is Upward!')
+        #print ('H is positive. Continuation is Upward!')
         kcont = np.exp((-H) * np.sqrt(kx**2 + ky**2))
         result = kcont * np.fft.fft2(data)
     elif H < 0.:
-        print ('H is negative. Continuation is Downward!')
+        #print ('H is negative. Continuation is Downward!')
         kcont = np.exp((-H) * np.sqrt(kx**2 + ky**2))
         result = kcont * np.fft.fft2(data)
 
@@ -86,8 +86,7 @@ def reduction(x, y, data, oldf, olds, newf, news):
     '''
     Return the reduced potential data giving the new directions for the geomagnetic field and source magnetization.
     '''
-    # 1 - Verificar o tamanho do grid e se precisa expandir
-    # 2 - Calcular os valores de nx, ny, dx e dy
+
     kx, ky = wavenumber(x, y)
     f0 = theta(oldf, kx, ky)
     m0 = theta(olds, kx, ky)
@@ -209,10 +208,10 @@ def hyperbolictilt(x, y, data):
     derivz = zderiv(x, y, data, 1)
     
     # Compute the tilt derivative
-    htilt = np.arctan2(derivz, hgrad)
+    hyptilt = np.arctan2(derivz, hgrad)
     
     # Return the final output
-    return np.real(htilt)
+    return np.real(hyptilt)
 
 def theta(angle, u, v):
     '''
@@ -232,6 +231,7 @@ def wavenumber(x, y):
     Return the wavenumbers in X and Y directions
     '''
     
+    # Verify if x and y are 1D or 2D numpy arrays
     if x.shape[0] == x.size or x.shape[1] == x.size:
         dx = x[1] - x[0]
         nx = x.size
@@ -246,9 +246,12 @@ def wavenumber(x, y):
         dy = (y.max() - y.min())/(y.shape[0] - 1)
         ny = y.shape[0]
       
+    # Compute the values for wavenumber in x and y directions
     c = 2.*np.pi
     kx = c*np.fft.fftfreq(nx, dx)
     ky = c*np.fft.fftfreq(ny, dy)    
+    
+    # Return the final output
     return np.meshgrid(kx, ky)
 
 def pseudograv(x, y, data, field, source, rho, mag):
@@ -283,9 +286,6 @@ def pseudograv(x, y, data, field, source, rho, mag):
     # Compute the constant value
     C = G*rho*si2mGal/(cm*mag*t2nt)
     
-    # Converting X, Y and Z to kilometers
-    #x, y = x/1000., y/1000.
-    
     # Calculate the wavenumber
     kx, ky = wavenumber(x, y)
     k = (kx**2 + ky**2)**(0.5)
@@ -306,9 +306,10 @@ def pseudograv(x, y, data, field, source, rho, mag):
 def cccoef(data1, data2):
     
     '''
-    Returns the crosscorrelation coefficient between two data sets, 
-    which can or a single 1D array or a N-dimensional data set. It 
-    is important that both data sets have the same dimension.
+    Returns the simple crosscorrelation coefficient between two data sets, 
+    which can or a single 1D array or a N-dimensional data set. It is very
+    important that both data sets have the same dimension, otherwise it will
+    runnig the code error.
     
     Inputs:
     data1 - numpy array - first dataset
