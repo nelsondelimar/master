@@ -147,6 +147,11 @@ def xderiv(x, y, data, n):
     Return the horizontal derivative in x direction for n order in Fourier domain.
     '''
     
+    # Stablishing some conditions
+    assert x.shape == data.shape, 'Grid in X and data must have the same shape!'
+    assert y.shape == data.shape, 'Grid in Y and data must have the same shape!'
+    
+    # Condition for the order of the derivative
     assert n > 0., 'Order of the derivative must be positive and nonzero!'
     
     kx, _ = wavenumber(x,y)
