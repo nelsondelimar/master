@@ -409,6 +409,10 @@ def wavenumber(x, y):
     Inputs:
     x - numpy array - coordinates in x directions
     y - numpy array - coordinates in y directions
+    
+    Output:
+    kx - numpy 2D array - calculated wavenumber in x direction
+    ky - numpy 2D array - calculated wavenumber in y direction
     '''
     
     # Verify if x and y are 1D or 2D numpy arrays
