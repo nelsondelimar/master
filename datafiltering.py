@@ -228,9 +228,14 @@ def totalgrad(x, y, data):
     return tga
 
 def tilt(x, y, data):
+    
     '''
-    Return the tilt angle for a potential data.
+    Return the tilt angle for a potential data on a regular grid.
     '''
+    
+    # Stablishing some conditions
+    assert x.shape == data.shape, 'Grid in X and data must have the same shape!'
+    assert y.shape == data.shape, 'Grid in Y and data must have the same shape!'
     
     # Calculate the horizontal and vertical gradients
     hgrad = horzgrad(x, y, data)
@@ -243,9 +248,14 @@ def tilt(x, y, data):
     return tilt
 
 def thetamap(x, y, data):
+
     '''
-    Return the theta map transform.
+    Return the theta map transformed data.
     '''
+    
+    # Stablishing some conditions
+    assert x.shape == data.shape, 'Grid in X and data must have the same shape!'
+    assert y.shape == data.shape, 'Grid in Y and data must have the same shape!'
     
     # Calculate the horizontal and total gradients
     hgrad = horzgrad(x, y, data)
