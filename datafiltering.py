@@ -120,7 +120,9 @@ def reduction(x, y, data, oldf, olds, newf, news):
     # values for magnetization directions in Fourier domains:
     kx, ky = wavenumber(x, y)
     
-    # It calculates
+    # Step 2 - Calcuate the magnetization direction
+    # It will return the magnetization directions in Fourier domain for all vector that
+    # contain  inclination and declination. All values are complex.
     f0 = theta(oldf, kx, ky)
     m0 = theta(olds, kx, ky)
     f1 = theta(newf, kx, ky)
