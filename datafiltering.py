@@ -506,8 +506,8 @@ def pseudograv(x, y, data, field, source, rho, mag):
 def cccoef(data1, data2):
     
     '''
-    Returns the simple crosscorrelation coefficient between two data sets, 
-    which can or a single 1D array or a N-dimensional data set. It is very
+    It returns the simple crosscorrelation coefficient between two data sets, which 
+    can or a single 1D array or a N-dimensional data set. It is very
     important that both data sets have the same dimension, otherwise it will
     runnig the code error.
     
