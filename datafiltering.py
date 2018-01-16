@@ -384,6 +384,9 @@ def theta(angle, u, v):
     angle - numpy 1D array - inclination and declination
     u - float - number of points in x direction
     v - float - number of points in y direction
+    
+    Output:
+    theta - complex - magnetization projection as a complex number
     '''
     
     # Calculate the modulus for k value. In this case: k = kz
