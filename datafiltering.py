@@ -157,8 +157,10 @@ def xderiv(x, y, data, n):
     # Calculate the wavenuber in x direction
     kx, _ = wavenumber(x,y)
     
+    # Apply the Fourier transform
     xder = np.fft.fft2(data)*((kx*1j)**(n))
     
+    # Return the final output
     return np.real(np.fft.ifft2(xder))
 
 def yderiv(x, y, data, n):
@@ -174,6 +176,7 @@ def yderiv(x, y, data, n):
     # Condition for the order of the derivative
     assert n > 0., 'Order of the derivative must be positive and nonzero!'
     
+    # Calculate the wavenuber in x direction
     _, ky = wavenumber(x,y)
     
     yder = np.fft.fft2(data)*((ky*1j)**(n))
