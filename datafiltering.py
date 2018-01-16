@@ -333,7 +333,7 @@ def thetamap(x, y, data):
     data - numpy 2D array - potential data
     
     Output:
-    hyptilt - numpy 2D array - hyperbolic tilt angle calculated
+    thetamap - numpy 2D array - thetha map calculated
     '''
     
     # Stablishing some conditions
@@ -351,6 +351,14 @@ def hyperbolictilt(x, y, data):
     
     '''
     Return the hyperbolic tilt angle for a potential data.
+    
+    Inputs:
+    x - numpy 2D array - grid values in x direction
+    y - numpy 2D array - grid values in y direction
+    data - numpy 2D array - potential data
+    
+    Output:
+    hyptilt - numpy 2D array - hyperbolic tilt angle calculated
     '''
     
     # Stablishing some conditions
