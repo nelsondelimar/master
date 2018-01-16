@@ -111,6 +111,10 @@ def reduction(x, y, data, oldf, olds, newf, news):
     assert x.shape == data.shape, 'Grid in X and Data must have same dimension!'
     assert y.shape == data.shape, 'Grid in X and Data must have same dimension!'
     
+    # Conditions for all direction vectors
+    assert olfd.size == newf.size, 'Vector must have only inclination and declination!'
+    assert olfs.size == news.size, 'Vector must have only inclination and declination!'
+    
     kx, ky = wavenumber(x, y)
     f0 = theta(oldf, kx, ky)
     m0 = theta(olds, kx, ky)
