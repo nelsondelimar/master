@@ -12,9 +12,9 @@ import auxiliars as aux
 
 def sphere_bx(x, y, z, sphere, direction):
     '''    
-    This function is a Python implementation for a Fortran subroutine contained in Blakely (1995). 
-    It computes the X component of the magnetic induction caused by a sphere with uniform  distribution of
-    magnetization. The direction X represents the north and Z represents growth downward. This function 
+    This function is a Python implementation for a Fortran subroutine contained in 
+    Blakely (1995). It computes the X component of the magnetic induction caused by 
+    a sphere with uniform  distribution of magnetization. The direction X represents the north and Z represents growth downward. This function 
     receives the coordinates of the points of observation (X, Y, Z - arrays), the coordinates of the center 
     of the sphere (Xe, Ye, Ze), the magnetization intensity M and the values for inclination and declination 
     (in degrees). The observation values are given in meters.
