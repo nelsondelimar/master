@@ -295,8 +295,10 @@ def theta(angle, u, v):
     v - float - number of points in y direction
     '''
     
+    # Calculate the modulus for k value. In this case: k = kz
     k = (u**2 + v**2)**(0.5)
     
+    # Defines inclination and declination:
     inc, dec = angle[0], angle[1]
     # Calcutaing the projections
     x, y, z = aux.dircos(inc, dec) 
