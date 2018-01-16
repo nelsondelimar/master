@@ -214,6 +214,7 @@ def totalgrad(x, y, data):
     assert x.shape == data.shape, 'Grid in X and data must have the same shape!'
     assert y.shape == data.shape, 'Grid in Y and data must have the same shape!'
 
+    # Calculates the x derivative
     derivx = xderiv(x, y, data, 1)
     derivy = yderiv(x, y, data, 1)
     derivz = zderiv(x, y, data, 1)
