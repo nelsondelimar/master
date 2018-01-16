@@ -15,11 +15,12 @@ import auxiliars as aux
 def statistical(data, unit=None):
     
     '''
-    It calculates the minimum and maximum values for a simple dataset and also
-    its mean values and variations.
+    A statistical function that calculates the minimum and maximum values for a simple 
+    dataset and also its mean values and variations. The dataset can be a 1D or a 2D
+    numpy array.
     
     Input:
-    data - numpy array 1D - data set as a vector
+    data - numpy array - data set as a vector
     unit - string - data unit
     
     Outputs:
@@ -38,7 +39,7 @@ def statistical(data, unit=None):
     datavar = datamax - datamin
     
     if (unit != None):
-        print 'Minimum:    %5.4f' % datamin, unit
+    	print 'Minimum:    %5.4f' % datamin, unit
         print 'Maximum:    %5.4f' % datamax, unit
         print 'Mean value: %5.4f' % datamed, unit
         print 'Variation:  %5.4f' % datavar, unit
@@ -53,11 +54,11 @@ def statistical(data, unit=None):
 def continuation(x, y, data, H):
     
     '''
-    This function compute the upward or downward continuation for a potential field data,
-    which can be gravity or magnetic signal. The value for H represents the level which 
-    the data will be continuated. If H is positive, the continuation is upward, because Dz 
-    is greater than 0 and the exponential is negative; otherwise, if H is negative, the 
-    continuation is downward.
+    This function compute the upward or downward continuation for a potential field 
+    data, which can be gravity or magnetic signal. The value for H represents the 
+    level which the data will be continuated. If H is positive, the continuation is 
+    upward, because Dz is greater than 0 and the exponential is negative; otherwise, 
+    if H is negative, the continuation is downward.
     
     Input:
     x - numpy 2D array - observation points on the grid in X direction
@@ -84,9 +85,29 @@ def continuation(x, y, data, H):
 
 def reduction(x, y, data, oldf, olds, newf, news):
     '''
-    Return the reduced potential data giving the new directions for the geomagnetic field and source magnetization.
+    Return the reduced potential data giving the new directions for the geomagnetic
+    field and source magnetization. Its based on Blakely (1996).
+    
+    Inputs: 
+    x - numpy 2D array - coordinate at X
+    y - numpy 2D array - coordinate at Y
+    data - numpy 2D array - magnetic data set (usually total field anomaly)
+    oldf - numpy 1D array - vector with old field directions
+    olds - numpy 1D array - vector with old source directions
+    newf - numpy 1D array - vector with new field directions
+    news - numpy 1D array - vector with new source directions
+    
+    - The last four vector are discplaced as : v = [inc, dec]
+    
+    Output:
+    res - numpy 2D array - result by using reduction filter
     '''
 
+    # Conditions for X and Y grids
+    assert x.shape == y.shape, 'Grid in X and grid in Y must have same dimension!'
+    assert x.shape == data.shape, 'Grid in X and Data must have same dimension!'
+    assert y.shape == data.shape, 'Grid in X and Data must have same dimension!'
+    
     kx, ky = wavenumber(x, y)
     f0 = theta(oldf, kx, ky)
     m0 = theta(olds, kx, ky)
