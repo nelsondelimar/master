@@ -154,6 +154,7 @@ def xderiv(x, y, data, n):
     # Condition for the order of the derivative
     assert n > 0., 'Order of the derivative must be positive and nonzero!'
     
+    # Calculate the wavenuber in x direction
     kx, _ = wavenumber(x,y)
     
     xder = np.fft.fft2(data)*((kx*1j)**(n))
@@ -185,8 +186,13 @@ def zderiv(x, y, data, n):
     Return the vertical derivative in z direction for n order in Fourier domain.
     '''
     
-    assert n > 0., 'Order of the derivative must be positive and nonzero!'
+    # Stablishing some conditions
+    assert x.shape == data.shape, 'Grid in X and data must have the same shape!'
+    assert y.shape == data.shape, 'Grid in Y and data must have the same shape!'
     
+    # Condition for the order of the derivative
+    assert n > 0., 'Order of the derivative must be positive and nonzero!'    
+
     kx, ky = wavenumber(x,y)
     
     zder = np.fft.fft2(data)*(np.sqrt(kx**2 + ky**2)**(n))
