@@ -490,10 +490,12 @@ def pseudograv(x, y, data, field, source, rho, mag):
     thetas = theta(source, kx, ky)
     
     # Calculate the product
+    # Here we use the numpy error statement in order to evaluate the zero division
     with np.errstate(divide='ignore', invalid='ignore'):
         prod = 1./(thetaf*thetas*k)
-    prod[0, 0] = 0.
+    #prod[0, 0] = 0.
     
+    # Calculate the pseudo gravity anomaly
     res = np.fft.fft2(data)*prod
     
     return C*np.real(np.fft.ifft2(res))
