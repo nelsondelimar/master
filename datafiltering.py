@@ -405,6 +405,10 @@ def theta(angle, u, v):
 def wavenumber(x, y):
     '''
     Return the wavenumbers in X and Y directions
+    
+    Inputs:
+    x - numpy array - coordinates in x directions
+    y - numpy array - coordinates in y directions
     '''
     
     # Verify if x and y are 1D or 2D numpy arrays
