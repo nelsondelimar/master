@@ -176,6 +176,15 @@ def yderiv(x, y, data, n):
     
     '''
     Return the horizontal derivative in y direction for n order in Fourier domain.
+
+    Inputs:
+    x - numpy 2D array - grid values in x direction
+    y - numpy 2D array - grid values in y direction
+    data - numpy 2D array - potential data
+    n - float - order of the derivative
+    
+    Output:
+    yder - numpy 2D array - derivative in y direction
     '''
     
     # Stablishing some conditions
