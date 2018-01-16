@@ -145,6 +145,15 @@ def xderiv(x, y, data, n):
     
     '''
     Return the horizontal derivative in x direction for n order in Fourier domain.
+    
+    Inputs:
+    x - numpy 2D array - grid values in x direction
+    y - numpy 2D array - grid values in y direction
+    data - numpy 2D array - potential data
+    n - float - order of the derivative
+    
+    Output:
+    xder - numpy 2D array - derivative in x direction
     '''
     
     # Stablishing some conditions
