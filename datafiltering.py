@@ -265,10 +265,15 @@ def thetamap(x, y, data):
     return (hgrad/tgrad)
 
 def hyperbolictilt(x, y, data):
+    
     '''
-    Return the tilt angle for a potential data.
+    Return the hyperbolic tilt angle for a potential data.
     '''
     
+    # Stablishing some conditions
+    assert x.shape == data.shape, 'Grid in X and data must have the same shape!'
+    assert y.shape == data.shape, 'Grid in Y and data must have the same shape!'
+
     # Calculate the horizontal and vertical gradients
     hgrad = horzgrad(x, y, data)
     derivz = zderiv(x, y, data, 1)
