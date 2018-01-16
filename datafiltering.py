@@ -207,6 +207,15 @@ def zderiv(x, y, data, n):
     
     '''
     Return the vertical derivative in z direction for n order in Fourier domain.
+    
+    Inputs:
+    x - numpy 2D array - grid values in x direction
+    y - numpy 2D array - grid values in y direction
+    data - numpy 2D array - potential data
+    n - float - order of the derivative
+    
+    Output:
+    zder - numpy 2D array - derivative in z direction    
     '''
     
     # Stablishing some conditions
