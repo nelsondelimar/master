@@ -461,7 +461,14 @@ def pseudograv(x, y, data, field, source, rho, mag):
     pgrav - numpy array - pseudo gravity anomaly
     '''
     
-    # Conditions:
+    # Conditions (1):
+    assert x.shape == data.shape, 'Grid in X and data must have the same shape!'
+    assert y.shape == data.shape, 'Grid in Y and data must have the same shape!'
+    
+    # Conditions (2):
+    field.size == source.size, 'Vectors for all directions must have same size!'
+    
+    # Conditions (3):
     assert rho != 0., 'Density must not be zero!'
     assert mag != 0., 'Density must not be zero!'
     
