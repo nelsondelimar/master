@@ -115,7 +115,12 @@ def reduction(x, y, data, oldf, olds, newf, news):
     assert olfd.size == newf.size, 'Vector must have only inclination and declination!'
     assert olfs.size == news.size, 'Vector must have only inclination and declination!'
     
+    # Step 1 - Calculate the wavenumbers
+    # It will return the wavenumbers in x and y directions, in order to calculate the
+    # values for magnetization directions in Fourier domains:
     kx, ky = wavenumber(x, y)
+    
+    # It calculates
     f0 = theta(oldf, kx, ky)
     m0 = theta(olds, kx, ky)
     f1 = theta(newf, kx, ky)
