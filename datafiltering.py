@@ -300,9 +300,12 @@ def theta(angle, u, v):
     
     # Defines inclination and declination:
     inc, dec = angle[0], angle[1]
+    
     # Calcutaing the projections
     x, y, z = aux.dircos(inc, dec) 
     theta = z + ((x*u + y*v)/k)*1j
+    
+    # Return the final output:
     return theta
 
 def wavenumber(x, y):
