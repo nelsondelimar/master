@@ -274,7 +274,7 @@ def totalgrad(x, y, data):
     data - numpy 2D array - potential data
     
     Output:
-    xder - numpy 2D array - derivative in x direction
+    tga - numpy 2D array - total gradient amplitude
     '''
     
     # Stablishing some conditions
@@ -298,6 +298,14 @@ def tilt(x, y, data):
     
     '''
     Return the tilt angle for a potential data on a regular grid.
+
+    Inputs:
+    x - numpy 2D array - grid values in x direction
+    y - numpy 2D array - grid values in y direction
+    data - numpy 2D array - potential data
+    
+    Output:
+    tilt - numpy 2D array - tilt angle for a potential data
     '''
     
     # Stablishing some conditions
@@ -318,6 +326,14 @@ def thetamap(x, y, data):
 
     '''
     Return the theta map transformed data.
+    
+    Inputs:
+    x - numpy 2D array - grid values in x direction
+    y - numpy 2D array - grid values in y direction
+    data - numpy 2D array - potential data
+    
+    Output:
+    hyptilt - numpy 2D array - hyperbolic tilt angle calculated
     '''
     
     # Stablishing some conditions
