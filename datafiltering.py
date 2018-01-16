@@ -218,6 +218,7 @@ def totalgrad(x, y, data):
     derivx = xderiv(x, y, data, 1)
     # Calculates the y derivative
     derivy = yderiv(x, y, data, 1)
+    # Calculates the z derivative
     derivz = zderiv(x, y, data, 1)
 
     # Calculates the total gradient
