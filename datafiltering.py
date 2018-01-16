@@ -84,6 +84,7 @@ def continuation(x, y, data, H):
     return np.real(np.fft.ifft2(result))
 
 def reduction(x, y, data, oldf, olds, newf, news):
+    
     '''
     Return the reduced potential data giving the new directions for the geomagnetic
     field and source magnetization. Its based on Blakely (1996).
@@ -101,6 +102,8 @@ def reduction(x, y, data, oldf, olds, newf, news):
     
     Output:
     res - numpy 2D array - result by using reduction filter
+    
+    Ps. This filter is very useful for values of incination greater than +/- 15 deg.
     '''
 
     # Conditions for X and Y grids
