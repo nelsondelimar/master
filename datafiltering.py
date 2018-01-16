@@ -128,10 +128,17 @@ def reduction(x, y, data, oldf, olds, newf, news):
     f1 = theta(newf, kx, ky)
     m1 = theta(news, kx, ky)
        
+    # Step 3 - Calculate the filter
+    # It will return the result for the reduction filter. However, it is necessary use a
+    # condition while the division is been calculated, once there is no zero division.
     with np.errstate(divide='ignore', invalid='ignore'):
         operator = (f1 * m1)/(f0 * m0)
     operator[0, 0] = 0.
+    
+    # Calculate the result by multiplying the filter and the data on Fourier domain
     res = operator*np.fft.fft2(data)
+    
+    # Return the final output
     return np.real(np.fft.ifft2(res))
 
 def xderiv(x, y, data, n):
