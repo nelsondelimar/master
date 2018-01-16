@@ -438,9 +438,13 @@ def wavenumber(x, y):
     # Return the final output
     return np.meshgrid(kx, ky)
 
-def pseudograv(x, y, data, field, source, rho, mag):####
+def pseudograv(x, y, data, field, source, rho, mag):
+
     '''
-    This function calculate the pseudogravity anomaly due to a total field anomaly mag. It recquires the X and Y coordinates (North and East directions), the magnetic data, the values for inclination and declination for the magnetic field and the magnetization of the source.
+    This function calculates the pseudogravity anomaly transformation due to a total 
+    field anomaly grid. It recquires the X and Y coordinates (respectively North and 
+    East directions), the magnetic data as a 2D array grid, the values for inclination 
+    and declination for the magnetic field and the magnetization of the source.
     
     Inputs:
     x, y - numpy array - 
