@@ -142,8 +142,9 @@ def reduction(x, y, data, oldf, olds, newf, news):
     return np.real(np.fft.ifft2(res))
 
 def xderiv(x, y, data, n):
+    
     '''
-    Return the horizontal derivative in x direction for n order.
+    Return the horizontal derivative in x direction for n order in Fourier domain.
     '''
     
     assert n > 0., 'Order of the derivative must be positive and nonzero!'
@@ -155,8 +156,9 @@ def xderiv(x, y, data, n):
     return np.real(np.fft.ifft2(xder))
 
 def yderiv(x, y, data, n):
+    
     '''
-    Return the horizontal derivative in y direction for n order.
+    Return the horizontal derivative in y direction for n order in Fourier domain.
     '''
     
     assert n > 0., 'Order of the derivative must be positive and nonzero!'
@@ -168,8 +170,9 @@ def yderiv(x, y, data, n):
     return np.real(np.fft.ifft2(yder))
 
 def zderiv(x, y, data, n):
+    
     '''
-    Return the vertical derivative in z direction for n order.
+    Return the vertical derivative in z direction for n order in Fourier domain.
     '''
     
     assert n > 0., 'Order of the derivative must be positive and nonzero!'
@@ -181,9 +184,15 @@ def zderiv(x, y, data, n):
     return np.real(np.fft.ifft2(zder))
 
 def horzgrad(x, y, data):
+    
     '''
-    Return the horizontal gradient amplitude (HGA) for a potential data on a regular grid.
+    Return the horizontal gradient amplitude (HGA) for a potential data on a regular 
+    grid. All calculation is done by using Fourier domain.
     '''
+    
+    # Stablishing some conditions
+    assert x.shape == data.shape, 'Grid in X and data must have the same shape!'
+    assert y.shape == data.shape, 'Grid in Y and data must have the same shape!'
     
     # Computes the horizontal derivatives
     derivx = xderiv(x, y, data, 1)
@@ -196,6 +205,7 @@ def horzgrad(x, y, data):
     return hga
 
 def totalgrad(x, y, data):
+    
     '''
     Return the total gradient amplitude (TGA) for a potential data on a regular grid.
     '''
