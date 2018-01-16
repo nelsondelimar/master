@@ -210,11 +210,12 @@ def totalgrad(x, y, data):
     Return the total gradient amplitude (TGA) for a potential data on a regular grid.
     '''
     
-    #if derivx is None:
+    # Stablishing some conditions
+    assert x.shape == data.shape, 'Grid in X and data must have the same shape!'
+    assert y.shape == data.shape, 'Grid in Y and data must have the same shape!'
+
     derivx = xderiv(x, y, data, 1)
-    #if derivx is None:
     derivy = yderiv(x, y, data, 1)
-    #if derivx is None:
     derivz = zderiv(x, y, data, 1)
 
     # Calculates the total gradient
