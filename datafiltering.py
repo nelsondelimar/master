@@ -536,4 +536,5 @@ def cccoef(data1, data2):
     #It calculates the cross correlation coefficient
     res = numerator/np.sqrt(den1*den2)
     
+    # Return the final output
     return res
