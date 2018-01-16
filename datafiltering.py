@@ -507,9 +507,8 @@ def cccoef(data1, data2):
     
     '''
     It returns the simple crosscorrelation coefficient between two data sets, which 
-    can or a single 1D array or a N-dimensional data set. It is very
-    important that both data sets have the same dimension, otherwise it will
-    runnig the code error.
+    can or a single 1D array or a N-dimensional data set. It is very important that 
+    both data sets have the same dimension, otherwise it will runnig the code error.
     
     Inputs:
     data1 - numpy array - first dataset
@@ -533,6 +532,8 @@ def cccoef(data1, data2):
     numerator = np.sum((data1 - mean1)*(data2 - mean2))
     den1 = np.sum((data1 - mean1)**2)
     den2 = np.sum((data2 - mean2)**2)
+    
+    #It calculates the cross correlation coefficient
     res = numerator/np.sqrt(den1*den2)
     
     return res
