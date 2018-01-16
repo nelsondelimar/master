@@ -285,8 +285,14 @@ def hyperbolictilt(x, y, data):
     return np.real(hyptilt)
 
 def theta(angle, u, v):
+    
     '''
-    Return the operators for magnetization and field directions
+    Return the operators for magnetization and field directions.
+    
+    Inputs:
+    angle - numpy 1D array - inclination and declination
+    u - float - number of points in x direction
+    v - float - number of points in y direction
     '''
     
     k = (u**2 + v**2)**(0.5)
