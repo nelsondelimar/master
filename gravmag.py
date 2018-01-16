@@ -1,9 +1,9 @@
-# -----------------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------------------
 # Title: Grav-Mag Codes
 # Author: Nelson Ribeiro Filho
 # Description: Source codes that will be necessary during the masters course.
 # Collaborator: Rodrigo Bijani
-# -----------------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------------------
 
 # Import Python libraries
 import numpy as np
@@ -11,6 +11,7 @@ import numpy as np
 import auxiliars as aux
 
 def sphere_bx(x, y, z, sphere, direction):
+
     '''    
     It is a Python implementation for a Fortran subroutine contained in Blakely (1995). 
     It computes the X component of the magnetic induction caused by a sphere with uniform  
@@ -71,6 +72,7 @@ def sphere_bx(x, y, z, sphere, direction):
     return bx
 
 def sphere_by(x, y, z, sphere, direction):
+
     '''    
     It is a Python implementation for a Fortran subroutine contained in Blakely (1995). It 
     computes the Y component of the magnetic induction caused by a sphere with uniform  
@@ -131,6 +133,7 @@ def sphere_by(x, y, z, sphere, direction):
     return by
 
 def sphere_bz(x, y, z, sphere, direction):
+
     '''    
     It is a Python implementation for a Fortran subroutine contained in Blakely (1995). It 
     computes the Z component of the magnetic induction caused by a sphere with uniform  
@@ -191,13 +194,14 @@ def sphere_bz(x, y, z, sphere, direction):
     return bz
 
 def sphere_tf(x, y, z, sphere, direction, field, F):
+    
     '''    
-    This function computes the total field anomaly produced due to a solid sphere, which has its center 
-    located in xe, ye and ze, radius equals to r and also the magnetic property (magnetic intensity). 
-    This function receives the coordinates of the points of observation (X, Y, Z - arrays), the elements 
-    of the sphere, the values for inclination, declination and azimuth (in one array only!) and the elements 
-    of the field (intensity, inclination, declination and azimuth - IN THAT ORDER!). The observation values 
-    are given in meters.
+    This function computes the total field anomaly produced due to a solid sphere, which has 
+    its center located in xe, ye and ze, radius equals to r and also the magnetic property 
+    (magnetic intensity). This function receives the coordinates of the points of observation 
+    (X, Y, Z - arrays), the elements of the sphere, the values for inclination, declination and 
+    azimuth (in one array only!) and the elements of the field (intensity, inclination, declination 
+    and azimuth - IN THAT ORDER!). The observation values are given in meters.
     
     Inputs: 
     x, y, z - numpy arrays - position of the observation points
@@ -231,13 +235,14 @@ def sphere_tf(x, y, z, sphere, direction, field, F):
     return tf
 
 def sphere_tfa(x, y, z, sphere, direction, field):
+
     '''    
-    This function computes the total field anomaly produced due to a solid sphere, which has its center 
-    located in xe, ye and ze, radius equals to r and also the magnetic property (magnetic intensity). 
-    This function receives the coordinates of the points of observation (X, Y, Z - arrays), the elements 
-    of the sphere, the values for inclination, declination and azimuth (in one array only!) and the elements 
-    of the field (intensity, inclination, declination and azimuth - IN THAT ORDER!). The observation values 
-    are given in meters.
+    This function computes the total field anomaly produced due to a solid sphere, which has 
+    its center located in xe, ye and ze, radius equals to r and also the magnetic property 
+    (magnetic intensity). This function receives the coordinates of the points of observation 
+    (X, Y, Z - arrays), the elements of the sphere, the values for inclination, declination 
+    and azimuth (in one array only!) and the elements of the field (intensity, inclination, 
+    declination and azimuth - IN THAT ORDER!). The observation values are given in meters.
     
     Inputs: 
     x, y, z - numpy arrays - position of the observation points
@@ -250,7 +255,8 @@ def sphere_tfa(x, y, z, sphere, direction, field):
     Outputs:
     tf_aprox - numpy array - approximated total field anomaly
     
-    Ps. The value for Z can be a scalar in the case of one depth, otherwise it can be a set of points.    
+    Ps. The value for Z can be a scalar in the case of one depth, otherwise it can be a 
+    set of points.    
     '''
     
     # Setting some values
@@ -272,10 +278,11 @@ def sphere_tfa(x, y, z, sphere, direction, field):
 
 def sphere_gz(x, y, z, sphere):
     '''    
-    This function calculates the gravity contribution due to a solid sphere. This is a Python implementation 
-    for the subroutine presented in Blakely (1995). On this function, there are received the value of the 
-    initial and final observation points (X and Y) and the properties of the sphere. The inputs sphere is 
-    allocated as: sphere[size = 5] = sphere[x center, y center, z center, radius , density]
+    This function calculates the gravity contribution due to a solid sphere. This is a Python 
+    implementation for the subroutine presented in Blakely (1995). On this function, there are 
+    received the value of the initial and final observation points (X and Y) and the properties 
+    of the sphere. The inputs sphere is allocated as: 
+    sphere[size = 5] = sphere[x center, y center, z center, radius , density]
     
     Inputs:
     sphere - numpy array - elements of the sphere
@@ -318,11 +325,11 @@ def sphere_gz(x, y, z, sphere):
 
 def prism_tf(x, y, z, prism, directions, field):
     '''
-    This function calculates the total field anomaly produced by a rectangular prism located under surface; 
-    it is a Python implementation for the Subroutin MBox which is contained on Blakely (1995). It recieves: 
-    the coordinates of the positions in all directions, the elements of the prims, the angle directions and 
-    the elements of the field. That function also uses the auxilary function DIR_COSSINE to calculate the 
-    projections due to the field F and the source S.
+    This function calculates the total field anomaly produced by a rectangular prism located under 
+    surface; it is a Python implementation for the Subroutin MBox which is contained on Blakely (1995). 
+    It recieves: the coordinates of the positions in all directions, the elements of the prims, the 
+    angle directions and the elements of the field. That function also uses the auxilary function 
+    DIR_COSSINE to calculate the projections due to the field F and the source S.
     
     Inputs:
     x, y - numpy arrays - observation points in x and y directions
