@@ -176,11 +176,13 @@ def yderiv(x, y, data, n):
     # Condition for the order of the derivative
     assert n > 0., 'Order of the derivative must be positive and nonzero!'
     
-    # Calculate the wavenuber in x direction
+    # Calculate the wavenuber in y direction
     _, ky = wavenumber(x,y)
     
+    # Apply the Fourier transform
     yder = np.fft.fft2(data)*((ky*1j)**(n))
     
+    # Return the final output
     return np.real(np.fft.ifft2(yder))
 
 def zderiv(x, y, data, n):
@@ -196,10 +198,13 @@ def zderiv(x, y, data, n):
     # Condition for the order of the derivative
     assert n > 0., 'Order of the derivative must be positive and nonzero!'    
 
+    # Calculate the wavenuber in z direction
     kx, ky = wavenumber(x,y)
     
+    # Apply the Fourier transform
     zder = np.fft.fft2(data)*(np.sqrt(kx**2 + ky**2)**(n))
     
+    # Return the final output
     return np.real(np.fft.ifft2(zder))
 
 def horzgrad(x, y, data):
