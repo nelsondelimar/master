@@ -447,16 +447,16 @@ def pseudograv(x, y, data, field, source, rho, mag):
     and declination for the magnetic field and the magnetization of the source.
     
     Inputs:
-    x, y - numpy array - 
-    data - numpy array - magnetic field anomaly
-    field -numpy array - inclination and declination for the magnetic field
+    x - numpy 2D array - coordinates in X direction
+    y - numpy 2D array - coordinates in y direction
+    data - numpy 2D array - magnetic data (usually total field anomaly)
+    field - numpy 1D array - inclination and declination for the magnetic field
         field[0] -> inclination
         field[1] -> declination
-    source -numpy array - inclination and declination for the magnetic source
+    source - numpy 1D array - inclination and declination for the magnetic source
         source[0] -> inclination
         source[1] -> declination
-    
-    
+
     Output:
     pgrav - numpy array - pseudo gravity anomaly
     '''
