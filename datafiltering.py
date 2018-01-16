@@ -498,7 +498,10 @@ def pseudograv(x, y, data, field, source, rho, mag):
     # Calculate the pseudo gravity anomaly
     res = np.fft.fft2(data)*prod
     
-    return C*np.real(np.fft.ifft2(res))
+    # Converting to mGal as a product by C:
+    res *= C
+    
+    return np.real(np.fft.ifft2(res))
 
 def cccoef(data1, data2):
     
