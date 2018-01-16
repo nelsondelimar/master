@@ -239,6 +239,14 @@ def horzgrad(x, y, data):
     '''
     Return the horizontal gradient amplitude (HGA) for a potential data on a regular 
     grid. All calculation is done by using Fourier domain.
+    
+    Inputs:
+    x - numpy 2D array - grid values in x direction
+    y - numpy 2D array - grid values in y direction
+    data - numpy 2D array - potential data
+    
+    Output:
+    hga - numpy 2D array - horizontal gradient amplitude
     '''
     
     # Stablishing some conditions
@@ -259,6 +267,14 @@ def totalgrad(x, y, data):
     
     '''
     Return the total gradient amplitude (TGA) for a potential data on a regular grid.
+    
+    Inputs:
+    x - numpy 2D array - grid values in x direction
+    y - numpy 2D array - grid values in y direction
+    data - numpy 2D array - potential data
+    
+    Output:
+    xder - numpy 2D array - derivative in x direction
     '''
     
     # Stablishing some conditions
