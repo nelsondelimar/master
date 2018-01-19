@@ -207,9 +207,6 @@ def pseudograv(x, y, data, field, source, rho, mag):
         raise ValueError("All inputs must have the same shape!")
     
     # Conditions (2):
-    field.size == source.size, 'Vectors for all directions must have same size!'
-    
-    # Conditions (3):
     assert rho != 0., 'Density must not be zero!'
     assert mag != 0., 'Density must not be zero!'
     
@@ -234,7 +231,7 @@ def pseudograv(x, y, data, field, source, rho, mag):
     # Here we use the numpy error statement in order to evaluate the zero division
     with np.errstate(divide='ignore', invalid='ignore'):
         prod = 1./(thetaf*thetas*k)
-    #prod[0, 0] = 0.
+    prod[0, 0] = 0.
     
     # Calculate the pseudo gravity anomaly
     res = np.fft.fft2(data)*prod
