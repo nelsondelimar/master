@@ -5,9 +5,7 @@
 # Collaborator: Rodrigo Bijani
 # --------------------------------------------------------------------------------------------------
 
-# Import Python libraries
 import numpy as np
-# Import my libraries
 import auxiliars as aux
 
 def prism_tf(x, y, z, prism, directions, field):
@@ -83,11 +81,11 @@ def prism_tf(x, y, z, prism, directions, field):
                 R2 = X2 + Y2 + H2
                 R = np.sqrt(R2)
                 HxR = H[k]*R
-                tfa += ((-1.)**(i + j))*mag*(0.5*(MF[2])*np.log((R - A[i])/(R + A[i])) + 0.5*(MF[1])*
-                                             np.log((R - B[j])/(R + B[j])) - (MF[0])*np.log(R + H[k]) -
-                                             (MF[3])*np.arctan2(AxB, X2 + HxR + H2) -
-                                             (MF[4])*np.arctan2(AxB, R2 + HxR - X2) +
-                                             (MF[5])*np.arctan2(AxB, HxR))
+                tfa += ((-1.)**(i + j))*mag*(0.5*(MF[2])*aux.my_log((R - A[i])/(R + A[i])) + 0.5*(MF[1])*
+                                             aux.my_log((R - B[j])/(R + B[j])) - (MF[0])*aux.my_log(R + H[k]) -
+                                             (MF[3])*aux.my_atan(AxB, X2 + HxR + H2) -
+                                             (MF[4])*aux.my_atan(AxB, R2 + HxR - X2) +
+                                             (MF[5])*aux.my_atan(AxB, HxR))
     # Multiplying for constants conversion
     tfa *= t2nt*cm
     
@@ -136,14 +134,14 @@ def potential(xo, yo, zo, prism):
         for j in range(2):
             for i in range(2):
                 r = np.sqrt(x[i]**2 + y[j]**2 + z[k]**2)
-                result = (x[i]*y[j]*np.log(z[k] + r)
-                          + y[j]*z[k]*np.log(x[i] + r)
-                          + x[i]*z[k]*np.log(y[j] + r)
+                result = (x[i]*y[j]*aux.my_log(z[k] + r)
+                          + y[j]*z[k]*aux.my_log(x[i] + r)
+                          + x[i]*z[k]*aux.my_log(y[j] + r)
                           - 0.5*x[i]**2 *
-                          np.arctan2(z[k]*y[j], x[i]*r)
+                          aux.my_atan(z[k]*y[j], x[i]*r)
                           - 0.5*y[j]**2 *
-                          np.arctan2(z[k]*x[i], y[j]*r)
-                          - 0.5*z[k]**2*np.arctan2(x[i]*y[j], z[k]*r))
+                          aux.my_atan(z[k]*x[i], y[j]*r)
+                          - 0.5*z[k]**2*aux.my_atan(x[i]*y[j], z[k]*r))
                 potential += ((-1.)**(i + j + k))*result*rho
     
     # Multiplying the values for 
@@ -192,7 +190,7 @@ def prism_gx(xo, yo, zo, prism):
         for j in range(2):
             for i in range(2):
                 r = np.sqrt(x[i]**2 + y[j]**2 + z[k]**2)
-                result = -(y[j]*np.log(z[k] + r) + z[k]*np.log(y[j] + r) - x[i]*np.arctan2(z[k]*y[j], x[i]*r))
+                result = -(y[j]*aux.my_log(z[k] + r) + z[k]*aux.my_log(y[j] + r) - x[i]*aux.my_atan(z[k]*y[j], x[i]*r))
                 gx += ((-1.)**(i + j + k))*result*rho
 
                 # Multiplication for all constants and conversion to mGal
@@ -242,7 +240,7 @@ def prism_gy(xo, yo, zo, prism):
         for j in range(2):
             for i in range(2):
                 r = np.sqrt(x[i]**2 + y[j]**2 + z[k]**2)
-                result = -(z[k]*np.log(x[i] + r) + x[i]*np.log(z[k] + r) - y[j]*np.arctan2(x[i]*z[k], y[j]*r))
+                result = -(z[k]*aux.my_log(x[i] + r) + x[i]*aux.my_log(z[k] + r) - y[j]*aux.my_atan(x[i]*z[k], y[j]*r))
                 gy += ((-1.)**(i + j + k))*result*rho
                 
     # Multiplication for all constants and conversion to mGal
@@ -292,7 +290,7 @@ def prism_gz(xo, yo, zo, prism):
         for j in range(2):
             for i in range(2):
                 r = np.sqrt(x[i]**2 + y[j]**2 + z[k]**2)
-                result = -(x[i]*np.log(y[j] + r) + y[j]*np.log(x[i] + r) - z[k]*np.arctan2(x[i]*y[j], z[k]*r))
+                result = -(x[i]*aux.my_log(y[j] + r) + y[j]*aux.my_log(x[i] + r) - z[k]*aux.my_atan(x[i]*y[j], z[k]*r))
                 gz += ((-1.)**(i + j + k))*result*rho
                 
     # Multiplication for all constants and conversion to mGal
