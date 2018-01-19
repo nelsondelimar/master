@@ -27,9 +27,9 @@ def xderiv(x, y, data, n):
     '''
     
     # Stablishing some conditions
-    assert x.shape == data.shape, 'Grid in X and data must have the same shape!'
-    assert y.shape == data.shape, 'Grid in Y and data must have the same shape!'
-    
+    if x.shape != y.shape != data.shape:
+        raise ValueError("All inputs must have same shape!")
+
     # Condition for the order of the derivative
     assert n > 0., 'Order of the derivative must be positive and nonzero!'
     
@@ -58,8 +58,8 @@ def yderiv(x, y, data, n):
     '''
     
     # Stablishing some conditions
-    assert x.shape == data.shape, 'Grid in X and data must have the same shape!'
-    assert y.shape == data.shape, 'Grid in Y and data must have the same shape!'
+    if x.shape != y.shape != data.shape:
+        raise ValueError("All inputs must have same shape!")
     
     # Condition for the order of the derivative
     assert n > 0., 'Order of the derivative must be positive and nonzero!'
@@ -89,8 +89,8 @@ def zderiv(x, y, data, n):
     '''
     
     # Stablishing some conditions
-    assert x.shape == data.shape, 'Grid in X and data must have the same shape!'
-    assert y.shape == data.shape, 'Grid in Y and data must have the same shape!'
+    if x.shape != y.shape != data.shape:
+        raise ValueError("All inputs must have same shape!")
     
     # Condition for the order of the derivative
     assert n > 0., 'Order of the derivative must be positive and nonzero!'    
@@ -120,8 +120,8 @@ def horzgrad(x, y, data):
     '''
     
     # Stablishing some conditions
-    assert x.shape == data.shape, 'Grid in X and data must have the same shape!'
-    assert y.shape == data.shape, 'Grid in Y and data must have the same shape!'
+    if x.shape != y.shape != data.shape:
+        raise ValueError("All inputs must have same shape!")
     
     # Computes the horizontal derivatives
     diffx = xderiv(x, y, data, 1)
@@ -148,8 +148,8 @@ def totalgrad(x, y, data):
     '''
     
     # Stablishing some conditions
-    assert x.shape == data.shape, 'Grid in X and data must have the same shape!'
-    assert y.shape == data.shape, 'Grid in Y and data must have the same shape!'
+    if x.shape != y.shape != data.shape:
+        raise ValueError("All inputs must have same shape!")
 
     # Calculates the x derivative
     diffx = xderiv(x, y, data, 1)
