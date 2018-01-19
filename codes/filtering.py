@@ -28,17 +28,17 @@ def continuation(x, y, data, H):
     H - float - value for the new observation level
     
     '''
-    assert H != 0., 'Height must be different of zero!'
     
-    # calculate the wavenumbers
-    kx, ky = aux.wavenumber(x, y)
-    
-    if H > 0.:
-        #print ('H is positive. Continuation is Upward!')
-        kcont = np.exp((-H) * np.sqrt(kx**2 + ky**2))
-        result = kcont * np.fft.fft2(data)
-    elif H < 0.:
-        #print ('H is negative. Continuation is Downward!')
+    # Conditions for all inputs
+    if x.shape != y.shape != data.shape:
+        raise ValueError("All inputs must have the same shape!")
+
+    if H == 0.:
+        # No continuation will be applied
+        return data
+    else:
+        # Calculate the wavenumbers
+        kx, ky = aux.wavenumber(x, y)
         kcont = np.exp((-H) * np.sqrt(kx**2 + ky**2))
         result = kcont * np.fft.fft2(data)
 
@@ -68,16 +68,9 @@ def reduction(x, y, data, oldf, olds, newf, news):
     Ps. This filter is very useful for values of incination greater than +/- 15 deg.
     '''
 
-    # Conditions for X and Y grids
+    # Conditions for all inputs
     if x.shape != y.shape != data.shape:
-        raise ValueError("Input arrays x, y, and data must have the same shape!")
-    #assert x.shape == y.shape, 'Grid in X and grid in Y must have same dimension!'
-    #assert x.shape == data.shape, 'Grid in X and Data must have same dimension!'
-    #assert y.shape == data.shape, 'Grid in X and Data must have same dimension!'
-    
-    # Conditions for all direction vectors
-    assert olfd.size == newf.size, 'Vector must have only inclination and declination!'
-    assert olfs.size == news.size, 'Vector must have only inclination and declination!'
+        raise ValueError("All inputs must have the same shape!")
     
     # Step 1 - Calculate the wavenumbers
     # It will return the wavenumbers in x and y directions, in order to calculate the
@@ -120,8 +113,8 @@ def tilt(x, y, data):
     '''
     
     # Stablishing some conditions
-    assert x.shape == data.shape, 'Grid in X and data must have the same shape!'
-    assert y.shape == data.shape, 'Grid in Y and data must have the same shape!'
+    if x.shape != y.shape != data.shape:
+        raise ValueError("All inputs must have the same shape!")
     
     # Calculate the horizontal and vertical gradients
     hgrad = deriv.horzgrad(x, y, data)
@@ -148,8 +141,8 @@ def thetamap(x, y, data):
     '''
     
     # Stablishing some conditions
-    assert x.shape == data.shape, 'Grid in X and data must have the same shape!'
-    assert y.shape == data.shape, 'Grid in Y and data must have the same shape!'
+    if x.shape != y.shape != data.shape:
+        raise ValueError("All inputs must have the same shape!")
     
     # Calculate the horizontal and total gradients
     hgrad = deriv.horzgrad(x, y, data)
@@ -173,8 +166,8 @@ def hyperbolictilt(x, y, data):
     '''
     
     # Stablishing some conditions
-    assert x.shape == data.shape, 'Grid in X and data must have the same shape!'
-    assert y.shape == data.shape, 'Grid in Y and data must have the same shape!'
+    if x.shape != y.shape != data.shape:
+        raise ValueError("All inputs must have the same shape!")
 
     # Calculate the horizontal and vertical gradients
     hgrad = deriv.horzgrad(x, y, data)
@@ -210,8 +203,8 @@ def pseudograv(x, y, data, field, source, rho, mag):
     '''
     
     # Conditions (1):
-    assert x.shape == data.shape, 'Grid in X and data must have the same shape!'
-    assert y.shape == data.shape, 'Grid in Y and data must have the same shape!'
+    if x.shape != y.shape != data.shape:
+        raise ValueError("All inputs must have the same shape!")
     
     # Conditions (2):
     field.size == source.size, 'Vectors for all directions must have same size!'
