@@ -136,6 +136,29 @@ def addnoise(data, v0, std):
     # Return the final output
     return data + noise
 
+def my_atan(x, y):
+    
+    '''
+    Return the more stable output for arctan calculation by correcting the 
+    value of the angle in arctan2, in order to fix the sign of the tangent.
+    '''
+    arctan = np.arctan2(x, y)
+    arctan[x == 0] = 0
+    arctan[(x > 0) & (y < 0)] -= np.pi
+    arctan[(x < 0) & (y < 0)] += np.pi
+    return arctan
+
+def my_log(x):
+    
+    ''' 
+    Return the value 0 for log(0), once the limits applying in the formula
+    tend to 0.
+    '''
+    
+    log = np.log(x)
+    log[x == 0] = 0
+    return log
+
 def theta(angle, u, v):
     
     '''
