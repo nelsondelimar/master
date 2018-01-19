@@ -66,10 +66,10 @@ def cccoef(data1, data2):
     res - scalar - cross correlation coefficient
     '''
     
-    # Stablish some conditions
-    assert data1.shape[0] == data2.shape[1], 'Both dataset must have the same dimension!'
-    assert data1.size == data2.size, 'Both dataset must have the same number of elements!'
-    
+    # Stablishing some conditions
+    if data1.shape != data2.shape :
+        raise ValueError("All inputs must have same shape!")
+        
     # Calculate the simple mean
     # For the first dataset
     mean1 = data1.mean()
