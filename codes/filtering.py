@@ -43,7 +43,7 @@ def continuation(x, y, data, H):
         result = kcont * np.fft.fft2(data)
 
     # Return the final output
-    return np.fft.ifft2(result)
+    return np.real(np.fft.ifft2(result))
 
 def reduction(x, y, data, oldf, olds, newf, news):
     
@@ -96,7 +96,7 @@ def reduction(x, y, data, oldf, olds, newf, news):
     res = operator*np.fft.fft2(data)
     
     # Return the final output
-    return np.fft.ifft2(res)
+    return np.real(np.fft.ifft2(res))
 
 def tilt(x, y, data):
     
@@ -117,14 +117,42 @@ def tilt(x, y, data):
         raise ValueError("All inputs must have the same shape!")
     
     # Calculate the horizontal and vertical gradients
-    hgrad = deriv.horzgrad(x, y, data)
-    derivz = deriv.zderiv(x, y, data, 1)
+    hgrad = np.real(deriv.horzgrad(x, y, data))
+    derivz = np.real(deriv.zderiv(x, y, data, 1))
     
     # Tilt angle calculation
-    tilt = np.arctan2(derivz, hgrad)
+    tilt = aux.my_atan(derivz, hgrad)
     
     # Return the final output
     return tilt
+
+def hyperbolictilt(x, y, data):
+    
+    '''
+    Return the hyperbolic tilt angle for a potential data.
+    
+    Inputs:
+    x - numpy 2D array - grid values in x direction
+    y - numpy 2D array - grid values in y direction
+    data - numpy 2D array - potential data
+    
+    Output:
+    hyptilt - numpy 2D array - hyperbolic tilt angle calculated
+    '''
+    
+    # Stablishing some conditions
+    if x.shape != y.shape != data.shape:
+        raise ValueError("All inputs must have the same shape!")
+
+    # Calculate the horizontal and vertical gradients
+    hgrad = deriv.horzgrad(x, y, data)
+    derivz = deriv.zderiv(x, y, data, 1)
+    
+    # Compute the tilt derivative
+    hyptilt = aux.my_atan(derivz, hgrad)
+    
+    # Return the final output
+    return np.real(hyptilt)
 
 def thetamap(x, y, data):
 
@@ -150,34 +178,6 @@ def thetamap(x, y, data):
    
     # Return the final output
     return (hgrad/tgrad)
-
-def hyperbolictilt(x, y, data):
-    
-    '''
-    Return the hyperbolic tilt angle for a potential data.
-    
-    Inputs:
-    x - numpy 2D array - grid values in x direction
-    y - numpy 2D array - grid values in y direction
-    data - numpy 2D array - potential data
-    
-    Output:
-    hyptilt - numpy 2D array - hyperbolic tilt angle calculated
-    '''
-    
-    # Stablishing some conditions
-    if x.shape != y.shape != data.shape:
-        raise ValueError("All inputs must have the same shape!")
-
-    # Calculate the horizontal and vertical gradients
-    hgrad = deriv.horzgrad(x, y, data)
-    derivz = deriv.zderiv(x, y, data, 1)
-    
-    # Compute the tilt derivative
-    hyptilt = np.arctan2(derivz, hgrad)
-    
-    # Return the final output
-    return np.real(hyptilt)
 
 def pseudograv(x, y, data, field, source, rho, mag):
 
@@ -240,4 +240,4 @@ def pseudograv(x, y, data, field, source, rho, mag):
     res *= C
     
     # Return the final output
-    return np.fft.ifft2(res)
+    return np.real(np.fft.ifft2(res))
