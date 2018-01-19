@@ -157,7 +157,7 @@ def theta(angle, u, v):
     inc, dec = angle[0], angle[1]
     
     # Calcutaing the projections
-    x, y, z = aux.dircos(inc, dec) 
+    x, y, z = dircos(inc, dec) 
     theta = z + ((x*u + y*v)/k)*1j
     
     # Return the final output:
