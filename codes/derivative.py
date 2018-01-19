@@ -40,7 +40,7 @@ def xderiv(x, y, data, n):
     xder = np.fft.fft2(data)*((kx*1j)**(n))
     
     # Return the final output
-    return np.fft.ifft2(xder)
+    return np.real(np.fft.ifft2(xder))
 
 def yderiv(x, y, data, n):
     
@@ -71,7 +71,7 @@ def yderiv(x, y, data, n):
     yder = np.fft.fft2(data)*((ky*1j)**(n))
     
     # Return the final output
-    return np.fft.ifft2(yder)
+    return np.real(np.fft.ifft2(yder))
 
 def zderiv(x, y, data, n):
     
@@ -102,7 +102,7 @@ def zderiv(x, y, data, n):
     zder = np.fft.fft2(data)*(np.sqrt(kx**2 + ky**2)**(n))
     
     # Return the final output
-    return np.fft.ifft2(zder)
+    return np.real(np.fft.ifft2(zder))
 
 def horzgrad(x, y, data):
     
@@ -128,7 +128,7 @@ def horzgrad(x, y, data):
     diffy = yderiv(x, y, data, 1)
     
     # Calculates the total gradient
-    hga = (diff**2 + diffy**2)**(0.5)
+    hga = (diffx**2 + diffy**2)**(0.5)
     
     # Return the final output
     return hga
