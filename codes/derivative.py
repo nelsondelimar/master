@@ -66,16 +66,21 @@ def yderiv(x, y, data, n):
         raise ValueError("All inputs must have same shape!")
     
     # Condition for the order of the derivative
-    assert n > 0., 'Order of the derivative must be positive and nonzero!'
+    assert n >= 0., 'Order of the derivative must be positive and nonzero!'
     
-    # Calculate the wavenuber in y direction
-    _, ky = aux.wavenumber(x,y)
+    if n == 0.:
+        res = data
+    else:    
+        # Calculate the wavenuber in y direction
+        _, ky = aux.wavenumber(x,y)
     
-    # Apply the Fourier transform
-    yder = np.fft.fft2(data)*((ky*1j)**(n))
+        # Apply the Fourier transform
+        yder = np.fft.fft2(data)*((ky*1j)**(n))
+        # Calculate the inverse transform
+        res = np.real(np.fft.ifft2(yder))
     
     # Return the final output
-    return np.real(np.fft.ifft2(yder))
+    return res
 
 def zderiv(x, y, data, n):
     
@@ -97,16 +102,22 @@ def zderiv(x, y, data, n):
         raise ValueError("All inputs must have same shape!")
     
     # Condition for the order of the derivative
-    assert n > 0., 'Order of the derivative must be positive and nonzero!'    
-
-    # Calculate the wavenuber in z direction
-    kx, ky = aux.wavenumber(x,y)
+    assert n >= 0., 'Order of the derivative must be positive and nonzero!'
     
-    # Apply the Fourier transform
-    zder = np.fft.fft2(data)*(np.sqrt(kx**2 + ky**2)**(n))
+    if n == 0.:
+        res = data
+    else:    
+        # Calculate the wavenuber in z direction
+        kx, ky = aux.wavenumber(x,y)
+    
+        # Apply the Fourier transform
+        zder = np.fft.fft2(data)*(np.sqrt(kx**2 + ky**2)**(n))
+    
+        # Calculate the inverse transform
+        res = np.real(np.fft.ifft2(zder))
     
     # Return the final output
-    return np.real(np.fft.ifft2(zder))
+    return res
 
 def horzgrad(x, y, data):
     
