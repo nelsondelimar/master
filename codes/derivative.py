@@ -31,16 +31,20 @@ def xderiv(x, y, data, n):
         raise ValueError("All inputs must have same shape!")
 
     # Condition for the order of the derivative
-    assert n > 0., 'Order of the derivative must be positive and nonzero!'
+    assert n >= 0., 'Order of the derivative must be positive and nonzero!'
     
-    # Calculate the wavenuber in x direction
-    kx, _ = aux.wavenumber(x,y)
-    
-    # Apply the Fourier transform
-    xder = np.fft.fft2(data)*((kx*1j)**(n))
+    if n == 0.:
+        res = data
+    else:    
+        # Calculate the wavenuber in x direction
+        kx, _ = aux.wavenumber(x,y)
+        # Apply the Fourier transform
+        xder = np.fft.fft2(data)*((kx*1j)**(n))
+        # Calculating the inverse transform
+        res = np.real(np.fft.ifft2(xder))
     
     # Return the final output
-    return np.real(np.fft.ifft2(xder))
+    return res
 
 def yderiv(x, y, data, n):
     
