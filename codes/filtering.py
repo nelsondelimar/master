@@ -178,7 +178,7 @@ def thetamap(x, y, data):
     tgrad = deriv.totalgrad(x, y, data)
    
     # Return the final output
-    return (hgrad/tgrad)
+    return np.arccos(hgrad/tgrad)
 
 def pseudograv(x, y, data, field, source, rho, mag):
 
