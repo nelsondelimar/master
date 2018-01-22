@@ -1,12 +1,10 @@
-# -----------------------------------------------------------------------------------
 # Title: Auxiliars
 # Author: Nelson Ribeiro Filho
-# Description: Auxiliars codes for using Gravmag Codes
+# Description: Auxiliars codes to help on some calculations
 # Collaborator: Rodrigo Bijani
-# -----------------------------------------------------------------------------------
 
-import numpy as np # Numpy library
-import scipy as sp # Scipy library
+import numpy as np
+import scipy as sp
 import warnings
 
 def deg2rad(angle):
@@ -47,7 +45,7 @@ def rad2deg(argument):
     # Return the final output
     return angle
 
-def dircos(inc, dec):
+def dircos(inc, dec, azm = None):
     '''
     This function calculates the cossines projected values on directions using inclination 
     and declination values. Here, we do not considerate an azimuth as a zero value, but as 
@@ -66,10 +64,18 @@ def dircos(inc, dec):
     incl = deg2rad(inc)
     decl = deg2rad(dec)
         
-    # Calculates the projected cossine values
-    A = np.cos(incl)*np.cos(decl)
-    B = np.cos(incl)*np.sin(decl)
-    C = np.sin(incl)
+    # Stablishing the input conditions
+    if azm is None:        
+        # Calculates the projected cossine values
+        A = np.cos(incl)*np.cos(decl)
+        B = np.cos(incl)*np.sin(decl)
+        C = np.sin(incl)
+    else:
+        azim = deg2rad(azm)
+        # Calculates the projected cossine values
+        A = np.cos(incl)*np.cos(decl - azim)
+        B = np.cos(incl)*np.sin(decl - azim)
+        C = np.sin(incl)
     
     # Return the final output
     return A, B, C
