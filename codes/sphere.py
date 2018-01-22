@@ -35,6 +35,10 @@ def sphere_bx(x, y, z, sphere, direction):
     be a set of points.    
     '''
     
+    # Stablishing some conditions
+    if x.shape != y.shape:
+        raise ValueError("All inputs must have same shape!")
+    
     # Calculates some constants
     t2nt = 1.e9 # Testa to nT - conversion
     cm = 1.e-7  # Magnetization constant
@@ -96,6 +100,10 @@ def sphere_by(x, y, z, sphere, direction):
     set of points.    
     '''
     
+    # Stablishing some conditions
+    if x.shape != y.shape:
+        raise ValueError("All inputs must have same shape!")
+        
     # Calculates some constants
     t2nt = 1.e9 # Testa to nT - conversion
     cm = 1.e-7  # Magnetization constant
@@ -157,6 +165,10 @@ def sphere_bz(x, y, z, sphere, direction):
     set of points.
     '''
     
+    # Stablishing some conditions
+    if x.shape != y.shape:
+        raise ValueError("All inputs must have same shape!")
+    
     # Calculates some constants
     t2nt = 1.e9 # Testa to nT - conversion
     cm = 1.e-7  # Magnetization constant
@@ -216,6 +228,10 @@ def sphere_tf(x, y, z, sphere, direction, field, F):
     
     Ps. The value for Z can be a scalar in the case of one depth, otherwise it can be a set of points.    
     '''
+    
+    # Stablishing some conditions
+    if x.shape != y.shape:
+        raise ValueError("All inputs must have same shape!")
        
     # Setting contants
     inc, dec = field[0], field[1]
@@ -259,6 +275,10 @@ def sphere_tfa(x, y, z, sphere, direction, field):
     set of points.    
     '''
     
+    # Stablishing some conditions
+    if x.shape != y.shape:
+        raise ValueError("All inputs must have same shape!")
+    
     # Setting some values
     inc, dec = field[0], field[1]
     
@@ -292,6 +312,10 @@ def sphere_gz(x, y, z, sphere):
     Output:
     gz - numpy array - vertical component for the gravity signal due to a solid sphere    
     '''
+    
+    # Stablishing some conditions
+    if x.shape != y.shape:
+        raise ValueError("All inputs must have same shape!")
     
     # Setting the initial value
     gz = 0.
