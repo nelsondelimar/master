@@ -35,15 +35,16 @@ def continuation(x, y, data, H):
 
     if H == 0.:
         # No continuation will be applied
-        return data
+        res = data
     else:
         # Calculate the wavenumbers
         kx, ky = aux.wavenumber(x, y)
         kcont = np.exp((-H) * np.sqrt(kx**2 + ky**2))
         result = kcont * np.fft.fft2(data)
+        res = np.real(np.fft.ifft2(result))
 
     # Return the final output
-    return np.real(np.fft.ifft2(result))
+    return res
 
 def reduction(x, y, data, oldf, olds, newf, news):
     
