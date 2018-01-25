@@ -29,9 +29,10 @@ def xderiv(x, y, data, n):
     # Stablishing some conditions
     if x.shape != y.shape != data.shape:
         raise ValueError("All inputs must have same shape!")
-
+    
     # Condition for the order of the derivative
-    assert n >= 0., 'Order of the derivative must be positive and nonzero!'
+    if n <= 0.:
+        raise ValueError("Order of the derivative must be positive and nonzero!")
     
     if n == 0.:
         res = data
@@ -66,8 +67,9 @@ def yderiv(x, y, data, n):
         raise ValueError("All inputs must have same shape!")
     
     # Condition for the order of the derivative
-    assert n >= 0., 'Order of the derivative must be positive and nonzero!'
-    
+    if n <= 0.:
+        raise ValueError("Order of the derivative must be positive and nonzero!")
+        
     if n == 0.:
         res = data
     else:    
@@ -102,7 +104,8 @@ def zderiv(x, y, data, n):
         raise ValueError("All inputs must have same shape!")
     
     # Condition for the order of the derivative
-    assert n >= 0., 'Order of the derivative must be positive and nonzero!'
+    if n < 0.:
+        raise ValueError("Order of the derivative must be positive!")
     
     if n == 0.:
         res = data
