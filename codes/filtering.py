@@ -1,9 +1,5 @@
-# -----------------------------------------------------------------------------------
-# Title: Data Filtering
-# Author: Nelson Ribeiro Filho
-# Description: Source codes for potential field filtering
-# Collaborator: Rodrigo Bijani
-# -----------------------------------------------------------------------------------
+# Title: Filtering
+# Author: Nelson Ribeiro Filho / Rodrido Bijani
 
 # Import Python libraries
 from __future__ import division
@@ -118,8 +114,8 @@ def tilt(x, y, data):
         raise ValueError("All inputs must have the same shape!")
     
     # Calculate the horizontal and vertical gradients
-    hgrad = np.real(deriv.horzgrad(x, y, data))
-    derivz = np.real(deriv.zderiv(x, y, data, 1))
+    hgrad = deriv.horzgrad(x, y, data)
+    derivz = deriv.zderiv(x, y, data, 1)
     
     # Tilt angle calculation
     tilt = aux.my_atan(derivz, hgrad)
@@ -147,10 +143,10 @@ def hyperbolictilt(x, y, data):
 
     # Calculate the horizontal and vertical gradients
     hgrad = deriv.horzgrad(x, y, data)
-    derivz = deriv.zderiv(x, y, data, 1)
+    diffz = deriv.zderiv(x, y, data, 1)
     
     # Compute the tilt derivative
-    hyptilt = aux.my_atan(derivz, hgrad)
+    hyptilt = aux.my_atan(diffz, hgrad)
     
     # Return the final output
     return np.real(hyptilt)
@@ -209,7 +205,7 @@ def pseudograv(x, y, data, field, source, rho, mag):
     
     # Conditions (2):
     assert rho != 0., 'Density must not be zero!'
-    assert mag != 0., 'Density must not be zero!'
+    assert mag != 0., 'Magnetization must not be zero!'
     
     # Conversion for gravity and magnetic data
     G = 6.673e-11
