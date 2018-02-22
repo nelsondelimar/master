@@ -11,7 +11,7 @@ import warnings
 import numpy as np
 import auxiliars as aux
 
-def xderiv(x, y, data, n):
+def xderiv(x, y, data, n = 1):
     
     '''
     Return the horizontal derivative in x direction for n order in Fourier domain.
@@ -47,7 +47,7 @@ def xderiv(x, y, data, n):
     # Return the final output
     return res
 
-def yderiv(x, y, data, n):
+def yderiv(x, y, data, n = 1):
     
     '''
     Return the horizontal derivative in y direction for n order in Fourier domain.
@@ -84,7 +84,7 @@ def yderiv(x, y, data, n):
     # Return the final output
     return res
 
-def zderiv(x, y, data, n):
+def zderiv(x, y, data, n = 1):
     
     '''
     Return the vertical derivative in z direction for n order in Fourier domain.
@@ -142,8 +142,8 @@ def horzgrad(x, y, data):
         raise ValueError("All inputs must have same shape!")
     
     # Computes the horizontal derivatives
-    diffx = xderiv(x, y, data, 1)
-    diffy = yderiv(x, y, data, 1)
+    diffx = xderiv(x, y, data)
+    diffy = yderiv(x, y, data)
     
     # Calculates the total gradient
     hga = (diffx**2 + diffy**2)**(0.5)
@@ -170,11 +170,11 @@ def totalgrad(x, y, data):
         raise ValueError("All inputs must have same shape!")
 
     # Calculates the x derivative
-    diffx = xderiv(x, y, data, 1)
+    diffx = xderiv(x, y, data)
     # Calculates the y derivative
-    diffy = yderiv(x, y, data, 1)
+    diffy = yderiv(x, y, data)
     # Calculates the z derivative
-    diffz = zderiv(x, y, data, 1)
+    diffz = zderiv(x, y, data)
 
     # Calculates the total gradient
     tga = (diffx**2 + diffy**2 + diffz**2)**(0.5)
