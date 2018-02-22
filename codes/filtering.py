@@ -42,7 +42,7 @@ def continuation(x, y, data, H):
     # Return the final output
     return res
 
-def reduction(x, y, data, oldf, olds, newf, news):
+def reduction(x, y, data, oldf, olds=None, newf=None, news=None):
     
     '''
     Return the reduced potential data giving the new directions for the geomagnetic
@@ -68,6 +68,16 @@ def reduction(x, y, data, oldf, olds, newf, news):
     # Conditions for all inputs
     if x.shape != y.shape != data.shape:
         raise ValueError("All inputs must have the same shape!")
+
+    # Induced magnetization
+    if olds == None:
+        olds = oldf
+    
+    # Reduction to Pole
+    if newf == None:
+        newf = (90., 0.)
+    if news == None:
+        news = (90., 0.)
     
     # Step 1 - Calculate the wavenumbers
     # It will return the wavenumbers in x and y directions, in order to calculate the
@@ -176,7 +186,7 @@ def thetamap(x, y, data):
     # Return the final output
     return np.arccos(hgrad/tgrad)
 
-def pseudograv(x, y, data, field, source, rho, mag):
+def pseudograv(x, y, data, field, source, rho = 1000., mag = 1.):
 
     '''
     This function calculates the pseudogravity anomaly transformation due to a total 
