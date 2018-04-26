@@ -1,10 +1,13 @@
 # Title: Plotting
 # Author: Nelson Ribeiro Filho / Rodrigo Bijani
-
 import numpy
 import warnings
 import scipy.interpolate
 from matplotlib import pyplot
+from mpl_toolkits.mplot3d import Axes3D
+import pylab as py
+from itertools import product, combinations
+
 
 def draw_prism(area, style='--k', linewidth=2, fill=None, alpha=1., label=None,
            xy2ne=False):
@@ -170,8 +173,8 @@ def prism3D(fig, prism, color, theta, phi, area, xlabel, ylabel, zlabel ,title):
     ax.view_init(theta, phi)
       
     # set labelsize 
-    plt.tick_params(axis='y', labelsize=fs-3)
-    plt.tick_params(axis='x', labelsize=fs-3)
-    plt.tick_params(axis='z', labelsize=fs-3)
+    pyplot.tick_params(axis='y', labelsize=fs-3)
+    pyplot.tick_params(axis='x', labelsize=fs-3)
+    pyplot.tick_params(axis='z', labelsize=fs-3)
           
     return plt.show()
