@@ -100,3 +100,78 @@ def draw_contourf(x, y, v, levels, interp=False, extrapolate=False,
         lon, lat = basemap(X, Y)
         ct_data = basemap.contourf(lon, lat, V, levels, **kwargs)
     return ct_data.levels
+
+####################################################################################################################################
+
+def prism3D(fig, prism, color, theta, phi, area, xlabel, ylabel, zlabel ,title):
+   # plot a 3D prism with a specific color:
+   # fig: the figure box defined outside of the function, usually as follows (copy paste the following 2 lines):
+   # py.rcParams['figure.figsize'] = (15.0, 10.0) #Redimensiona a figura
+   #fig = plt.figure()
+   
+   # inputs: model = list with the corners of the prism to be drawn
+   # color = string that indicates the color to paint the edges of the prism
+   # color can be: ('black', 'red', 'blue', 'yellow', 'green')
+   # phi, theta = integers to define the angle and azimuth of the box plot;
+   # xlabel, ylabel, zlabel = strings with the label id:  
+   # output: the plot of the 3D prism
+
+    ax = fig.add_subplot(111, projection='3d')
+    fs = 15
+   
+    if color=="black":
+        c = "k"
+    if color=="red":
+        c = "r"
+    if color=="blue":
+        c = "b"
+    if color=="yellow":
+        c = "y"
+    if color =="green":
+        c = "g"
+
+    
+    x0, x1, y0, y1, z0, z1 = area
+   
+        # get the corners of the prism:    
+    r = np.array(prism)
+    rx = r[0:2] # x corners
+    ry = r[2:4] # y corners
+    rz = r[4:6] # z corners
+    
+    for s, e in combinations(np.array(list(product(rx,ry,rz))), 2):
+        
+        if np.sum(np.abs(s-e)) == ry[1]-ry[0]:
+            ax.plot3D(*zip(s,e), color=c)
+            ax.set_xlim3d(x0, x1)
+            ax.set_ylim3d(y0, y1)
+            ax.set_zlim3d(z0, z1)
+            ax.invert_zaxis()    
+      
+        if np.sum(np.abs(s-e)) == rx[1]-rx[0]:
+            ax.plot3D(*zip(s,e), color=c)
+            ax.set_xlim3d(x0, x1)
+            ax.set_ylim3d(y0, y1)
+            ax.set_zlim3d(z0, z1)
+            ax.invert_zaxis()
+
+        if np.sum(np.abs(s-e)) == rz[1]-rz[0]:
+            ax.plot3D(*zip(s,e), color=c)
+            ax.set_xlim3d(x0, x1)
+            ax.set_ylim3d(y0, y1)
+            ax.set_zlim3d(z0, z1)
+            ax.invert_zaxis() 
+    
+    
+    ax.set_xlabel(xlabel, labelpad=25 ,fontsize=fs) # labelpad = distance between the label and the axis
+    ax.set_ylabel(ylabel, labelpad=25 ,fontsize=fs)
+    ax.set_zlabel(zlabel, labelpad=25,fontsize=fs)
+    ax.set_title(title, fontsize=fs + 3 )
+    ax.view_init(theta, phi)
+      
+    # set labelsize 
+    plt.tick_params(axis='y', labelsize=fs-3)
+    plt.tick_params(axis='x', labelsize=fs-3)
+    plt.tick_params(axis='z', labelsize=fs-3)
+          
+    return plt.show()
