@@ -2,12 +2,11 @@
 # Author: Nelson Ribeiro Filho / Rodrigo Bijani
 import numpy
 import warnings
+import pylab as py
 import scipy.interpolate
 from matplotlib import pyplot
 from mpl_toolkits.mplot3d import Axes3D
-import pylab as py
 from itertools import product, combinations
-
 
 def draw_prism(area, style='--k', linewidth=2, fill=None, alpha=1., label=None,
            xy2ne=False):
