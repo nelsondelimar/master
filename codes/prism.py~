@@ -5,10 +5,12 @@
 # Collaborator: Rodrigo Bijani
 # --------------------------------------------------------------------------------------------------
 
+# Import Python libraries
 import numpy as np
+# Import my libraries
 import auxiliars as aux
 
-def prism_tf(x, y, z, prism, incf, decf, incs = None, decs = None):
+def prism_tf(x, y, z, prism, directions, field):
     '''
     This function calculates the total field anomaly produced by a rectangular prism located under 
     surface; it is a Python implementation for the Subroutin MBox which is contained on Blakely (1995). 
@@ -38,22 +40,19 @@ def prism_tf(x, y, z, prism, incf, decf, incs = None, decs = None):
     Ps. Z can be a array with all elements for toppography or a float point as a flight height.
     '''    
     
-    # Stablishing some conditions
-    if x.shape != y.shape:
-        raise ValueError("All inputs must have same shape!")
-        
     # Stablish some constants
     t2nt = 1.e9 # Testa to nT - conversion
     cm = 1.e-7  # Magnetization constant
+
+    # Setting some values
+    D1 = directions[0]
+    D2 = directions[1]
+    F1 = field[0]
+    F2 = field[1] 
     
-    if incs == None:
-        incs = incf
-    if decs == None:
-        decs = decf
-  
     # Calculate the directions for the source magnetization and for the field
-    Ma, Mb, Mc = aux.dircos(incs, decs) # s -> source
-    Fa, Fb, Fc = aux.dircos(incf, decf) # f -> field
+    Ma, Mb, Mc = aux.dircos(D1, D2) # s -> source
+    Fa, Fb, Fc = aux.dircos(F1, F2) # f -> field
 
     # Aranges all values as a vector
     MF = [Ma*Fb + Mb*Fa, 
@@ -84,18 +83,18 @@ def prism_tf(x, y, z, prism, incf, decf, incs = None, decs = None):
                 R2 = X2 + Y2 + H2
                 R = np.sqrt(R2)
                 HxR = H[k]*R
-                tfa += ((-1.)**(i + j))*mag*(0.5*(MF[2])*aux.my_log((R - A[i])/(R + A[i])) + 0.5*(MF[1])*
-                                             aux.my_log((R - B[j])/(R + B[j])) - (MF[0])*aux.my_log(R + H[k]) -
-                                             (MF[3])*aux.my_atan(AxB, X2 + HxR + H2) -
-                                             (MF[4])*aux.my_atan(AxB, R2 + HxR - X2) +
-                                             (MF[5])*aux.my_atan(AxB, HxR))
+                tfa += ((-1.)**(i + j))*mag*(0.5*(MF[2])*np.log((R - A[i])/(R + A[i])) + 0.5*(MF[1])*
+                                             np.log((R - B[j])/(R + B[j])) - (MF[0])*np.log(R + H[k]) -
+                                             (MF[3])*np.arctan2(AxB, X2 + HxR + H2) -
+                                             (MF[4])*np.arctan2(AxB, R2 + HxR - X2) +
+                                             (MF[5])*np.arctan2(AxB, HxR))
     # Multiplying for constants conversion
     tfa *= t2nt*cm
     
     # Return the final output
     return tfa
 
-def potential(x, y, z, prism):
+def potential(xo, yo, zo, prism):
     '''
     This function calculates the gravitational potential due to a rectangular prism. It is calculated 
     solving a numerical integral approximated by using the gravity field G(x,y,z), once G can be written 
@@ -116,15 +115,11 @@ def potential(x, y, z, prism):
     Output:
     potential - numpy array - gravitational potential due to a solid prism
     '''
-
-    # Stablishing some conditions
-    if x.shape != y.shape:
-        raise ValueError("All inputs must have same shape!")
        
     # Definitions for all distances
-    xp = [prism[1] - x, prism[0] - x]
-    yp = [prism[3] - y, prism[2] - y]
-    zp = [prism[5] - z, prism[4] - z]
+    x = [prism[1] - xo, prism[0] - xo]
+    y = [prism[3] - yo, prism[2] - yo]
+    z = [prism[5] - zo, prism[4] - zo]
     
     # Definition for density
     rho = prism[6]
@@ -134,21 +129,21 @@ def potential(x, y, z, prism):
     si2mGal = 100000.0
     
     # Creating the zeros vector to allocate the result
-    potential = np.zeros_like(x)
+    potential = np.zeros_like(xo)
     
     # Solving the integral as a numerical approximation
     for k in range(2):
         for j in range(2):
             for i in range(2):
-                r = np.sqrt(xp[i]**2 + yp[j]**2 + zp[k]**2)
-                result = (xp[i]*yp[j]*aux.my_log(zp[k] + r)
-                          + yp[j]*zp[k]*aux.my_log(xp[i] + r)
-                          + xp[i]*zp[k]*aux.my_log(yp[j] + r)
-                          - 0.5*xp[i]**2 *
-                          aux.my_atan(zp[k]*yp[j], xp[i]*r)
-                          - 0.5*yp[j]**2 *
-                          aux.my_atan(zp[k]*xp[i], yp[j]*r)
-                          - 0.5*zp[k]**2*aux.my_atan(xp[i]*yp[j], zp[k]*r))
+                r = np.sqrt(x[i]**2 + y[j]**2 + z[k]**2)
+                result = (x[i]*y[j]*np.log(z[k] + r)
+                          + y[j]*z[k]*np.log(x[i] + r)
+                          + x[i]*z[k]*np.log(y[j] + r)
+                          - 0.5*x[i]**2 *
+                          np.arctan2(z[k]*y[j], x[i]*r)
+                          - 0.5*y[j]**2 *
+                          np.arctan2(z[k]*x[i], y[j]*r)
+                          - 0.5*z[k]**2*np.arctan2(x[i]*y[j], z[k]*r))
                 potential += ((-1.)**(i + j + k))*result*rho
     
     # Multiplying the values for 
@@ -157,7 +152,7 @@ def potential(x, y, z, prism):
     # Return the final output
     return potential
 
-def prism_gx(x, y, z, prism):
+def prism_gx(xo, yo, zo, prism):
     '''
     This function is a Python implementation for the X horizontal component for the gravity field due to 
     a rectangular prism, which has initial and final positions equals to xi and xf, yi and yf, for the X 
@@ -176,16 +171,12 @@ def prism_gx(x, y, z, prism):
     Output:
     gx - numpy array - vertical component for the gravity atraction
     '''
-
-    # Stablishing some conditions
-    if x.shape != y.shape:
-        raise ValueError("All inputs must have same shape!")
-       
+    
     # Definitions for all distances
-    xp = [prism[1] - x, prism[0] - x]
-    yp = [prism[3] - y, prism[2] - y]
-    zp = [prism[5] - z, prism[4] - z]    
-
+    x = [prism[1] - xo, prism[0] - xo]
+    y = [prism[3] - yo, prism[2] - yo]
+    z = [prism[5] - zo, prism[4] - zo]
+    
     # Definition for density
     rho = prism[6]
     
@@ -194,14 +185,14 @@ def prism_gx(x, y, z, prism):
     si2mGal = 100000.0
     
     # Numpy zeros array to update the result
-    gx = np.zeros_like(x)
+    gx = np.zeros_like(xo)
     
-    # Compute the value for Gx
+    # Compute the value for Gz
     for k in range(2):
         for j in range(2):
             for i in range(2):
-                r = np.sqrt(xp[i]**2 + yp[j]**2 + zp[k]**2)
-                result = -(yp[j]*aux.my_log(zp[k] + r) + zp[k]*aux.my_log(yp[j] + r) - xp[i]*aux.my_atan(zp[k]*yp[j], xp[i]*r))
+                r = np.sqrt(x[i]**2 + y[j]**2 + z[k]**2)
+                result = -(y[j]*np.log(z[k] + r) + z[k]*np.log(y[j] + r) - x[i]*np.arctan2(z[k]*y[j], x[i]*r))
                 gx += ((-1.)**(i + j + k))*result*rho
 
                 # Multiplication for all constants and conversion to mGal
@@ -210,7 +201,7 @@ def prism_gx(x, y, z, prism):
     # Return the final output
     return gx
 
-def prism_gy(x, y, z, prism):
+def prism_gy(xo, yo, zo, prism):
     '''
     This function is a Python implementation for the Y horizontal  component for the gravity field due 
     to a rectangular prism, which has initial and final positions equals to xi and xf, yi and yf, for 
@@ -231,14 +222,10 @@ def prism_gy(x, y, z, prism):
     gy - numpy array - vertical component for the gravity atraction
     '''
     
-    # Stablishing some conditions
-    if x.shape != y.shape:
-        raise ValueError("All inputs must have same shape!")
-       
     # Definitions for all distances
-    xp = [prism[1] - x, prism[0] - x]
-    yp = [prism[3] - y, prism[2] - y]
-    zp = [prism[5] - z, prism[4] - z]  
+    x = [prism[1] - xo, prism[0] - xo]
+    y = [prism[3] - yo, prism[2] - yo]
+    z = [prism[5] - zo, prism[4] - zo]
     
     # Definition for density
     rho = prism[6]
@@ -248,14 +235,14 @@ def prism_gy(x, y, z, prism):
     si2mGal = 100000.0
     
     # Numpy zeros array to update the result
-    gy = np.zeros_like(x)
+    gy = np.zeros_like(xo)
     
-    # Compute the value for Gy
+    # Compute the value for Gz
     for k in range(2):
         for j in range(2):
             for i in range(2):
-                r = np.sqrt(xp[i]**2 + yp[j]**2 + zp[k]**2)
-                result = -(zp[k]*aux.my_log(xp[i] + r) + xp[i]*aux.my_log(zp[k] + r) - yp[j]*aux.my_atan(xp[i]*zp[k], yp[j]*r))
+                r = np.sqrt(x[i]**2 + y[j]**2 + z[k]**2)
+                result = -(z[k]*np.log(x[i] + r) + x[i]*np.log(z[k] + r) - y[j]*np.arctan2(x[i]*z[k], y[j]*r))
                 gy += ((-1.)**(i + j + k))*result*rho
                 
     # Multiplication for all constants and conversion to mGal
@@ -264,7 +251,7 @@ def prism_gy(x, y, z, prism):
     # Return the final output
     return gy
 
-def prism_gz(x, y, z, prism):
+def prism_gz(xo, yo, zo, prism):
     '''
     This function is a Python implementation for the vertical component for the gravity field due to a 
     rectangular prism, which has initial and final positions equals to xi and xf, yi and yf, for the X 
@@ -284,15 +271,11 @@ def prism_gz(x, y, z, prism):
     Output:
     gz - numpy array - vertical component for the gravity atraction
     '''
-
-    # Stablishing some conditions
-    if x.shape != y.shape:
-        raise ValueError("All inputs must have same shape!")
-       
+    
     # Definitions for all distances
-    xp = [prism[1] - x, prism[0] - x]
-    yp = [prism[3] - y, prism[2] - y]
-    zp = [prism[5] - z, prism[4] - z]  
+    x = [prism[1] - xo, prism[0] - xo]
+    y = [prism[3] - yo, prism[2] - yo]
+    z = [prism[5] - zo, prism[4] - zo]
     
     # Definition for density
     rho = prism[6]
@@ -302,14 +285,14 @@ def prism_gz(x, y, z, prism):
     si2mGal = 100000.0
     
     # Numpy zeros array to update the result
-    gz = np.zeros_like(x)
+    gz = np.zeros_like(xo)
     
     # Compute the value for Gz
     for k in range(2):
         for j in range(2):
             for i in range(2):
-                r = np.sqrt(xp[i]**2 + yp[j]**2 + zp[k]**2)
-                result = -(xp[i]*aux.my_log(yp[j] + r) + yp[j]*aux.my_log(xp[i] + r) - zp[k]*aux.my_atan(xp[i]*yp[j], zp[k]*r))
+                r = np.sqrt(x[i]**2 + y[j]**2 + z[k]**2)
+                result = -(x[i]*np.log(y[j] + r) + y[j]*np.log(x[i] + r) - z[k]*np.arctan2(x[i]*y[j], z[k]*r))
                 gz += ((-1.)**(i + j + k))*result*rho
                 
     # Multiplication for all constants and conversion to mGal
@@ -317,3 +300,37 @@ def prism_gz(x, y, z, prism):
     
     # Return the final output
     return gz
+
+def cylinder(xo, zo, model):
+    '''
+    This function is a Python implementation which computes the vertical gravitational attraction due 
+    to a cylinder. The reference is on Blakely (1996).
+    '''
+    
+    # Setting some constants
+    km2m = 0.001
+    G = 6.673e-11
+    si2mGal = 100000.0
+    
+    xc, zc = model[0], model[1]
+    a, rho = model[2], model[3]
+      
+    # Calculates the distances
+    x = xo - xc
+    z = zo - zc
+    # Computing r square
+    r2 = x**2 + z**2
+    
+    # Calculate the constant
+    mass = (np.pi) * (a**2) * rho
+    
+    # Computes gx and gz
+    gx = (-2. * mass * x)/r2
+    gz = (-2. * mass * z)/r2
+    
+    # Conversion to mGal
+    gx *= G*si2mGal*km2m
+    gz *= G*si2mGal*km2m
+    
+    # Return the tinal output
+    return gx, gz

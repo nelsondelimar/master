@@ -80,7 +80,7 @@ def dircos(inc, dec, azm = None):
     # Return the final output
     return A, B, C
 
-def regional(F, field):
+def regional(F, incf, decf):
     '''
     This fucntion computes the projected components of the regional magnetic field in all 
     directions X, Y and Z. This calculation is done by using a cossine projected function, 
@@ -99,10 +99,10 @@ def regional(F, field):
     Ps. All inputs can be arrays when they are used for a set of values.    
     '''
     
-    assert field[0] != 0., 'Value of the regional magnetic field must be nonzero!'
+    assert F != 0., 'Value of the regional magnetic field must be nonzero!'
         
     # Computes the projected cossine
-    X, Y, Z = dircos(field[0], field[1])
+    X, Y, Z = dircos(incf, decf,)
     
     # Compute all components
     Fx, Fy, Fz = F*X, F*Y, F*Z
@@ -165,7 +165,7 @@ def my_log(x):
     log[x == 0] = 0
     return log
 
-def theta(angle, u, v):
+def theta(inc, dec, u, v):
     
     '''
     Return the operators for magnetization and field directions.
@@ -181,9 +181,6 @@ def theta(angle, u, v):
     
     # Calculate the modulus for k value. In this case: k = kz
     k = (u**2 + v**2)**(0.5)
-    
-    # Defines inclination and declination:
-    inc, dec = angle[0], angle[1]
     
     # Calcutaing the projections
     x, y, z = dircos(inc, dec) 

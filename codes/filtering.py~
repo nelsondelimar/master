@@ -1,5 +1,9 @@
-# Title: Filtering
-# Author: Nelson Ribeiro Filho / Rodrido Bijani
+# -----------------------------------------------------------------------------------
+# Title: Data Filtering
+# Author: Nelson Ribeiro Filho
+# Description: Source codes for potential field filtering
+# Collaborator: Rodrigo Bijani
+# -----------------------------------------------------------------------------------
 
 # Import Python libraries
 from __future__ import division
@@ -42,7 +46,7 @@ def continuation(x, y, data, H):
     # Return the final output
     return res
 
-def reduction(x, y, data, incf, decf, incs=None, decs=None, newincf=None, newdecf=None, newincs=None, newdecs=None):
+def reduction(x, y, data, oldf, olds, newf, news):
     
     '''
     Return the reduced potential data giving the new directions for the geomagnetic
@@ -68,23 +72,7 @@ def reduction(x, y, data, incf, decf, incs=None, decs=None, newincf=None, newdec
     # Conditions for all inputs
     if x.shape != y.shape != data.shape:
         raise ValueError("All inputs must have the same shape!")
-
-    # Induced magnetization
-    if incs == None:
-        incs = incf
-    if decs == None:
-        decs = decf
     
-    # Reduction to Pole
-    if newincf == None:
-        newincf = 90.
-    if newdecf == None:
-        newdecf = 0.
-    if newincs == None:
-        newincs = 90.
-    if newdecs == None:
-        newdecs = 0.
-        
     # Step 1 - Calculate the wavenumbers
     # It will return the wavenumbers in x and y directions, in order to calculate the
     # values for magnetization directions in Fourier domains:
@@ -93,10 +81,10 @@ def reduction(x, y, data, incf, decf, incs=None, decs=None, newincf=None, newdec
     # Step 2 - Calcuate the magnetization direction
     # It will return the magnetization directions in Fourier domain for all vector that
     # contain  inclination and declination. All values are complex.
-    f0 = aux.theta(incf, decf, kx, ky)
-    m0 = aux.theta(incs, decs, kx, ky)
-    f1 = aux.theta(newincf, newdecf, kx, ky)
-    m1 = aux.theta(newincs, newdecs, kx, ky)
+    f0 = aux.theta(oldf, kx, ky)
+    m0 = aux.theta(olds, kx, ky)
+    f1 = aux.theta(newf, kx, ky)
+    m1 = aux.theta(news, kx, ky)
        
     # Step 3 - Calculate the filter
     # It will return the result for the reduction filter. However, it is necessary use a
@@ -130,8 +118,8 @@ def tilt(x, y, data):
         raise ValueError("All inputs must have the same shape!")
     
     # Calculate the horizontal and vertical gradients
-    hgrad = deriv.horzgrad(x, y, data)
-    derivz = deriv.zderiv(x, y, data, 1)
+    hgrad = np.real(deriv.horzgrad(x, y, data))
+    derivz = np.real(deriv.zderiv(x, y, data, 1))
     
     # Tilt angle calculation
     tilt = aux.my_atan(derivz, hgrad)
@@ -159,10 +147,10 @@ def hyperbolictilt(x, y, data):
 
     # Calculate the horizontal and vertical gradients
     hgrad = deriv.horzgrad(x, y, data)
-    diffz = deriv.zderiv(x, y, data, 1)
+    derivz = deriv.zderiv(x, y, data, 1)
     
     # Compute the tilt derivative
-    hyptilt = aux.my_atan(diffz, hgrad)
+    hyptilt = aux.my_atan(derivz, hgrad)
     
     # Return the final output
     return np.real(hyptilt)
@@ -190,9 +178,9 @@ def thetamap(x, y, data):
     tgrad = deriv.totalgrad(x, y, data)
    
     # Return the final output
-    return np.arccos(hgrad/tgrad)
+    return (hgrad/tgrad)
 
-def pseudograv(x, y, data, incf, decf, incs, decs, rho = 1000., mag = 1.):
+def pseudograv(x, y, data, field, source, rho, mag):
 
     '''
     This function calculates the pseudogravity anomaly transformation due to a total 
@@ -221,7 +209,7 @@ def pseudograv(x, y, data, incf, decf, incs, decs, rho = 1000., mag = 1.):
     
     # Conditions (2):
     assert rho != 0., 'Density must not be zero!'
-    assert mag != 0., 'Magnetization must not be zero!'
+    assert mag != 0., 'Density must not be zero!'
     
     # Conversion for gravity and magnetic data
     G = 6.673e-11
@@ -237,8 +225,8 @@ def pseudograv(x, y, data, incf, decf, incs, decs, rho = 1000., mag = 1.):
     k = (kx**2 + ky**2)**(0.5)
     
     # Computing theta values for the source
-    thetaf = aux.theta(incf, decf, kx, ky)
-    thetas = aux.theta(incs, decs, kx, ky)
+    thetaf = aux.theta(field, kx, ky)
+    thetas = aux.theta(source, kx, ky)
     
     # Calculate the product
     # Here we use the numpy error statement in order to evaluate the zero division
