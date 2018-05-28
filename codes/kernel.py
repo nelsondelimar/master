@@ -23,7 +23,7 @@ def kernelz(x, y, z, model):
     # Computing the kernel at z direction
     v = (4./3.)*(numpy.pi)*(radius)**3
     r = numpy.sqrt((x - xe)**2 + (y - ye)**2 + (z - ze)**2)
-    diffz = -((z - ze)/(r***3)) * v
+    diffz = -((z - ze)/(r**3)) * v
     # Return the final output
     return diffz
 
