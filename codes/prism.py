@@ -71,8 +71,10 @@ def prism_tf(x, y, z, prism, incf, decf, incs = None, decs = None):
     # Create the zero array to allocate the total field result
     tfa = np.zeros_like(x)
     
-    # Loop for controling the signal of the function    
+    # Magnetization
     mag = prism[6]
+    
+    # Loop for controling the signal of the function    
     for k in range(2):
         mag *= -1
         H2 = H[k]**2
