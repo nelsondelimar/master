@@ -3,8 +3,8 @@
 # Description: Auxiliars codes to help on some calculations
 # Collaborator: Rodrigo Bijani
 
-import numpy as np
-import scipy as sp
+import numpy
+import scipy
 import warnings
 
 def deg2rad(angle):
@@ -12,18 +12,13 @@ def deg2rad(angle):
     This function converts an angle value in degrees to an another value in radian.     
     
     Input:
-    angle - float - angle in degrees    
+    angle - float - number or list of angle in degrees    
     Output:
     argument - float - angle in radian    
     '''
     
-    # Condition for the calculation
-    if angle > 360.:
-        r = angle//360
-        angle = angle - r*360
-    
     # Angle conversion
-    argument = (angle/180.)*np.pi
+    argument = (angle/180.)*numpy.pi
     
     # Return the final output
     return argument
@@ -33,15 +28,13 @@ def rad2deg(argument):
     This function converts an angle value in radian to an another value in degrees.
     
     Input:
-    argument - float - angle in radian
+    argument - float - number or list of angle in radian
     Output:
     angle - float - angle in degrees    
     '''
     
-    # Check the input value for an angle
-    assert type(argument) is float, 'Angle value must be decimal!'
     # Angle conversion
-    angle = (argument/np.pi)*180.
+    angle = (argument/numpy.pi)*180.
     # Return the final output
     return angle
 
@@ -67,20 +60,20 @@ def dircos(inc, dec, azm = None):
     # Stablishing the input conditions
     if azm is None:        
         # Calculates the projected cossine values
-        A = np.cos(incl)*np.cos(decl)
-        B = np.cos(incl)*np.sin(decl)
-        C = np.sin(incl)
+        A = numpy.cos(incl)*numpy.cos(decl)
+        B = numpy.cos(incl)*numpy.sin(decl)
+        C = numpy.sin(incl)
     else:
         azim = deg2rad(azm)
         # Calculates the projected cossine values
-        A = np.cos(incl)*np.cos(decl - azim)
-        B = np.cos(incl)*np.sin(decl - azim)
-        C = np.sin(incl)
+        A = numpy.cos(incl)*numpy.cos(decl - azim)
+        B = numpy.cos(incl)*numpy.sin(decl - azim)
+        C = numpy.sin(incl)
     
     # Return the final output
     return A, B, C
 
-def regional(F, incf, decf):
+def regional(intensity, incf, decf):
     '''
     This fucntion computes the projected components of the regional magnetic field in all 
     directions X, Y and Z. This calculation is done by using a cossine projected function, 
@@ -90,7 +83,7 @@ def regional(F, incf, decf):
     
     Inputs: 
     field - numpy array
-        valF - float - regional magnetic field value
+        intensity - float - regional magnetic intensity
         incF - float - magnetic field inclination value
         decF - float - magnetic field declination value
     Outputs:
@@ -99,16 +92,14 @@ def regional(F, incf, decf):
     Ps. All inputs can be arrays when they are used for a set of values.    
     '''
     
-    assert F != 0., 'Value of the regional magnetic field must be nonzero!'
-        
     # Computes the projected cossine
     X, Y, Z = dircos(incf, decf,)
     
     # Compute all components
-    Fx, Fy, Fz = F*X, F*Y, F*Z
+    Fx, Fy, Fz = intensity*X, intensity*Y, intensity*Z
     
     # Set F as array and return the output
-    return [Fx, Fy, Fz]
+    return Fx, Fy, Fz
 
 def addnoise(data, v0, std):
     '''
@@ -118,8 +109,8 @@ def addnoise(data, v0, std):
     else it returns a 2D array with NM elements.    
     '''
     
-    assert np.min(data) <= np.mean(data), 'Mean must be greater than minimum'
-    assert np.max(data) >= np.mean(data), 'Maximum must be greater than mean'
+    assert numpy.min(data) <= numpy.mean(data), 'Mean must be greater than minimum'
+    assert numpy.max(data) >= numpy.mean(data), 'Maximum must be greater than mean'
     assert std <= 10., 'Noise must not be greater than 1'
     assert std >= 1e-12, 'Noise should not be smaller than 1 micro unit'
     
@@ -128,16 +119,16 @@ def addnoise(data, v0, std):
     shape = data.shape
     
     # Creat the zero vector such as data
-    noise = np.zeros_like(data)
+    noise = numpy.zeros_like(data)
     
     # Calculate the local number
     #local = np.abs((data.max() - data.min())*(1e-2))
     
     # Verify if data is a 1D or 2D array
     if data.shape[0] == size or data.shape[1] == size:
-        noise = np.random.normal(loc = v0, scale = std, size = size)
+        noise = numpy.random.normal(loc = v0, scale = std, size = size)
     else:
-        noise = np.random.normal(loc = v0, scale = std, size = shape)
+        noise = numpy.random.normal(loc = v0, scale = std, size = shape)
         
     # Return the final output
     return data + noise
@@ -148,10 +139,10 @@ def my_atan(x, y):
     Return the more stable output for arctan calculation by correcting the 
     value of the angle in arctan2, in order to fix the sign of the tangent.
     '''
-    arctan = np.arctan2(x, y)
+    arctan = numpy.arctan2(x, y)
     arctan[x == 0] = 0
-    arctan[(x > 0) & (y < 0)] -= np.pi
-    arctan[(x < 0) & (y < 0)] += np.pi
+    arctan[(x > 0) & (y < 0)] -= numpy.pi
+    arctan[(x < 0) & (y < 0)] += numpy.pi
     return arctan
 
 def my_log(x):
@@ -161,9 +152,38 @@ def my_log(x):
     tend to 0.
     '''
     
-    log = np.log(x)
+    log = numpy.log(x)
     log[x == 0] = 0
     return log
+
+def residual(observed, predicted):
+    '''
+    It calculates the residual between the observed data and the calculated predicted data.
+    
+    Inputs:
+    observed - numpy array or list - observed data
+    predicted - numpy array or list - predicted data
+    
+    Outputs:
+    norm - numpy array or list - norm data values
+    mean - float - mean of all values
+    std - float - calculated tandard deviation
+    '''
+    
+    # Calculates the residual
+    res = observed - predicted
+    
+    # Calculates the mean value of the residual
+    mean = numpy.mean(res)
+    
+    # Calculates the standard deviation of the residual
+    std = numpy.std(res)
+    
+    # Calculates the array of norms
+    norm = (res - mean)/(std)
+    
+    # Returns the output final
+    return norm, mean, std
 
 def theta(inc, dec, u, v):
     
@@ -218,9 +238,33 @@ def wavenumber(x, y):
         ny = y.shape[0]
       
     # Compute the values for wavenumber in x and y directions
-    c = 2.*np.pi
-    kx = c*np.fft.fftfreq(nx, dx)
-    ky = c*np.fft.fftfreq(ny, dy)    
+    c = 2.*numpy.pi
+    kx = c*numpy.fft.fftfreq(nx, dx)
+    ky = c*numpy.fft.fftfreq(ny, dy)    
     
     # Return the final output
-    return np.meshgrid(kx, ky)
+    return numpy.meshgrid(kx, ky)
+
+def spherical_cartesian(longitude, latitude, level):
+    '''
+    It converts all spherical coordinates values to values in geocentric coordinates. 
+    It receives the directions as longitude and latitude and the level.
+    
+    Inputs:
+    longitude - float - longitude value in degrees
+    latitude - float - latitude value in degrees
+    level - float - height above Earth radius in meters
+    
+    Outputs:
+    x, y, z - floats - converted geocentric coordinates
+    '''
+    # Defines the value of the Earth radius
+    R = 6378137. + level
+    
+    # Calculates the geocentric coordinates x, y and z
+    x = numpy.cos((numpy.pi/180.) * latitude) * numpy.cos((numpy.pi/180.) * longitude) * R
+    y = numpy.cos((numpy.pi/180.) * latitude) * numpy.sin((numpy.pi/180.) * longitude) * R
+    z = numpy.sin((numpy.pi/180.) * latitude) * R
+    
+    # Returns the final output
+    return x, y, z
