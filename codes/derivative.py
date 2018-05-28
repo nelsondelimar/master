@@ -8,8 +8,8 @@
 # Import Python libraries
 from __future__ import division
 import warnings
-import numpy as np
-import auxiliars as aux
+import numpy
+import auxiliars
 
 def xderiv(x, y, data, n = 1):
     
@@ -38,11 +38,11 @@ def xderiv(x, y, data, n = 1):
         res = data
     else:    
         # Calculate the wavenuber in x direction
-        kx, _ = aux.wavenumber(x,y)
+        kx, _ = auxiliars.wavenumber(x,y)
         # Apply the Fourier transform
-        xder = np.fft.fft2(data)*((kx*1j)**(n))
+        xder = numpy.fft.fft2(data)*((kx*1j)**(n))
         # Calculating the inverse transform
-        res = np.real(np.fft.ifft2(xder))
+        res = numpy.real(numpy.fft.ifft2(xder))
     
     # Return the final output
     return res
@@ -74,12 +74,12 @@ def yderiv(x, y, data, n = 1):
         res = data
     else:    
         # Calculate the wavenuber in y direction
-        _, ky = aux.wavenumber(x,y)
+        _, ky = auxiliars.wavenumber(x,y)
     
         # Apply the Fourier transform
-        yder = np.fft.fft2(data)*((ky*1j)**(n))
+        yder = numpy.fft.fft2(data)*((ky*1j)**(n))
         # Calculate the inverse transform
-        res = np.real(np.fft.ifft2(yder))
+        res = numpy.real(numpy.fft.ifft2(yder))
     
     # Return the final output
     return res
@@ -111,13 +111,13 @@ def zderiv(x, y, data, n = 1):
         res = data
     else:    
         # Calculate the wavenuber in z direction
-        kx, ky = aux.wavenumber(x,y)
+        kx, ky = auxiliars.wavenumber(x,y)
     
         # Apply the Fourier transform
-        zder = np.fft.fft2(data)*(np.sqrt(kx**2 + ky**2)**(n))
+        zder = numpy.fft.fft2(data)*(numpy.sqrt(kx**2 + ky**2)**(n))
     
         # Calculate the inverse transform
-        res = np.real(np.fft.ifft2(zder))
+        res = numpy.real(numpy.fft.ifft2(zder))
     
     # Return the final output
     return res
