@@ -183,7 +183,7 @@ def residual(observed, predicted):
     norm = (res - mean)/(std)
     
     # Returns the output final
-    return norm, mean, std
+    return res, norm, mean, std
 
 def theta(inc, dec, u, v):
     
