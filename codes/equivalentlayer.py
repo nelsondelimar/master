@@ -107,14 +107,16 @@ def mat_grav(xo, yo, zo, layer):
     g = 0.00000006673
     si2mGal = 100000.
     
-    # Number of points
+    # Number of points:
     n = len(xo)
+    m = len(layer)
+    
     # Create the zero matrix
-    mat = numpy.zeros((n, n))
+    mat = numpy.zeros((n, m))
     
     # Calculates the kernel
-    for i,m in enumerate(layer):
-        mat[:,i] = kernel.kernelz(xo, yo, zo, m)
+    for i,j in enumerate(layer):
+        mat[:,i] = kernel.kernelz(xo, yo, zo, j)
 
     mat *= g * si2mGal
     
