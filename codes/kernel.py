@@ -1,5 +1,59 @@
 import numpy
 
+def kernelx(x, y, z, model):
+    '''
+    Calculate the first x-derivative of a 1/r function.
+
+    Inputs:
+    x, y, z - numpy arrays - observation points (meters)
+    model - list - values of x, y, z and r of a sphere
+
+    Output:
+    diffx - numpy array - first z derivative
+    '''
+    
+    # Condition
+    assert x.size == y.size, ('All arrays must have the same size')
+    assert y.size == z.size, ('All arrays must have the same size')
+    assert x.size == z.size, ('All arrays must have the same size')
+    
+    # Sphere values 
+    xe, ye, ze, radius = model
+
+    # Computing the kernel at x direction
+    v = (4./3.)*(numpy.pi)*(radius)**3
+    r = numpy.sqrt((x - xe)**2 + (y - ye)**2 + (z - ze)**2)
+    diffx = -((x - xe)/(r**3)) * v
+    # Return the final output
+    return diffx
+
+def kernely(x, y, z, model):
+    '''
+    Calculate the first y-derivative of a 1/r function.
+
+    Inputs:
+    x, y, z - numpy arrays - observation points (meters)
+    model - list - values of x, y, z and r of a sphere
+
+    Output:
+    diffy - numpy array - first z derivative
+    '''
+    
+    # Condition
+    assert x.size == y.size, ('All arrays must have the same size')
+    assert y.size == z.size, ('All arrays must have the same size')
+    assert x.size == z.size, ('All arrays must have the same size')
+    
+    # Sphere values 
+    xe, ye, ze, radius = model
+
+    # Computing the kernel at y direction
+    v = (4./3.)*(numpy.pi)*(radius)**3
+    r = numpy.sqrt((x - xe)**2 + (y - ye)**2 + (z - ze)**2)
+    diffy = -((y - ye)/(r**3)) * v
+    # Return the final output
+    return diffy
+
 def kernelz(x, y, z, model):
     '''
     Calculate the first z-derivative of a 1/r function.
