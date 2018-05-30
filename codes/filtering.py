@@ -4,9 +4,9 @@
 # Import Python libraries
 from __future__ import division
 import warnings
-import numpy as np
-import auxiliars as aux
-import derivative as deriv
+import numpy
+import auxiliars
+import derivative
 
 def continuation(x, y, data, H):
     
@@ -34,15 +34,15 @@ def continuation(x, y, data, H):
         res = data
     else:
         # Calculate the wavenumbers
-        kx, ky = aux.wavenumber(x, y)
-        kcont = np.exp((-H) * np.sqrt(kx**2 + ky**2))
-        result = kcont * np.fft.fft2(data)
-        res = np.real(np.fft.ifft2(result))
+        kx, ky = auxiliars.wavenumber(x, y)
+        kcont = numpy.exp((-H) * numpy.sqrt(kx**2 + ky**2))
+        result = kcont * numpy.fft.fft2(data)
+        res = numpy.real(numpy.fft.ifft2(result))
 
     # Return the final output
     return res
 
-def reduction(x, y, data, incf, decf, incs=None, decs=None, newincf=None, newdecf=None, newincs=None, newdecs=None):
+def reduction(x, y, data, inc, dec, incs=None, decs=None, newinc=None, newdec=None, newincs=None, newdecs=None):
     
     '''
     Return the reduced potential data giving the new directions for the geomagnetic
@@ -71,15 +71,15 @@ def reduction(x, y, data, incf, decf, incs=None, decs=None, newincf=None, newdec
 
     # Induced magnetization
     if incs == None:
-        incs = incf
+        incs = inc
     if decs == None:
-        decs = decf
+        decs = dec
     
     # Reduction to Pole
-    if newincf == None:
-        newincf = 90.
-    if newdecf == None:
-        newdecf = 0.
+    if newinc == None:
+        newinc = 90.
+    if newdec == None:
+        newdec = 0.
     if newincs == None:
         newincs = 90.
     if newdecs == None:
@@ -88,28 +88,28 @@ def reduction(x, y, data, incf, decf, incs=None, decs=None, newincf=None, newdec
     # Step 1 - Calculate the wavenumbers
     # It will return the wavenumbers in x and y directions, in order to calculate the
     # values for magnetization directions in Fourier domains:
-    kx, ky = aux.wavenumber(x, y)
+    kx, ky = auxiliars.wavenumber(x, y)
     
     # Step 2 - Calcuate the magnetization direction
     # It will return the magnetization directions in Fourier domain for all vector that
     # contain  inclination and declination. All values are complex.
-    f0 = aux.theta(incf, decf, kx, ky)
-    m0 = aux.theta(incs, decs, kx, ky)
-    f1 = aux.theta(newincf, newdecf, kx, ky)
-    m1 = aux.theta(newincs, newdecs, kx, ky)
+    f0 = auxiliars.theta(inc, dec, kx, ky)
+    m0 = auxiliars.theta(incs, decs, kx, ky)
+    f1 = auxiliars.theta(newinc, newdec, kx, ky)
+    m1 = auxiliars.theta(newincs, newdecs, kx, ky)
        
     # Step 3 - Calculate the filter
     # It will return the result for the reduction filter. However, it is necessary use a
     # condition while the division is been calculated, once there is no zero division.
-    with np.errstate(divide='ignore', invalid='ignore'):
+    with numpy.errstate(divide='ignore', invalid='ignore'):
         operator = (f1 * m1)/(f0 * m0)
     operator[0, 0] = 0.
     
     # Calculate the result by multiplying the filter and the data on Fourier domain
-    res = operator*np.fft.fft2(data)
+    res = operator*numpy.fft.fft2(data)
     
     # Return the final output
-    return np.real(np.fft.ifft2(res))
+    return numpy.real(numpy.fft.ifft2(res))
 
 def tilt(x, y, data):
     
@@ -130,11 +130,11 @@ def tilt(x, y, data):
         raise ValueError("All inputs must have the same shape!")
     
     # Calculate the horizontal and vertical gradients
-    hgrad = deriv.horzgrad(x, y, data)
-    derivz = deriv.zderiv(x, y, data, 1)
+    hgrad = derivative.horzgrad(x, y, data)
+    derivz = derivative.zderiv(x, y, data, 1)
     
     # Tilt angle calculation
-    tilt = aux.my_atan(derivz, hgrad)
+    tilt = auxiliars.my_atan(derivz, hgrad)
     
     # Return the final output
     return tilt
@@ -158,14 +158,14 @@ def hyperbolictilt(x, y, data):
         raise ValueError("All inputs must have the same shape!")
 
     # Calculate the horizontal and vertical gradients
-    hgrad = deriv.horzgrad(x, y, data)
-    diffz = deriv.zderiv(x, y, data, 1)
+    hgrad = derivative.horzgrad(x, y, data)
+    diffz = derivative.zderiv(x, y, data, 1)
     
     # Compute the tilt derivative
-    hyptilt = aux.my_atan(diffz, hgrad)
+    hyptilt = auxiliars.my_atan(diffz, hgrad)
     
     # Return the final output
-    return np.real(hyptilt)
+    return numpy.real(hyptilt)
 
 def thetamap(x, y, data):
 
@@ -186,13 +186,13 @@ def thetamap(x, y, data):
         raise ValueError("All inputs must have the same shape!")
     
     # Calculate the horizontal and total gradients
-    hgrad = deriv.horzgrad(x, y, data)
-    tgrad = deriv.totalgrad(x, y, data)
+    hgrad = derivative.horzgrad(x, y, data)
+    tgrad = derivative.totalgrad(x, y, data)
    
     # Return the final output
-    return np.arccos(hgrad/tgrad)
+    return numpy.arccos(hgrad/tgrad)
 
-def pseudograv(x, y, data, incf, decf, incs, decs, rho = 1000., mag = 1.):
+def pseudograv(x, y, data, inc, dec, incs, decs, rho = 1000., mag = 1.):
 
     '''
     This function calculates the pseudogravity anomaly transformation due to a total 
@@ -233,24 +233,24 @@ def pseudograv(x, y, data, incf, decf, incs, decs, rho = 1000., mag = 1.):
     C = G*rho*si2mGal/(cm*mag*t2nt)
     
     # Calculate the wavenumber
-    kx, ky = aux.wavenumber(x, y)
+    kx, ky = auxiliars.wavenumber(x, y)
     k = (kx**2 + ky**2)**(0.5)
     
     # Computing theta values for the source
-    thetaf = aux.theta(incf, decf, kx, ky)
-    thetas = aux.theta(incs, decs, kx, ky)
+    thetaf = auxiliars.theta(inc, dec, kx, ky)
+    thetas = auxiliars.theta(incs, decs, kx, ky)
     
     # Calculate the product
     # Here we use the numpy error statement in order to evaluate the zero division
-    with np.errstate(divide='ignore', invalid='ignore'):
+    with numpy.errstate(divide='ignore', invalid='ignore'):
         prod = 1./(thetaf*thetas*k)
     prod[0, 0] = 0.
     
     # Calculate the pseudo gravity anomaly
-    res = np.fft.fft2(data)*prod
+    res = numpy.fft.fft2(data)*prod
     
     # Converting to mGal as a product by C:
     res *= C
     
     # Return the final output
-    return np.real(np.fft.ifft2(res))
+    return numpy.real(numpy.fft.ifft2(res))
