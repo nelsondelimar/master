@@ -34,7 +34,7 @@ def continuation(x, y, data, H):
         res = data
     else:
         # Calculate the wavenumbers
-        kx, ky = auxiliars.wavenumber(x, y)
+        ky, kx = auxiliars.wavenumber(y, x)
         kcont = numpy.exp((-H) * numpy.sqrt(kx**2 + ky**2))
         result = kcont * numpy.fft.fft2(data)
         res = numpy.real(numpy.fft.ifft2(result))
@@ -88,7 +88,7 @@ def reduction(x, y, data, inc, dec, incs=None, decs=None, newinc=None, newdec=No
     # Step 1 - Calculate the wavenumbers
     # It will return the wavenumbers in x and y directions, in order to calculate the
     # values for magnetization directions in Fourier domains:
-    kx, ky = auxiliars.wavenumber(x, y)
+    ky, kx = auxiliars.wavenumber(y, x)
     
     # Step 2 - Calcuate the magnetization direction
     # It will return the magnetization directions in Fourier domain for all vector that
@@ -233,7 +233,7 @@ def pseudograv(x, y, data, inc, dec, incs, decs, rho = 1000., mag = 1.):
     C = G*rho*si2mGal/(cm*mag*t2nt)
     
     # Calculate the wavenumber
-    kx, ky = auxiliars.wavenumber(x, y)
+    ky, kx = auxiliars.wavenumber(y, x)
     k = (kx**2 + ky**2)**(0.5)
     
     # Computing theta values for the source
