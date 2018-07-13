@@ -165,3 +165,126 @@ def mat_grav_gz_xyz(xo, yo, zo, layer):
     
     # Return the final output
     return mat_gzx, mat_gzy, mat_gzz
+
+def fit_layer(datasets, datashape, layermodel, layershape, regulator, inc, dec, inclayer = None, declayer = None):
+    '''
+    It returns the predicted data by using classical equivalent layer technique. This function must receive 
+    all data as a list with all positions for x, y and z, and also the potential data. It receives the 
+    shape of the data, the model as an equivalent layer and the values of inclination and declination as 
+    well, for both field and depth sources.    
+    
+    Inputs:
+    datasets - numpy list - x, y and z positions and total field data
+    datashape - tuple - shape of the input data
+    layermodel - list - values for created equivalent layer
+    layershape - tuple - shape of the equivalent layer
+    regulator - float - zero order Tikhonov regulator
+    inc - float - inclination of the geomagnetic field
+    dec - float - declination of the geomagnetic field
+    inclayer - float - inclination of all depth sources
+    declayer - float - declination of all depth sources
+    
+    Output:
+    parameter - numpy array - parameters vector
+    predicted - numpy array - predicted total field data
+    
+    '''
+    
+    # Define the type of magnetization
+    if inclayer == None or declayer == None:
+        inclayer = inc
+        declayer = dec
+        
+    # Datasets = [xobs, yobs, zobs, totalfield]
+    xp = datasets[0]
+    yp = datasets[1]
+    zp = datasets[2]
+    tf = datasets[3]
+    
+    # Define the number of observations and depth sources
+    N = datashape[0]*datashape[1]
+    M = layershape[0]*layershape[1]
+    
+    # Computes the sensitivity matrix
+    matA = mat_mag_tfa(xp, yp, zp, layermodel, inc, dec, inclayer, declayer)
+
+    # Case1: Overdetermined - Number of observations are greater or equal than the number of depth sources
+    if N >= M: 
+        I = numpy.identity(M)
+        trace = numpy.trace(numpy.dot(matA.T, matA))/M
+        vec = numpy.linalg.solve(numpy.dot(matA.T, matA) + regulator*trace*I, numpy.dot(matA.T, tf))
+    # Case2: Underterminated - Number of observations are less than the number of depth sources
+    else:
+        I = numpy.identity(N)
+        trace = numpy.trace(numpy.dot(matA.T, matA))/N
+        aux = numpy.linalg.solve(numpy.dot(matA, matA.T) + regulator*trace*I, tf)
+        vec = numpy.dot(matA.T, aux)
+        
+    # Calculates the predicted total field anomaly data
+    predicted = numpy.dot(matA, vec)
+
+    # Return the final output
+    return vec, predicted
+
+def rtp_layer(datasets, datashape, layermodel, layershape, regulator, incf, decf, inceql = None, deceql = None):
+    '''
+    It returns the reduce to Pole data by using the equivalent layer technique. This functions 
+    must receives all data as a list with all positions for x, y and z, and also the potential 
+    data. It receives the shape of the data, the model as an equivalent layer and the values of
+    inclination and declination as well, for both field and depth sources.    
+    
+    Inputs:
+    datasets - numpy list - x, y and z positions and total field data
+    datashape - tuple - shape of the input data
+    layermodel - list - values for created equivalent layer
+    layershape - tuple - shape of the equivalent layer
+    incf - float - inclination of the geomagnetic field
+    decf - float - declination of the geomagnetic field
+    inceql - float - inclination of all depth sources
+    deceql - float - declination of all depth sources
+    
+    Output:
+    rtp - numpy array - reduce to Pole data
+    
+    '''
+    
+    # Define the type of magnetization
+    if inceql == None or deceql == None:
+        inceql = incf
+        deceql = decf
+        
+    # Datasets = [xobs, yobs, zobs, totalfield]
+    xp = datasets[0]
+    yp = datasets[1]
+    zp = datasets[2]
+    tf = datasets[3]
+    
+    # Define the number of observations and depth sources
+    N = datashape[0]*datashape[1]
+    M = layershape[0]*layershape[1]
+    
+    # Computes the sensitivity matrix
+    matA = mat_mag_tfa(xp, yp, zp, layermodel, incf, decf, inceql, deceql)
+    
+    # Case1: Overdetermined - Number of observations are greater or equal than the number of depth sources
+    if N >= M: 
+        I = numpy.identity(M)
+        trace = numpy.trace(numpy.dot(matA.T, matA))/M
+        vec = numpy.linalg.solve(numpy.dot(matA.T, matA) + regulator*trace*I, numpy.dot(matA.T, tf))
+    # Case2: Underterminated - Number of observations are less than the number of depth sources
+    else:
+        I = numpy.identity(N)
+        trace = numpy.trace(numpy.dot(matA.T, matA))/N
+        aux = numpy.linalg.solve(numpy.dot(matA, matA.T) + regulator*trace*I, tf)
+        vec = numpy.dot(matA.T, aux)
+        
+    # Calculates the predicted total field anomaly data
+    tf_pred = numpy.dot(matA, vec)
+    
+    # Create the new matrix for reduction to Pole
+    mat_rtp = mat_mag_tfa(xp, yp, zp, layermodel, 90., 0., 90., 0.)
+    # Calculates the reduction to Pole
+    rtp = numpy.dot(mat_rtp, vec)    
+    
+    # Return the final output
+    return rtp.reshape(datashape)
