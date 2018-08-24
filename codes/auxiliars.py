@@ -38,7 +38,7 @@ def rad2deg(argument):
     # Return the final output
     return angle
 
-def dircos(inc, dec, azm = None):
+def dircos(inc, dec, azm = 0.):
     '''
     This function calculates the cossines projected values on directions using inclination 
     and declination values. Here, we do not considerate an azimuth as a zero value, but as 
@@ -56,19 +56,11 @@ def dircos(inc, dec, azm = None):
     # Use the function to convert some values
     incl = deg2rad(inc)
     decl = deg2rad(dec)
-        
-    # Stablishing the input conditions
-    if azm is None:        
-        # Calculates the projected cossine values
-        A = numpy.cos(incl)*numpy.cos(decl)
-        B = numpy.cos(incl)*numpy.sin(decl)
-        C = numpy.sin(incl)
-    else:
-        azim = deg2rad(azm)
-        # Calculates the projected cossine values
-        A = numpy.cos(incl)*numpy.cos(decl - azim)
-        B = numpy.cos(incl)*numpy.sin(decl - azim)
-        C = numpy.sin(incl)
+    azim = deg2rad(azm)
+    # Calculates the projected cossine values
+    A = numpy.cos(incl)*numpy.cos(decl - azim)
+    B = numpy.cos(incl)*numpy.sin(decl - azim)
+    C = numpy.sin(incl)
     
     # Return the final output
     return A, B, C
@@ -268,3 +260,66 @@ def spherical_cartesian(longitude, latitude, level):
     
     # Returns the final output
     return x, y, z
+
+def rotation_x(angle):
+    '''
+     
+    It returns the rotation matrix given a (x, y, z) point at x direction,
+    
+    Inputs: 
+    angle - numpy float - angle of rotation
+     
+    '''
+     
+    #assert angle <= 360, 'Angulo em graus deve ser menor ou igual a 360'
+    #assert angle >= 0, 'Angulo em graus deve ser maior ou igual a 0'
+     
+    argument = (angle/180.)*np.pi
+    c = np.cos(argument)
+    s = np.sin(argument)
+  
+    return np.array([[1., 0., 0.,],[0., c, s],[0., -s, c]])
+
+def rotation_y(angle):
+    '''
+     
+    It returns the rotation matrix given a (x, y, z) point at y direction,
+    
+    Inputs: 
+    angle - numpy float - angle of rotation
+
+    Output:
+    ry - numpy array 2D - matrix of rotation at y direction
+     
+    '''
+     
+    #assert angle <= 360, 'Angulo em graus deve ser menor ou igual a 360'
+    #assert angle >= 0, 'Angulo em graus deve ser maior ou igual a 0'
+     
+    argument = (angle/180.)*np.pi
+    c = np.cos(argument)
+    s = np.sin(argument)
+     
+    return np.array([[c, 0., s,],[0., 1., 0.],[-s, 0., c]])
+
+def rotation_z(angle):
+    '''
+     
+    It returns the rotation matrix given a (x, y, z) point at z direction,
+    
+    Inputs: 
+    angle - numpy float - angle of rotation
+     
+    Output:
+    rz - numpy array 2D - matrix of rotation at z direction
+
+    '''
+     
+    #assert angle <= 360, 'Angulo em graus deve ser menor ou igual a 360'
+    #assert angle >= 0, 'Angulo em graus deve ser maior ou igual a 0'
+     
+    argument = (angle/180.)*np.pi
+    c = np.cos(argument)
+    s = np.sin(argument)
+
+    return np.array([[c, s, 0.,],[-s, c, 0.],[0., 0., 1.]])
