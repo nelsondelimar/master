@@ -274,11 +274,11 @@ def rotation_x(angle):
     #assert angle <= 360, 'Angulo em graus deve ser menor ou igual a 360'
     #assert angle >= 0, 'Angulo em graus deve ser maior ou igual a 0'
      
-    argument = (angle/180.)*np.pi
-    c = np.cos(argument)
-    s = np.sin(argument)
+    argument = (angle/180.)*numpy.pi
+    c = numpy.cos(argument)
+    s = numpy.sin(argument)
   
-    return np.array([[1., 0., 0.,],[0., c, s],[0., -s, c]])
+    return numpy.array([[1., 0., 0.,],[0., c, s],[0., -s, c]])
 
 def rotation_y(angle):
     '''
@@ -296,11 +296,11 @@ def rotation_y(angle):
     #assert angle <= 360, 'Angulo em graus deve ser menor ou igual a 360'
     #assert angle >= 0, 'Angulo em graus deve ser maior ou igual a 0'
      
-    argument = (angle/180.)*np.pi
-    c = np.cos(argument)
-    s = np.sin(argument)
+    argument = (angle/180.)*numpy.pi
+    c = numpy.cos(argument)
+    s = numpy.sin(argument)
      
-    return np.array([[c, 0., s,],[0., 1., 0.],[-s, 0., c]])
+    return numpy.array([[c, 0., s,],[0., 1., 0.],[-s, 0., c]])
 
 def rotation_z(angle):
     '''
@@ -318,8 +318,52 @@ def rotation_z(angle):
     #assert angle <= 360, 'Angulo em graus deve ser menor ou igual a 360'
     #assert angle >= 0, 'Angulo em graus deve ser maior ou igual a 0'
      
-    argument = (angle/180.)*np.pi
-    c = np.cos(argument)
-    s = np.sin(argument)
+    argument = (angle/180.)*numpy.pi
+    c = numpy.cos(argument)
+    s = numpy.sin(argument)
 
-    return np.array([[c, s, 0.,],[-s, c, 0.],[0., 0., 1.]])
+    return numpy.array([[c, s, 0.,],[-s, c, 0.],[0., 0., 1.]])
+
+def rotate3D_xyz(x, y, z, angle, direction = 'z'):
+    '''
+    
+    It returns the rotated plane x-y along z-axis by default.
+    If angle is positive, the rotation in counterclockwise direction; 
+    otherwise is clockwise direction.
+    
+    Inputs:
+    x, y, z - numpy arrays - coordinate points
+    angle - float - angle of rotation
+    direction - string - direction
+    
+    Outputs:
+    xr, yr, zr - numpy arrays - new rotated coordinate points
+    '''
+    
+    # Size condition
+    #if x.shape != y.shape:
+    #    raise ValueError("All inputs must have same shape!")
+    # Matrix rotation in x-y-or-z direction
+    if direction == 'x':
+        rot = rotation_x(angle)
+    if direction == 'y':
+        rot = rotation_y(angle)
+    if direction == 'z':
+        rot = rotation_z(angle)
+        
+    # Create the matrix
+    mat = numpy.vstack([x, y, z]).T
+    # Create the zero matrix
+    res = numpy.zeros_like(mat)
+    
+    # Calculate the rotated coordinates
+    for k, i in enumerate(mat):
+        res[k,:] = numpy.dot(rot, i)
+    
+    # New coordinates
+    xr = res[:,0]
+    yr = res[:,1]
+    zr = res[:,2]
+    
+    # Return the final output
+    return xr, yr, zr
