@@ -50,6 +50,39 @@ def regular_grid(area, shape, level = None):
         # If zp is not given, returns xp and yp only
         return xp.reshape(nx*ny), yp.reshape(nx*ny)
 
+def irregular_grid(area, n, z = None, seed = None):
+    '''
+    This function creates a rregular grid, once the area, the shape and the level are given as input. 
+    It also asserts that area must have four elements and the final values must greater than initial values. The
+    level indicates the value over the grid, which is converted for an array with same shape of x and y.
+    
+    Inputs:
+    area - numpy list - initial and final values
+    n - integer - number of points
+    level - float - level of observation (positive downward)
+    
+    Outputs:
+    xp, yp - numpy 2D array - grid of points
+    zp - numpy 2D array - gird at observation level
+    '''
+
+    xi, xf, yi, yf = area
+    
+    # Condition
+    if xi > xf or yi > yf:
+        raise ValueError('Final values must be greater than initial values!')
+
+    # Including the seed
+    np.random.seed(seed)
+    
+    # Define the arrays
+    xarray = numpy.random.uniform(x1, x2, n)
+    yarray = numpy.random.uniform(y1, y2, n)
+    # If Z is not give:
+    if z is not None:
+        zarray = z*nump.ones(n)
+    return xarray, yarray, zarray
+    
 def padzeros(vector, width, ax, kwargs):
     '''
     This function pads an array with zeros. It should be used while converting or expanding a 
@@ -140,3 +173,58 @@ def gridding(x, y, values, datashape):
     
     # Return the final output
     return xp, yp, grid
+
+def load_surfer(fname):
+    """
+    Read a Surfer grid file and return three 1d numpy arrays and the grid shape
+
+    Surfer is a contouring, gridding and surface mapping software
+    from GoldenSoftware. The names and logos for Surfer and Golden
+    Software are registered trademarks of Golden Software, Inc.
+
+    http://www.goldensoftware.com/products/surfer
+
+    Parameters:
+
+    * fname : str
+        Name of the Surfer grid file
+    * fmt : str
+        File type, can be 'ascii' or 'binary'
+
+    Returns:
+
+    * x : 1d-array
+        Value of the North-South coordinate of each grid point.
+    * y : 1d-array
+        Value of the East-West coordinate of each grid point.
+    * data : 1d-array
+        Values of the field in each grid point. Field can be for example
+        topography, gravity anomaly etc
+    * shape : tuple = (nx, ny)
+        The number of points in the x and y grid dimensions, respectively
+
+    """
+    with open(fname) as ftext:
+        # DSAA is a Surfer ASCII GRD ID
+        id = ftext.readline()
+        # Read the number of columns (ny) and rows (nx)
+        ny, nx = [int(s) for s in ftext.readline().split()]
+        shape = (nx, ny)
+        # Read the min/max value of columns/longitude (y direction)
+        ymin, ymax = [float(s) for s in ftext.readline().split()]
+        # Read the min/max value of rows/latitude (x direction)
+        xmin, xmax = [float(s) for s in ftext.readline().split()]
+        area = (xmin, xmax, ymin, ymax)
+        # Read the min/max value of grid values
+        datamin, datamax = [float(s) for s in ftext.readline().split()]
+        data = numpy.fromiter((float(i) for line in ftext for i in
+                               line.split()), dtype='f')
+        data = numpy.ma.masked_greater_equal(data, 1.70141e+38)
+        assert numpy.allclose(datamin, data.min()) \
+        and numpy.allclose(datamax, data.max()), \
+        "Min and max values of grid don't match ones read from file." \
+        + "Read: ({}, {})  Actual: ({}, {})".format(
+            datamin, datamax, data.min(), data.max())
+        # Create x and y coordinate numpy arrays
+        x, y = regular_grid(area, shape)
+    return x, y, data, shape

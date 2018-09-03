@@ -162,6 +162,9 @@ def residual(observed, predicted):
     std - float - calculated tandard deviation
     '''
     
+    if observed.shape != predicted.shape:
+        raise ValueError("All inputs must have same shape!") 
+    
     # Calculates the residual
     res = observed - predicted
     
