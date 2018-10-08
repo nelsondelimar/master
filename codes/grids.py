@@ -6,7 +6,6 @@
 # -----------------------------------------------------------------------------------
 
 import numpy
-import scipy
 import warnings
 from scipy.interpolate import griddata
 
@@ -83,6 +82,39 @@ def irregular_grid(area, n, z = None, seed = None):
     if z is not None:
         zarray = z*nump.ones(n)
     return xarray, yarray, zarray
+
+def profile(x, y, data, p1, p2, size):
+    ''' It draws a interpolated profile between two data points. It recieves the original 
+    observation points and data, and returns the profile.
+    
+    Inputs:
+    x, y - numpy array - observation points
+    data - numpy array - observed data
+    p1 - list - initial profile point (x,y)
+    p2 - list - final profile point (x,y)
+    size - scalar - number of points along profile
+    
+    Output:
+    profile - numpy array - interpolated profile
+    '''
+    
+    # Defines points coordinates
+    x1, y1 = p1
+    x2, y2 = p2
+    
+    # Calculate the distances
+    maxdist = numpy.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2)
+    distances = numpy.linspace(0, maxdist, size)
+    
+    # Angle of profile line
+    angle = numpy.arctan2(y2 - y1, x2 - x1)
+    xp = x1 + distances * numpy.cos(angle)
+    yp = y1 + distances * numpy.sin(angle)    
+    
+    # Calculates the interpolated profile    
+    profile = griddata((x, y), data, (xp, yp), method = 'cubic')
+    # Return the final output
+    return xp, yp, profile
     
 def padzeros(vector, width, ax, kwargs):
     '''
@@ -136,17 +168,26 @@ def gridding(x, y, values, datashape):
     area = [x.min(), x.max(), y.min(), y.max()]
     # Initial and final values for x and y
     xi, xf, yi, yf = area
+    # Number of points in x and y directions
+    nx, ny = datashape
+    
+    # Creating the vectors for x and y
+    xn = numpy.linspace(xi, xf, nx)
+    yn = numpy.linspace(yi, yf, ny)
     # Creating the grid
-    xp, yp = regular_grid(area, datashape)[::-1]
+    xp, yp = numpy.meshgrid(xn, yn)[::-1]
     # Eliminatign the values on the edges
     xp = xp.ravel()
     yp = yp.ravel()
+
     # Allowing the extrapolate of the data
     # Setting the algorithm
     extrapolate = True
     algorithm = 'cubic' 
+    
     # Calling the Scipy function
-    grid = scipy.interpolate.griddata((x, y), values, (xp, yp), method = 'cubic').ravel()
+    grid = scipy.interpolate.griddata((x, y), zvalues, (xp, yp), method = 'cubic').ravel()
+
     # Allowing the extrapolate and also the nearest gridding
     if extrapolate and algorithm != 'nearest' and numpy.any(numpy.isnan(grid)):
         if numpy.ma.is_masked(grid):
@@ -157,42 +198,45 @@ def gridding(x, y, values, datashape):
             grid[nans] = scipy.interpolate.griddata((x[notnans], y[notnans]), grid[notnans],
                                          (x[nans], y[nans]),
                                          method='nearest').ravel()
+    
     # Setting the values for x, y and z as the same shape
     xp = xp.reshape(shape)
     yp = yp.reshape(shape)
-    data = grid.reshape(shape)
-    # Return the final output
-    return xp, yp, data
-
-def circle_points(area, n, z=None, random=False, seed=None):
-
-    x1, x2, y1, y2 = area
-    radius = 0.5 * min(x2 - x1, y2 - y1)
-    if random:
-        numpy.random.seed(seed)
-        angles = numpy.random.uniform(0, 2 * math.pi, n)
-        numpy.random.seed()
-    else:
-        da = 2. * math.pi / float(n)
-        angles = numpy.arange(0., 2. * math.pi, da)
-    xs = 0.5 * (x1 + x2) + radius * numpy.cos(angles)
-    ys = 0.5 * (y1 + y2) + radius * numpy.sin(angles)
-    # Calculate z
-    if z is not None:
-        zs = z*numpy.ones(n)
-    return xy, ys, zs
-
-def cut_grid(x, y, scalars, area):
-    xmin, xmax, ymin, ymax = area
-    if len(x) != len(y):
-        raise ValueError("x and y must have the same length")
-    inside = [i for i in xrange(len(x))
-              if x[i] >= xmin and x[i] <= xmax
-              and y[i] >= ymin and y[i] <= ymax]
-    return [x[inside], y[inside], [s[inside] for s in scalars]]
-
-def loadGRD_surfer(fname):
+    grid = grid.reshape(shape)
     
+    # Return the final output
+    return xp, yp, grid
+
+def load_surfer(fname):
+    """
+    Read a Surfer grid file and return three 1d numpy arrays and the grid shape
+
+    Surfer is a contouring, gridding and surface mapping software
+    from GoldenSoftware. The names and logos for Surfer and Golden
+    Software are registered trademarks of Golden Software, Inc.
+
+    http://www.goldensoftware.com/products/surfer
+
+    Parameters:
+
+    * fname : str
+        Name of the Surfer grid file
+    * fmt : str
+        File type, can be 'ascii' or 'binary'
+
+    Returns:
+
+    * x : 1d-array
+        Value of the North-South coordinate of each grid point.
+    * y : 1d-array
+        Value of the East-West coordinate of each grid point.
+    * data : 1d-array
+        Values of the field in each grid point. Field can be for example
+        topography, gravity anomaly etc
+    * shape : tuple = (nx, ny)
+        The number of points in the x and y grid dimensions, respectively
+
+    """
     with open(fname) as ftext:
         # DSAA is a Surfer ASCII GRD ID
         id = ftext.readline()
@@ -216,4 +260,4 @@ def loadGRD_surfer(fname):
             datamin, datamax, data.min(), data.max())
         # Create x and y coordinate numpy arrays
         x, y = regular_grid(area, shape)
-    return x.reshape(shape), y.reshape(shape), data.reshape(shape)
+    return x, y, data, shape
