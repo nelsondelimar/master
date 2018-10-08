@@ -209,7 +209,7 @@ def test_mycorrelation_equals_to_1():
     data = numpy.random.normal(loc = 50., scale = 2., size = 100)
     
     mycoeff = cccoef(data, data)
-    assert_almost_equal(mycoeff, 1., decimal = 3)
+    assert_almost_equal(mycoeff, 1., decimal = 5)
 
 def test_mycorrelation_vs_scipy():
     '''
