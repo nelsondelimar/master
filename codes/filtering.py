@@ -9,7 +9,6 @@ import auxiliars
 import derivative
 
 def continuation(x, y, data, H):
-    
     '''
     This function compute the upward or downward continuation for a potential field 
     data, which can be gravity or magnetic signal. The value for H represents the 
@@ -43,7 +42,6 @@ def continuation(x, y, data, H):
     return res
 
 def reduction(x, y, data, inc, dec, incs=None, decs=None, newinc=None, newdec=None, newincs=None, newdecs=None):
-    
     '''
     Return the reduced potential data giving the new directions for the geomagnetic
     field and source magnetization. Its based on Blakely (1996).
@@ -112,7 +110,6 @@ def reduction(x, y, data, inc, dec, incs=None, decs=None, newinc=None, newdec=No
     return numpy.real(numpy.fft.ifft2(res))
 
 def tilt(x, y, data):
-    
     '''
     Return the tilt angle for a potential data on a regular grid.
 
@@ -140,7 +137,6 @@ def tilt(x, y, data):
     return tilt
 
 def hyperbolictilt(x, y, data):
-    
     '''
     Return the hyperbolic tilt angle for a potential data.
     
@@ -168,7 +164,6 @@ def hyperbolictilt(x, y, data):
     return numpy.real(hyptilt)
 
 def thetamap(x, y, data):
-
     '''
     Return the theta map transformed data.
     
@@ -193,7 +188,6 @@ def thetamap(x, y, data):
     return numpy.arccos(hgrad/tgrad)
 
 def pseudograv(x, y, data, inc, dec, incs, decs, rho = 1000., mag = 1.):
-
     '''
     This function calculates the pseudogravity anomaly transformation due to a total 
     field anomaly grid. It recquires the X and Y coordinates (respectively North and 
@@ -254,3 +248,35 @@ def pseudograv(x, y, data, inc, dec, incs, decs, rho = 1000., mag = 1.):
     
     # Return the final output
     return numpy.real(numpy.fft.ifft2(res))
+
+def simple_polynomial(x, y, data):
+    '''
+    It calculates the regional and residual signal by applying a second-order 
+    degree polynomial in order to fit the observed data.
+    
+    Inputs: 
+    xo, yo - numpy array - observation points
+    data - numpy array - gravity or magnetic data
+    
+    Outputs:
+    pcoef - list - values of all coefficients
+    reg - numpy array - regional signal
+    res - numpy array - residual signal
+    '''
+    
+    # Conditions:
+    if x.shape != y.shape != data.shape:
+        raise ValueError('Observation points must have same shape!')
+        
+    # Calculate the Jacobian matrix
+    mat = numpy.vstack((numpy.ones_like(x), x, y)).T
+    # Calculate the polynomial coefficients
+    poly = numpy.linalg.solve(numpy.dot(mat.T, mat), 
+                              numpy.dot(mat.T, data))
+    # Calculate the regional signal
+    reg = numpy.dot(mat, poly)
+    # Calculate the residual signal
+    res = data - reg
+    
+    # Return the final output
+    return reg, res
