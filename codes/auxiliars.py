@@ -9,7 +9,7 @@ import warnings
 
 def deg2rad(angle):
     '''
-    This function converts an angle value in degrees to an another value in radian.     
+    It converts an angle value in degrees to radian.     
     
     Input:
     angle - float - number or list of angle in degrees    
@@ -93,7 +93,7 @@ def regional(intensity, incf, decf):
     # Set F as array and return the output
     return Fx, Fy, Fz
 
-def addnoise(data, v0, std):
+def noise_normal_dist(data, v0, std):
     '''
     This function adds noise along the input data using a normal Gaussian distribution for each 
     point along the data set.
@@ -118,9 +118,37 @@ def addnoise(data, v0, std):
     
     # Verify if data is a 1D or 2D array
     if data.shape[0] == size or data.shape[1] == size:
-        noise = numpy.random.normal(loc = v0, scale = std, size = size)
+        noise = numpy.random.normal(v0, std, size)
     else:
-        noise = numpy.random.normal(loc = v0, scale = std, size = shape)
+        noise = numpy.random.normal(v0, std, shape)
+        
+    # Return the final output
+    return data + noise
+
+def noise_uniform_dist(data, vmin, vmax):
+    '''
+    This function adds noise along the input data using a uniform distribution for each point 
+    along the data set. 
+    '''
+    
+    assert numpy.min(data) <= numpy.mean(data), 'Mean must be greater than minimum'
+    assert numpy.max(data) >= numpy.mean(data), 'Maximum must be greater than mean'
+    
+    # Define the values for size and shape of the data
+    size = data.size
+    shape = data.shape
+    
+    # Creat the zero vector such as data
+    noise = numpy.zeros_like(data)
+    
+    # Calculate the local number
+    #local = np.abs((data.max() - data.min())*(1e-2))
+    
+    # Verify if data is a 1D or 2D array
+    if data.shape[0] == size or data.shape[1] == size:
+        noise = numpy.random.uniform(vmin, vmax, size = size)
+    else:
+        noise = numpy.random.uniform(vmin, vmax, size = shape)
         
     # Return the final output
     return data + noise
@@ -167,21 +195,17 @@ def residual(observed, predicted):
     
     # Calculates the residual
     res = observed - predicted
-    
     # Calculates the mean value of the residual
     mean = numpy.mean(res)
-    
     # Calculates the standard deviation of the residual
     std = numpy.std(res)
-    
     # Calculates the array of norms
     norm = (res - mean)/(std)
     
     # Returns the output final
     return res, norm, mean, std
 
-def theta(inc, dec, u, v):
-    
+def theta(inc, dec, u, v):    
     '''
     Return the operators for magnetization and field directions.
     
@@ -265,13 +289,11 @@ def spherical_cartesian(longitude, latitude, level):
     return x, y, z
 
 def rotation_x(angle):
-    '''
-     
+    '''    
     It returns the rotation matrix given a (x, y, z) point at x direction,
     
     Inputs: 
-    angle - numpy float - angle of rotation
-     
+    angle - numpy float - angle of rotation     
     '''
      
     #assert angle <= 360, 'Angulo em graus deve ser menor ou igual a 360'
@@ -284,16 +306,14 @@ def rotation_x(angle):
     return numpy.array([[1., 0., 0.,],[0., c, s],[0., -s, c]])
 
 def rotation_y(angle):
-    '''
-     
+    '''     
     It returns the rotation matrix given a (x, y, z) point at y direction,
     
     Inputs: 
     angle - numpy float - angle of rotation
 
     Output:
-    ry - numpy array 2D - matrix of rotation at y direction
-     
+    ry - numpy array 2D - matrix of rotation at y direction    
     '''
      
     #assert angle <= 360, 'Angulo em graus deve ser menor ou igual a 360'
@@ -306,8 +326,7 @@ def rotation_y(angle):
     return numpy.array([[c, 0., s,],[0., 1., 0.],[-s, 0., c]])
 
 def rotation_z(angle):
-    '''
-     
+    '''    
     It returns the rotation matrix given a (x, y, z) point at z direction,
     
     Inputs: 
@@ -315,7 +334,6 @@ def rotation_z(angle):
      
     Output:
     rz - numpy array 2D - matrix of rotation at z direction
-
     '''
      
     #assert angle <= 360, 'Angulo em graus deve ser menor ou igual a 360'
@@ -328,8 +346,7 @@ def rotation_z(angle):
     return numpy.array([[c, s, 0.,],[-s, c, 0.],[0., 0., 1.]])
 
 def rotate3D_xyz(x, y, z, angle, direction = 'z'):
-    '''
-    
+    '''   
     It returns the rotated plane x-y along z-axis by default.
     If angle is positive, the rotation in counterclockwise direction; 
     otherwise is clockwise direction.
