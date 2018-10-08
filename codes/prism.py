@@ -227,7 +227,51 @@ def prism_gz(x, y, z, prism, rho):
     # Return the final output
     return gz
 
-def prism3D(x, y, z, xprism, yprism, top, bottom, deltax, deltay, density):
+def prism3D_potential(x, y, z, xprism, yprism, top, bottom, deltax, deltay, density):
+    '''
+    It calculates the gravitational potential due to a set of prisms. Xp and Yp represent 
+    the horizontal positions of all prisms; Zt and Zb repesent the depth of top 
+    and bottom of each prism. Dx and Dy are the horizontal dimensions. All space 
+    coordinates are in meteres. Rho indicates the density in g/cm^3.
+    
+    Inputs:
+    x, y, z - numpy array - coordinates and level of each observation
+    xp, yp - numpy array - horizontal coordinates of each prism
+    zt, zb - numpy array - depth of top and bottom of each prism
+    dx, dy - float - horizontal dimension of each prism
+    rho - numpy array - values of density
+    
+    Output:
+    pot - numpy array - gravity signal of all prisms
+    '''
+    
+    # Assert all conditions for observation points
+    if x.shape != y.shape:
+        raise ValueError("All observations inputs must have same shape!")
+    # Assert all conditions for each prism in horizontal and vertical positions
+    if xprism.shape != yprism.shape:
+        raise ValueError("All prisms horizontal inputs must have same shape!")
+    if top.shape != bottom.shape:
+        raise ValueError("All prisms vertical inputs must have same shape!")
+        
+    # Create the zero array
+    pot = numpy.zeros_like(x)
+    
+    # Condition for density
+    if density.shape == xprism.shape:
+        for k in range(xprism.size):
+            pot += potential(x, y, z, (xprism[k] - deltax/2., xprism[k] + deltax/2., 
+                                       yprism[k] - deltay/2., yprism[k] + deltay/2., 
+                                       top[k], bottom[k]), density[k])
+    else:
+        for k in range(xprism.size):
+            pot += prism_potential(x, y, z, (xprism[k] - deltax/2., xprism[k] + deltax/2., 
+                                             yprism[k] - deltay/2., yprism[k] + deltay/2., 
+                                             top[k], bottom[k]), density)
+    # Return the final output
+    return pot
+
+def prism3D_gx(x, y, z, xprism, yprism, top, bottom, deltax, deltay, density):
     '''
     It calculates the gravity signal due to a set of prisms. Xp and Yp represent 
     the horizontal positions of all prisms; Zt and Zb repesent the depth of top 
@@ -242,7 +286,96 @@ def prism3D(x, y, z, xprism, yprism, top, bottom, deltax, deltay, density):
     rho - numpy array - values of density
     
     Output:
-    gz - numpy array - gravity signal of all prisms
+    gx - numpy array - gravity signal of all prisms in x direction
+    '''
+    
+    # Assert all conditions for observation points
+    if x.shape != y.shape:
+        raise ValueError("All observations inputs must have same shape!")
+    # Assert all conditions for each prism in horizontal and vertical positions
+    if xprism.shape != yprism.shape:
+        raise ValueError("All prisms horizontal inputs must have same shape!")
+    if top.shape != bottom.shape:
+        raise ValueError("All prisms vertical inputs must have same shape!")
+        
+    # Create the zero array
+    gx = numpy.zeros_like(x)
+    
+    # Condition for density
+    if density.shape == xprism.shape:
+        for k in range(xprism.size):
+            gx += prism_gx(x, y, z, (xprism[k] - deltax/2., xprism[k] + deltax/2., 
+                                     yprism[k] - deltay/2., yprism[k] + deltay/2., 
+                                     top[k], bottom[k]), density[k])
+    else:
+        for k in range(xprism.size):
+            gx += prism_gx(x, y, z, (xprism[k] - deltax/2., xprism[k] + deltax/2., 
+                                     yprism[k] - deltay/2., yprism[k] + deltay/2., 
+                                     top[k], bottom[k]), density)
+            
+    # Return the final output
+    return gx
+
+def prism3D_gy(x, y, z, xprism, yprism, top, bottom, deltax, deltay, density):
+    '''
+    It calculates the gravity signal due to a set of prisms. Xp and Yp represent 
+    the horizontal positions of all prisms; Zt and Zb repesent the depth of top 
+    and bottom of each prism. Dx and Dy are the horizontal dimensions. All space 
+    coordinates are in meteres. Rho indicates the density in g/cm^3.
+    
+    Inputs:
+    x, y, z - numpy array - coordinates and level of each observation
+    xp, yp - numpy array - horizontal coordinates of each prism
+    zt, zb - numpy array - depth of top and bottom of each prism
+    dx, dy - float - horizontal dimension of each prism
+    rho - numpy array - values of density
+    
+    Output:
+    gy - numpy array - gravity signal of all prisms in y direction
+    '''
+    
+    # Assert all conditions for observation points
+    if x.shape != y.shape:
+        raise ValueError("All observations inputs must have same shape!")
+    # Assert all conditions for each prism in horizontal and vertical positions
+    if xprism.shape != yprism.shape:
+        raise ValueError("All prisms horizontal inputs must have same shape!")
+    if top.shape != bottom.shape:
+        raise ValueError("All prisms vertical inputs must have same shape!")
+        
+    # Create the zero array
+    gy = numpy.zeros_like(x)
+    
+    # Condition for density
+    if density.shape == xprism.shape:
+        for k in range(xprism.size):
+            gy += prism_gy(x, y, z, (xprism[k] - deltax/2., xprism[k] + deltax/2., 
+                                     yprism[k] - deltay/2., yprism[k] + deltay/2., 
+                                     top[k], bottom[k]), density[k])
+    else:
+        for k in range(xprism.size):
+            gy += prism_gy(x, y, z, (xprism[k] - deltax/2., xprism[k] + deltax/2., 
+                                     yprism[k] - deltay/2., yprism[k] + deltay/2., 
+                                     top[k], bottom[k]), density)
+    # Return the final output
+    return gz
+
+def prism3D_gz(x, y, z, xprism, yprism, top, bottom, deltax, deltay, density):
+    '''
+    It calculates the gravity signal due to a set of prisms. Xp and Yp represent 
+    the horizontal positions of all prisms; Zt and Zb repesent the depth of top 
+    and bottom of each prism. Dx and Dy are the horizontal dimensions. All space 
+    coordinates are in meteres. Rho indicates the density in g/cm^3.
+    
+    Inputs:
+    x, y, z - numpy array - coordinates and level of each observation
+    xp, yp - numpy array - horizontal coordinates of each prism
+    zt, zb - numpy array - depth of top and bottom of each prism
+    dx, dy - float - horizontal dimension of each prism
+    rho - numpy array - values of density
+    
+    Output:
+    gz - numpy array - gravity signal of all prisms in z direction
     '''
     
     # Assert all conditions for observation points
