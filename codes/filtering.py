@@ -4,6 +4,7 @@
 # Import Python libraries
 from __future__ import division
 import warnings
+import time
 import numpy
 import auxiliars
 import derivative
@@ -41,7 +42,8 @@ def continuation(x, y, data, H):
     # Return the final output
     return res
 
-def reduction(x, y, data, inc, dec, incs=None, decs=None, newinc=None, newdec=None, newincs=None, newdecs=None):
+def reduction(x, y, data, inc, dec, incs=None, decs=None, newinc=None, newdec=None, 
+              newincs=None, newdecs=None):
     '''
     Return the reduced potential data giving the new directions for the geomagnetic
     field and source magnetization. Its based on Blakely (1996).
@@ -280,3 +282,73 @@ def simple_polynomial(x, y, data):
     
     # Return the final output
     return reg, res
+
+def robust_polynomial(x, y, data, degree, iterations):
+    '''
+    It calculates the robust polynomial fitting on regional-residual separation 
+    for gravity or magnetic data. It receives the observation points, the data
+    and the polynomial degree as well as the number of iterations.
+    
+    Input:
+    x, y - numpy array - observation points
+    data - numpy array - gravity or magnetic data
+    degree - scalar - degree of polynomial
+    iterations - scalar - number of iterations
+    
+    Output:
+    reg - numpy array - regional signal
+    res - numpy array - residual signal
+    '''
+    
+    # Computing the time
+    timei = time.time()
+    
+    # Jacobian matrix must be calculated with same rows of observed data and
+    # columns equal to (2*N + 1)
+    cols = (2*degree) + 1
+    
+    # Create the Jacobian matrix A
+    mat = numpy.zeros((x.size, cols))
+    for k in range(cols):
+        if k % 2 == 0:
+            e = (k/2)
+            mat[:,k] = y**e
+        else:
+            e = (k + 1)/2
+            mat[:,k] = x**e
+    
+    # Solving the linear system in order to calculate the simple fitting
+    # data by least squares method
+    poly_simple = numpy.linalg.solve(numpy.dot(mat.T, mat), 
+                                     numpy.dot(mat.T, data))
+    # Calculate the regional and residual by least square
+    reg_simple = numpy.dot(mat, poly_simple)
+    
+    # Initiate the robust polynomial fitting
+    # Copy the last result as input
+    poly_rob = poly_simple.copy()
+    reg_rob = reg_simple.copy()
+    
+    # Robust polynomial fitting in n iterations
+    for i in range(iterations):
+        # Calculate the first residual to minimize the difference
+        r = data - reg_rob
+        s = numpy.median(r)
+        #W = numpy.diag(numpy.exp(-((0.6745*r/s)**2.)))
+        # Calculate the weight matrix and solve linear system for each iteration
+        W = numpy.diag(1./numpy.abs(r + 1.e-5))
+        W = numpy.dot(mat.T, W)
+        # New robust coefficients 
+        poly_rob = numpy.linalg.solve(numpy.dot(W, mat), 
+                                    numpy.dot(W, data))
+        # Calculate the regional by robust fittin
+        reg_rob = numpy.dot(mat, poly_rob)
+    
+    # Calcualte the residual by robust fitting
+    res_rob = data - reg_rob
+    
+    # Final time
+    timef = time.time()
+    print 'Computation time (seconds):', numpy.around((timef - timei), decimals = 3)
+    # Return the final output
+    return reg_rob, res_rob
