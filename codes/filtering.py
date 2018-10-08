@@ -349,6 +349,6 @@ def robust_polynomial(x, y, data, degree, iterations):
     
     # Final time
     timef = time.time()
-    print 'Computation time (seconds):', numpy.around((timef - timei), decimals = 3)
+    print 'Time of process (second):', numpy.around((timef - timei), decimals = 3)
     # Return the final output
     return reg_rob, res_rob
