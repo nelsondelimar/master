@@ -10,7 +10,7 @@ import numpy as np
 # Import my libraries
 import auxiliars as aux
 
-def sphere_bx(x, y, z, sphere, incs, decs):
+def sphere_bx(x, y, z, sphere, mag, incs, decs):
 
     '''    
     It is a Python implementation for a Fortran subroutine contained in Blakely (1995). 
@@ -46,7 +46,6 @@ def sphere_bx(x, y, z, sphere, incs, decs):
     #Setting some constants
     xe, ye, ze = sphere[0], sphere[1], sphere[2]
     radius = sphere[3]
-    mag = sphere[4]
     
     # Distances in all axis directions - x, y e z
     rx = x - xe
@@ -72,7 +71,7 @@ def sphere_bx(x, y, z, sphere, incs, decs):
     # Return the final output
     return bx
 
-def sphere_by(x, y, z, sphere, incs, decs):
+def sphere_by(x, y, z, sphere, mag, incs, decs):
 
     '''    
     It is a Python implementation for a Fortran subroutine contained in Blakely (1995). It 
@@ -108,7 +107,6 @@ def sphere_by(x, y, z, sphere, incs, decs):
     #Setting some constants
     xe, ye, ze = sphere[0], sphere[1], sphere[2]
     radius = sphere[3]
-    mag = sphere[4]
     
     # Distances in all axis directions - x, y e z
     rx = x - xe
@@ -134,7 +132,7 @@ def sphere_by(x, y, z, sphere, incs, decs):
     # Return the final output
     return by
 
-def sphere_bz(x, y, z, sphere, incs, decs):
+def sphere_bz(x, y, z, sphere, mag, incs, decs):
 
     '''    
     It is a Python implementation for a Fortran subroutine contained in Blakely (1995). It 
@@ -170,7 +168,6 @@ def sphere_bz(x, y, z, sphere, incs, decs):
     #Setting some constants
     xe, ye, ze = sphere[0], sphere[1], sphere[2]
     radius = sphere[3]
-    mag = sphere[4]
     
     # Distances in all axis directions - x, y e z
     rx = x - xe
@@ -196,7 +193,7 @@ def sphere_bz(x, y, z, sphere, incs, decs):
     # Return the final output
     return bz
 
-def sphere_tf(x, y, z, sphere, F, incf, decf, incs = None, decs = None):
+def sphere_tf(x, y, z, sphere, mag, F, incf, decf, incs = None, decs = None):
     
     '''    
     This function computes the total field anomaly produced due to a solid sphere, which has 
@@ -233,9 +230,9 @@ def sphere_tf(x, y, z, sphere, F, incf, decf, incs = None, decs = None):
         decs = decf
     
     # Computing the components and the regional field
-    bx = sphere_bx(x, y, z, sphere, incs, decs) + Fx
-    by = sphere_by(x, y, z, sphere, incs, decs) + Fy
-    bz = sphere_bz(x, y, z, sphere, incs, decs) + Fz
+    bx = sphere_bx(x, y, z, sphere, mag, incs, decs) + Fx
+    by = sphere_by(x, y, z, sphere, mag, incs, decs) + Fy
+    bz = sphere_bz(x, y, z, sphere, mag, incs, decs) + Fz
     
     # Final value for the total field anomaly
     tf = np.sqrt(bx**2 + by**2 + bz**2) - F
@@ -243,7 +240,7 @@ def sphere_tf(x, y, z, sphere, F, incf, decf, incs = None, decs = None):
     # Return the final output
     return tf
 
-def sphere_tfa(x, y, z, sphere, incf, decf, incs = None, decs = None):
+def sphere_tfa(x, y, z, sphere, mag, incf, decf, incs = None, decs = None):
 
     '''    
     This function computes the total field anomaly produced due to a solid sphere, which has 
@@ -281,9 +278,9 @@ def sphere_tfa(x, y, z, sphere, incf, decf, incs = None, decs = None):
         decs = decf
     
     # Computing the components and the regional field
-    bx = sphere_bx(x, y, z, sphere, incs, decs)
-    by = sphere_by(x, y, z, sphere, incs, decs)
-    bz = sphere_bz(x, y, z, sphere, incs, decs)
+    bx = sphere_bx(x, y, z, sphere, mag, incs, decs)
+    by = sphere_by(x, y, z, sphere, mag, incs, decs)
+    bz = sphere_bz(x, y, z, sphere, mag, incs, decs)
     
     # Final value for the total field anomaly
     tf_aprox = fx*bx + fy*by + fz*bz
@@ -291,7 +288,7 @@ def sphere_tfa(x, y, z, sphere, incf, decf, incs = None, decs = None):
     # Return the final output
     return tf_aprox
 
-def sphere_gz(x, y, z, sphere):
+def sphere_gz(x, y, z, sphere, rho):
     '''    
     This function calculates the gravity contribution due to a solid sphere. This is a Python 
     implementation for the subroutine presented in Blakely (1995). On this function, there are 
@@ -320,7 +317,6 @@ def sphere_gz(x, y, z, sphere):
     dy = sphere[1] - y
     dz = sphere[2] - z
     radius = sphere[3]
-    rho = sphere[4]
     
     # Definition for some constants
     G = 6.673e-11

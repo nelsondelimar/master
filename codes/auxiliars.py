@@ -387,23 +387,3 @@ def rotate3D_xyz(x, y, z, angle, direction = 'z'):
     
     # Return the final output
     return xr, yr, zr
-
-def is_even(number):
-    '''
-    It defines if a number is Even or Odd!
-    
-    Input: 
-    number - float
-    
-    Output:
-    res - string - even or odd
-    '''
-    
-    # Condition
-    if number % 2 == 0:
-        res = 'Even'
-    else:
-        res = 'Odd'
-    
-    # Return the final output
-    return res

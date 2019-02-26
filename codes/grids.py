@@ -73,14 +73,14 @@ def irregular_grid(area, n, z = None, seed = None):
         raise ValueError('Final values must be greater than initial values!')
 
     # Including the seed
-    np.random.seed(seed)
+    numpy.random.seed(seed)
     
     # Define the arrays
-    xarray = numpy.random.uniform(x1, x2, n)
-    yarray = numpy.random.uniform(y1, y2, n)
+    xarray = numpy.random.uniform(xi, xf, n)
+    yarray = numpy.random.uniform(yi, yf, n)
     # If Z is not give:
     if z is not None:
-        zarray = z*nump.ones(n)
+        zarray = z*numpy.ones(n)
     return xarray, yarray, zarray
 
 def profile(x, y, data, p1, p2, size):

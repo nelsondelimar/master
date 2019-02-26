@@ -287,4 +287,4 @@ def rtp_layer(datasets, datashape, layermodel, layershape, regulator, incf, decf
     rtp = numpy.dot(mat_rtp, vec)    
     
     # Return the final output
-    return rtp.reshape(datashape)
+    return rtp
