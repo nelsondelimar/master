@@ -388,7 +388,7 @@ def rotate3D_xyz(x, y, z, angle, direction = 'z'):
     # Return the final output
     return xr, yr, zr
 
-def mydot(a, b):
+def my_dot(a, b):
     '''
     This function calculates the true dot product between two vectors.
     
