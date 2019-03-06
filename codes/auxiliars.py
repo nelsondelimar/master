@@ -387,3 +387,19 @@ def rotate3D_xyz(x, y, z, angle, direction = 'z'):
     
     # Return the final output
     return xr, yr, zr
+
+def mydot(a, b):
+    '''
+    This function calculates the true dot product between two vectors.
+    
+    Inputs:
+    a, b - numpy 1D array - N-dimensional vectors
+    
+    Output:
+    c - float - dot product between a and b
+    '''
+    # Dimension verification
+    if a.size != b.size:
+		raise ValueError("Vector with different sizes!") 
+    # Return the dot product
+    return numpy.dot(a, b)
