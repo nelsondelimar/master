@@ -400,6 +400,6 @@ def my_dot(a, b):
     '''
     # Dimension verification
     if a.size != b.size:
-		raise ValueError("Vector with different sizes!") 
+        raise ValueError("Vector with different sizes!") 
     # Return the dot product
     return numpy.dot(a, b)
