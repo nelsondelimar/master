@@ -38,7 +38,7 @@ def xderiv(x, y, data, n = 1):
         res = data
     else:    
         # Calculate the wavenuber in x direction
-        _, kx = auxiliars.wavenumber(y, x)
+	_, kx = auxiliars.wavenumber(y, x)
         # Apply the Fourier transform
         xder = numpy.fft.fft2(data)*((kx*1j)**(n))
         # Calculating the inverse transform

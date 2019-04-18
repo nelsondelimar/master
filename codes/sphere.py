@@ -10,42 +10,6 @@ import numpy as np
 # Import my libraries
 import auxiliars as aux
 
-def potential(x,y,z,sphere):
-    '''
-    Computes the gravitational potencial of sphere of mass:
-    Inputs:
-    x, y, z - numpy arrays - position of the observation points
-    sphere[0, 1, 2] - arrays - position of the center of the sphere
-    sphere[3] - total mass of each sphere
-
-    Outputs:
-    the gravitational potencial
-    '''
-
-    # Stablishing some conditions
-    if x.shape != y.shape:
-        raise ValueError("All inputs must have same shape!")
-    
-    # Calculates some constants
-    gamma = 6.67e-11 # Universal gravity constant in SI units
-    si2mGal = 100000.0 # convert SI to mGal
-    
-    #Setting some constants
-    xe, ye, ze = sphere[0], sphere[1], sphere[2]
-    mass = sphere[3]
-    
-    # Distances in all axis directions - x, y e z
-    rx = x - xe
-    ry = y - ye
-    rz = z - ze
-    
-    # Computes the distance (r) as the module of the other three components
-    r2 = rx**2 + ry**2 + rz**2
-
-    U = gamma*mass/r2
-
-    return U
-
 def sphere_bx(x, y, z, sphere, mag, incs, decs):
 
     '''    

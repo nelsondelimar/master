@@ -39,15 +39,15 @@ def analysis(data, unit=None):
     datavar = datamax - datamin
     
     if (unit != None):
-        print('Minimum:    %5.4f' % datamin, unit)
-        print('Maximum:    %5.4f' % datamax, unit)
-        print('Mean value: %5.4f' % datamed, unit)
-        print('Variation:  %5.4f' % datavar, unit)
+    	print 'Minimum:    %5.4f' % datamin, unit
+        print 'Maximum:    %5.4f' % datamax, unit
+        print 'Mean value: %5.4f' % datamed, unit
+        print 'Variation:  %5.4f' % datavar, unit
     else:
-        print('Minimum:    %5.4f' % datamin)
-        print('Maximum:    %5.4f' % datamax)
-        print('Mean value: %5.4f' % datamed)
-        print('Variation:  %5.4f' % datavar)
+        print 'Minimum:    %5.4f' % datamin
+        print 'Maximum:    %5.4f' % datamax
+        print 'Mean value: %5.4f' % datamed
+        print 'Variation:  %5.4f' % datavar
         
     return datamin, datamax, datamed, datavar
 

@@ -4,8 +4,56 @@
 # Collaborator: Rodrigo Bijani
 
 import numpy
+import math
 import scipy
 import warnings
+
+def my_atan(x, y):
+    
+    '''
+    Return the more stable output for arctan calculation by correcting the 
+    value of the angle in arctan2, in order to fix the sign of the tangent.
+    '''
+    arctan = numpy.arctan2(x, y)
+    arctan[x == 0] = 0
+    arctan[(x > 0) & (y < 0)] -= numpy.pi
+    arctan[(x < 0) & (y < 0)] += numpy.pi
+    return arctan
+
+def my_log(x):
+    
+    ''' 
+    Return the value 0 for log(0), once the limits applying in the formula
+    tend to 0.
+    '''
+    
+    log = numpy.log(x)
+    log[x == 0] = 0
+    return log
+
+def my_dot(x,y):
+    
+    '''
+    Return the safe value for the dot product between two vectors.
+    '''
+    
+    return numpy.dot(x,y)
+
+def my_hadamard(x,y):
+    
+    '''
+    Return the safe value for the hadamard product between two vectors.
+    '''
+    
+    return numpy.multiply(x,y)
+
+def my_outer(x,y):
+    
+    '''
+    Return the safe value for the outer product between two vectors.
+    '''
+    
+    return numpy.outer(x,y)
 
 def deg2rad(angle):
     '''
@@ -153,29 +201,6 @@ def noise_uniform_dist(data, vmin, vmax):
     # Return the final output
     return data + noise
 
-def my_atan(x, y):
-    
-    '''
-    Return the more stable output for arctan calculation by correcting the 
-    value of the angle in arctan2, in order to fix the sign of the tangent.
-    '''
-    arctan = numpy.arctan2(x, y)
-    arctan[x == 0] = 0
-    arctan[(x > 0) & (y < 0)] -= numpy.pi
-    arctan[(x < 0) & (y < 0)] += numpy.pi
-    return arctan
-
-def my_log(x):
-    
-    ''' 
-    Return the value 0 for log(0), once the limits applying in the formula
-    tend to 0.
-    '''
-    
-    log = numpy.log(x)
-    log[x == 0] = 0
-    return log
-
 def residual(observed, predicted):
     '''
     It calculates the residual between the observed data and the calculated predicted data.
@@ -263,30 +288,6 @@ def wavenumber(x, y):
     
     # Return the final output
     return numpy.meshgrid(kx, ky)
-
-def spherical_cartesian(longitude, latitude, level):
-    '''
-    It converts all spherical coordinates values to values in geocentric coordinates. 
-    It receives the directions as longitude and latitude and the level.
-    
-    Inputs:
-    longitude - float - longitude value in degrees
-    latitude - float - latitude value in degrees
-    level - float - height above Earth radius in meters
-    
-    Outputs:
-    x, y, z - floats - converted geocentric coordinates
-    '''
-    # Defines the value of the Earth radius
-    R = 6378137. + level
-    
-    # Calculates the geocentric coordinates x, y and z
-    x = numpy.cos((numpy.pi/180.) * latitude) * numpy.cos((numpy.pi/180.) * longitude) * R
-    y = numpy.cos((numpy.pi/180.) * latitude) * numpy.sin((numpy.pi/180.) * longitude) * R
-    z = numpy.sin((numpy.pi/180.) * latitude) * R
-    
-    # Returns the final output
-    return x, y, z
 
 def rotation_x(angle):
     '''    
@@ -387,19 +388,3 @@ def rotate3D_xyz(x, y, z, angle, direction = 'z'):
     
     # Return the final output
     return xr, yr, zr
-
-def my_dot(a, b):
-    '''
-    This function calculates the true dot product between two vectors.
-    
-    Inputs:
-    a, b - numpy 1D array - N-dimensional vectors
-    
-    Output:
-    c - float - dot product between a and b
-    '''
-    # Dimension verification
-    if a.size != b.size:
-        raise ValueError("Vector with different sizes!") 
-    # Return the dot product
-    return numpy.dot(a, b)

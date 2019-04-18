@@ -9,6 +9,7 @@ import kernel
 from auxiliars import regional
 from grids import regular_grid
 
+# Building the Classical Equivalent Layer Technique
 def layer(area, shape, level):
     '''
     It generates a list with all 3D spheres position.
@@ -42,57 +43,7 @@ def layer(area, shape, level):
     # Return the final output
     return layer
 
-
-def mat_mag_tfa(xo, yo, zo, layer, inc, dec, incs, decs):
-    '''
-    It calculates the sensitivity matrix for a magnetic case as total field anomaly. It must receives 
-    all observation points and the layer model as a list. It also recieves all values of inclination
-    and declination for the magnetic field and the magnetic source.
-    
-    Inputs:
-    xo, yo, zo - numpy array - observation points
-    layer - numpy list - created layer as a list
-    inc - float - magnetic field inclination
-    dec - float - magnetic field declination
-    incs - float - source inclination
-    decs - float - source declination
-    
-    Output:
-    mat - numpy matrix - computed sensitivity matrix
-    '''
-    
-    # Constants
-    cm = 1.e-7
-    t2nT = 1.e9
-    
-    # Number of points:
-    n = len(xo)
-    m = len(layer)
-
-    # Create the zero-matrix
-    mat = numpy.zeros((n,m))
-    
-    # Calculate the projections in x, y and z directions
-    fx, fy, fz = regional(1., inc, dec)
-    mx, my, mz = regional(1., incs, decs)
-    
-    # Dealing with all kernels at all directions
-    for i,j in enumerate(layer):
-        phi_xx = kernel.kernelxx(xo, yo, zo, j)
-        phi_yy = kernel.kernelyy(xo, yo, zo, j)
-        phi_zz = kernel.kernelzz(xo, yo, zo, j)
-        phi_xy = kernel.kernelxy(xo, yo, zo, j)
-        phi_xz = kernel.kernelxz(xo, yo, zo, j)
-        phi_yz = kernel.kernelyz(xo, yo, zo, j)
-        mat[:,i] = fx*phi_xx*mx + fx*phi_xy*my + fx*phi_xz*mz + \
-                   fy*phi_xy*mx + fy*phi_yy*my + fy*phi_yz*mz + \
-                   fz*phi_xz*mx + fz*phi_yz*my + fz*phi_zz*mz
-
-    mat *= cm * t2nT
-    
-    # Return the final output
-    return mat
-
+# Applying for gravity data
 def mat_grav_gz(xo, yo, zo, layer):
     '''
     It calculates the sensitivity matrix for a gravity case as vertical gravitational component. It must 
@@ -166,7 +117,108 @@ def mat_grav_gz_xyz(xo, yo, zo, layer):
     # Return the final output
     return mat_gzx, mat_gzy, mat_gzz
 
-def fit_layer(datasets, datashape, layermodel, layershape, regulator, inc, dec, inclayer = None, declayer = None):
+def fit_layer_grav(datasets, datashape, layermodel, layershape, regulator):
+    '''
+    It returns the predicted data by using classical equivalent layer technique. This function must receive 
+    all data as a list with all positions for x, y and z, and also the potential data. It receives the 
+    shape of the data, the model as an equivalent layer and the value for the regularization parameter.    
+    
+    Inputs:
+    datasets - numpy list - x, y and z positions and gravity data
+    datashape - tuple - shape of the input data
+    layermodel - list - values for created equivalent layer
+    layershape - tuple - shape of the equivalent layer
+    regulator - float - zero order Tikhonov regulator
+    
+    Output:
+    parameter - numpy array - parameters vector
+    predicted - numpy array - predicted total field data
+    
+    '''
+    
+    # Datasets = [xobs, yobs, zobs, totalfield]
+    xp = datasets[0]
+    yp = datasets[1]
+    zp = datasets[2]
+    gz = datasets[3]
+    
+    # Define the number of observations and depth sources
+    N = datashape[0]*datashape[1]
+    M = layershape[0]*layershape[1]
+    
+    # Computes the sensitivity matrix
+    matA = mat_grav_gz(xp, yp, zp, layermodel)
+
+    # Case1: Overdetermined - Number of observations are greater or equal than the number of depth sources
+    if N >= M: 
+        I = numpy.identity(M)
+        trace = numpy.trace(numpy.dot(matA.T, matA))/M
+        parameter = numpy.linalg.solve(numpy.dot(matA.T, matA) + regulator*trace*I, numpy.dot(matA.T, gz))
+    # Case2: Underterminated - Number of observations are less than the number of depth sources
+    else:
+        I = numpy.identity(N)
+        trace = numpy.trace(numpy.dot(matA.T, matA))/N
+        aux = numpy.linalg.solve(numpy.dot(matA, matA.T) + regulator*trace*I, gz)
+        parameter = numpy.dot(matA.T, aux)
+        
+    # Calculates the predicted total field anomaly data
+    predicted = numpy.dot(matA, parameter)
+
+    # Return the final output
+    return parameter, predicted
+
+# Applying for magnetic data - Total field anomaly and reduction to Pole
+def mat_mag_tfa(xo, yo, zo, layer, inc, dec, incs, decs):
+    '''
+    It calculates the sensitivity matrix for a magnetic case as total field anomaly. It must receives 
+    all observation points and the layer model as a list. It also recieves all values of inclination
+    and declination for the magnetic field and the magnetic source.
+    
+    Inputs:
+    xo, yo, zo - numpy array - observation points
+    layer - numpy list - created layer as a list
+    inc - float - magnetic field inclination
+    dec - float - magnetic field declination
+    incs - float - source inclination
+    decs - float - source declination
+    
+    Output:
+    mat - numpy matrix - computed sensitivity matrix
+    '''
+    
+    # Constants
+    cm = 1.e-7
+    t2nT = 1.e9
+    
+    # Number of points:
+    n = len(xo)
+    m = len(layer)
+
+    # Create the zero-matrix
+    mat = numpy.zeros((n,m))
+    
+    # Calculate the projections in x, y and z directions
+    fx, fy, fz = regional(1., inc, dec)
+    mx, my, mz = regional(1., incs, decs)
+    
+    # Dealing with all kernels at all directions
+    for i,j in enumerate(layer):
+        phi_xx = kernel.kernelxx(xo, yo, zo, j)
+        phi_yy = kernel.kernelyy(xo, yo, zo, j)
+        phi_zz = kernel.kernelzz(xo, yo, zo, j)
+        phi_xy = kernel.kernelxy(xo, yo, zo, j)
+        phi_xz = kernel.kernelxz(xo, yo, zo, j)
+        phi_yz = kernel.kernelyz(xo, yo, zo, j)
+        mat[:,i] = fx*phi_xx*mx + fx*phi_xy*my + fx*phi_xz*mz + \
+                   fy*phi_xy*mx + fy*phi_yy*my + fy*phi_yz*mz + \
+                   fz*phi_xz*mx + fz*phi_yz*my + fz*phi_zz*mz
+
+    mat *= cm * t2nT
+    
+    # Return the final output
+    return mat
+
+def fit_layer_mag(datasets, datashape, layermodel, layershape, regulator, inc, dec, inclayer = None, declayer = None):
     '''
     It returns the predicted data by using classical equivalent layer technique. This function must receive 
     all data as a list with all positions for x, y and z, and also the potential data. It receives the 
@@ -212,19 +264,19 @@ def fit_layer(datasets, datashape, layermodel, layershape, regulator, inc, dec, 
     if N >= M: 
         I = numpy.identity(M)
         trace = numpy.trace(numpy.dot(matA.T, matA))/M
-        vec = numpy.linalg.solve(numpy.dot(matA.T, matA) + regulator*trace*I, numpy.dot(matA.T, tf))
+        parameter = numpy.linalg.solve(numpy.dot(matA.T, matA) + regulator*trace*I, numpy.dot(matA.T, tf))
     # Case2: Underterminated - Number of observations are less than the number of depth sources
     else:
         I = numpy.identity(N)
         trace = numpy.trace(numpy.dot(matA.T, matA))/N
         aux = numpy.linalg.solve(numpy.dot(matA, matA.T) + regulator*trace*I, tf)
-        vec = numpy.dot(matA.T, aux)
+        parameter = numpy.dot(matA.T, aux)
         
     # Calculates the predicted total field anomaly data
-    predicted = numpy.dot(matA, vec)
+    predicted = numpy.dot(matA, parameter)
 
     # Return the final output
-    return vec, predicted
+    return parameter, predicted
 
 def rtp_layer(datasets, datashape, layermodel, layershape, regulator, incf, decf, inceql = None, deceql = None):
     '''
