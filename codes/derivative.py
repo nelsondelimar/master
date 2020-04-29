@@ -38,12 +38,11 @@ def xderiv(x, y, data, n = 1):
         res = data
     else:    
         # Calculate the wavenuber in x direction
-	_, kx = auxiliars.wavenumber(y, x)
+        _, kx = auxiliars.make_wavenumber(y, x)
         # Apply the Fourier transform
         xder = numpy.fft.fft2(data)*((kx*1j)**(n))
         # Calculating the inverse transform
         res = numpy.real(numpy.fft.ifft2(xder))
-    
     # Return the final output
     return res
 
@@ -74,7 +73,7 @@ def yderiv(x, y, data, n = 1):
         res = data
     else:    
         # Calculate the wavenuber in y direction
-        ky, _ = auxiliars.wavenumber(y, x)
+        ky, _ = auxiliars.make_wavenumber(y, x)
     
         # Apply the Fourier transform
         yder = numpy.fft.fft2(data)*((ky*1j)**(n))
@@ -111,7 +110,7 @@ def zderiv(x, y, data, n = 1):
         res = data
     else:    
         # Calculate the wavenuber in z direction
-        ky, kx = auxiliars.wavenumber(y, x)
+        ky, kx = auxiliars.make_wavenumber(y, x)
     
         # Apply the Fourier transform
         zder = numpy.fft.fft2(data)*(numpy.sqrt(kx**2 + ky**2)**(n))
