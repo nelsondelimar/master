@@ -34,7 +34,7 @@ def continuation(x, y, data, H):
         res = data
     else:
         # Calculate the wavenumbers
-        ky, kx = auxiliars.wavenumber(y, x)
+        ky, kx = auxiliars.make_wavenumber(y, x)
         kcont = numpy.exp((-H) * numpy.sqrt(kx**2 + ky**2))
         result = kcont * numpy.fft.fft2(data)
         res = numpy.real(numpy.fft.ifft2(result))
@@ -42,8 +42,8 @@ def continuation(x, y, data, H):
     # Return the final output
     return res
 
-def reduction(x, y, data, inc, dec, incs=None, decs=None, newinc=None, newdec=None, 
-              newincs=None, newdecs=None):
+def reduction(x, y, data, inc, dec, incs = None, decs = None, newinc = None, newdec = None, 
+              newincs = None, newdecs = None):
     '''
     Return the reduced potential data giving the new directions for the geomagnetic
     field and source magnetization. Its based on Blakely (1996).
@@ -88,7 +88,7 @@ def reduction(x, y, data, inc, dec, incs=None, decs=None, newinc=None, newdec=No
     # Step 1 - Calculate the wavenumbers
     # It will return the wavenumbers in x and y directions, in order to calculate the
     # values for magnetization directions in Fourier domains:
-    ky, kx = auxiliars.wavenumber(y, x)
+    ky, kx = auxiliars.make_wavenumber(y, x)
     
     # Step 2 - Calcuate the magnetization direction
     # It will return the magnetization directions in Fourier domain for all vector that
@@ -229,7 +229,7 @@ def pseudograv(x, y, data, inc, dec, incs, decs, rho = 1000., mag = 1.):
     C = G*rho*si2mGal/(cm*mag*t2nt)
     
     # Calculate the wavenumber
-    ky, kx = auxiliars.wavenumber(y, x)
+    ky, kx = auxiliars.make_wavenumber(y, x)
     k = (kx**2 + ky**2)**(0.5)
     
     # Computing theta values for the source
@@ -253,15 +253,14 @@ def pseudograv(x, y, data, inc, dec, incs, decs, rho = 1000., mag = 1.):
 
 def simple_polynomial(x, y, data):
     '''
-    It calculates the regional and residual signal by applying a second-order 
-    degree polynomial in order to fit the observed data.
+    It calculates the regional and residual signal by applying a second-order degree polynomial in order to fit the observed data.
     
     Inputs: 
     xo, yo - numpy array - observation points
     data - numpy array - gravity or magnetic data
     
     Outputs:
-    pcoef - list - values of all coefficients
+    poly - list - values of all coefficients
     reg - numpy array - regional signal
     res - numpy array - residual signal
     '''
@@ -281,13 +280,12 @@ def simple_polynomial(x, y, data):
     res = data - reg
     
     # Return the final output
-    return reg, res
+    return poly, reg, res
 
-def robust_polynomial(x, y, data, degree, iterations):
+def robust_polynomial(x, y, data, degree = 2., iterations = 20.):
     '''
-    It calculates the robust polynomial fitting on regional-residual separation 
-    for gravity or magnetic data. It receives the observation points, the data
-    and the polynomial degree as well as the number of iterations.
+    It calculates the robust polynomial fitting on regional-residual separation for gravity or magnetic data. 
+    It receives the observation points, the data and the polynomial degree as well as the number of iterations.
     
     Input:
     x, y - numpy array - observation points
@@ -303,8 +301,7 @@ def robust_polynomial(x, y, data, degree, iterations):
     # Computing the time
     timei = time.time()
     
-    # Jacobian matrix must be calculated with same rows of observed data and
-    # columns equal to (2*N + 1)
+    # Jacobian matrix must be calculated with same rows of observed data and columns equal to (2*N + 1)
     cols = (2*degree) + 1
     
     # Create the Jacobian matrix A
@@ -334,14 +331,13 @@ def robust_polynomial(x, y, data, degree, iterations):
         # Calculate the first residual to minimize the difference
         r = data - reg_rob
         s = numpy.median(r)
-        #W = numpy.diag(numpy.exp(-((0.6745*r/s)**2.)))
         # Calculate the weight matrix and solve linear system for each iteration
-        W = numpy.diag(1./numpy.abs(r + 1.e-5))
+        W = numpy.diag(1./numpy.abs(r + 1.e-10))
         W = numpy.dot(mat.T, W)
         # New robust coefficients 
         poly_rob = numpy.linalg.solve(numpy.dot(W, mat), 
                                     numpy.dot(W, data))
-        # Calculate the regional by robust fittin
+        # Calculate the regional by robust fitting
         reg_rob = numpy.dot(mat, poly_rob)
     
     # Calcualte the residual by robust fitting
@@ -349,6 +345,6 @@ def robust_polynomial(x, y, data, degree, iterations):
     
     # Final time
     timef = time.time()
-    print 'Time of process (second):', numpy.around((timef - timei), decimals = 3)
+    #print ('Time of process (second): %1.3f' % (timef - timei))
     # Return the final output
-    return reg_rob, res_rob
+    return poly_rob, reg_rob, res_rob
