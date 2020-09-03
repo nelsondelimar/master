@@ -1,15 +1,9 @@
-# Title: Auxiliars
-# Author: Nelson Ribeiro Filho
-# Description: Auxiliars codes to help on some calculations
-# Collaborator: Rodrigo Bijani
-
+from __future__ import division
 import numpy
-import math
 import scipy
 import warnings
-import grids
 
-def deg2rad(angle):
+def my_deg2rad(angle):
     '''
     It converts an angle value in degrees to radian.     
     
@@ -18,12 +12,10 @@ def deg2rad(angle):
     Output:
     argument - float - angle in radian    
     '''
-    # Angle conversion
-    argument = (angle/180.)*numpy.pi
     # Return the final output
-    return argument
+    return (angle/180.)*numpy.pi
 
-def rad2deg(argument):
+def my_rad2deg(argument):
     '''
     This function converts an angle value in radian to an another value in degrees.
     
@@ -32,10 +24,8 @@ def rad2deg(argument):
     Output:
     angle - float - angle in degrees    
     '''
-    # Angle conversion
-    angle = (argument/numpy.pi)*180.
     # Return the final output
-    return angle
+    return (argument/numpy.pi)*180.
 
 def my_trigonometrics_deg(angle):
     '''
@@ -158,7 +148,7 @@ def my_LU(mat):
     
     return mat
 
-def rotation_x(angle):
+def my_xrotation(angle):
     '''    
     It returns the rotation matrix given a (x, y, z) point at x direction,
     
@@ -176,7 +166,7 @@ def rotation_x(angle):
     # Return the output 
     return rotx
 
-def rotation_y(angle):
+def my_yrotation(angle):
     '''     
     It returns the rotation matrix given a (x, y, z) point at y direction,
     
@@ -197,7 +187,7 @@ def rotation_y(angle):
     # Return the output
     return roty
 
-def rotation_z(angle):
+def my_zrotation(angle):
     '''    
     It returns the rotation matrix given a (x, y, z) point at z direction,
     
@@ -233,16 +223,13 @@ def rotate3D_xyz(x, y, z, angle, direction = 'z'):
     Outputs:
     xr, yr, zr - numpy arrays - new rotated coordinate points
     '''
-    # Size condition
-    #if x.shape != y.shape:
-    #    raise ValueError("All inputs must have same shape!")
     # Matrix rotation in x-y-or-z direction
     if direction == 'x':
-        rot = rotation_x(angle)
+        rot = my_xrotation(angle)
     if direction == 'y':
-        rot = rotation_y(angle)
+        rot = my_yrotation(angle)
     if direction == 'z':
-        rot = rotation_z(angle)
+        rot = my_zrotation(angle)
     # Create the matrix
     mat = numpy.vstack([x, y, z]).T
     # Create the zero matrix
@@ -257,7 +244,31 @@ def rotate3D_xyz(x, y, z, angle, direction = 'z'):
     # Return the final output
     return xr, yr, zr
 
-def noise_normal_dist(xi, vi = 0., std = 0.):
+def my_spherical2cartesian(longitude, latitude, level):
+    '''
+    It converts all spherical coordinates values to values in geocentric coordinates. 
+    It receives the directions as longitude and latitude and the level.
+    
+    Inputs:
+    longitude - float - longitude value in degrees
+    latitude - float - latitude value in degrees
+    level - float - height above Earth radius in meters
+    
+    Outputs:
+    x, y, z - floats - converted geocentric coordinates
+    '''
+    # Defines the value of the Earth radius
+    R = 6378137. + level
+    
+    # Calculates the geocentric coordinates x, y and z
+    x = numpy.cos((numpy.pi/180.) * latitude) * numpy.cos((numpy.pi/180.) * longitude) * R
+    y = numpy.cos((numpy.pi/180.) * latitude) * numpy.sin((numpy.pi/180.) * longitude) * R
+    z = numpy.sin((numpy.pi/180.) * latitude) * R
+    
+    # Returns the final output
+    return x, y, z
+
+def my_normalnoise(xi, vi = 0., std = 0.):
     '''
     It contaminantes the data using a normal Gaussian distribution.
     
@@ -278,7 +289,7 @@ def noise_normal_dist(xi, vi = 0., std = 0.):
     # Return the final output
     return xi + numpy.array(noise)
 
-def noise_uniform_dist(xi, vmin, vmax):
+def my_uniformnoise(xi, vmin, vmax):
     '''
     It contaminantes the data using a normal Gaussian distribution.
     
@@ -298,7 +309,7 @@ def noise_uniform_dist(xi, vmin, vmax):
     # Return the final output
     return xi + numpy.array(noise)
 
-def data_error(do, dp):
+def my_residual(do, dp):
     '''
     It calculates the residual between the observed data and the calculated predicted data.
     Moreover, perform the calculation for the mean value of this difference, as well as the standard 
@@ -353,7 +364,7 @@ def my_dircos(inc, dec, azm = 0.):
     # Return the final output
     return xdir, ydir, zdir
 
-def regional(field, inc, dec, azm = 0.):
+def my_regional(field, inc, dec, azm = 0.):
     '''
     It calculates the regional magnetic field in x, y and z directions.
     It uses values of a reference magnetic field, the inclination and the magnetic declination.
@@ -370,13 +381,13 @@ def regional(field, inc, dec, azm = 0.):
     fz - float or 1D array - field in z direction
     '''
     # Computes the projected cossine
-    xdir, ydir, zdir = mydircos(inc, dec, azm)    
+    xdir, ydir, zdir = my_dircos(inc, dec, azm)    
     # Compute all components
     fx, fy, fz = field*xdir, field*ydir, field*zdir
     # Set F as array and return the output
     return fx, fy, fz
 
-def theta(inc, dec, u, v, azim = 0.):    
+def my_theta(inc, dec, u, v, azim = 0.):    
     '''
     Return the operators for magnetization and field directions.
     
@@ -393,13 +404,13 @@ def theta(inc, dec, u, v, azim = 0.):
     k = (u**2 + v**2)**(0.5)
     
     # Calcutaing the projections
-    x, y, z = dircos(inc, dec, azim) 
+    x, y, z = my_dircos(inc, dec, azim) 
     theta = z + ((x*u + y*v)/k)*1j
     
     # Return the final output:
     return theta
 
-def make_wavenumber(x, y):
+def my_wavenumber(x, y):
     '''
     Return the wavenumbers in X and Y directions
     

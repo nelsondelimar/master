@@ -5,9 +5,9 @@
 # Collaborator: Rodrigo Bijani
 #------------------------------------------------------------------------------------
 import numpy
-import auxiliars as aux
+from codes import auxiliarsiliars
 #------------------------------------------------------------------------------------
-def potential(x, y, z, prism, rho):
+def my_potential(x, y, z, prism, rho):
     '''
     This function calculates the gravitational potential due to a rectangular prism. It is calculated 
     solving a numerical integral approximated by using the gravity field G(x,y,z), once G can be written 
@@ -51,14 +51,14 @@ def potential(x, y, z, prism, rho):
         for j in range(2):
             for i in range(2):
                 r = numpy.sqrt(xp[i]**2 + yp[j]**2 + zp[k]**2)
-                result = (xp[i]*yp[j]*aux.my_log(zp[k] + r)
-                          + yp[j]*zp[k]*aux.my_log(xp[i] + r)
-                          + xp[i]*zp[k]*aux.my_log(yp[j] + r)
+                result = (xp[i]*yp[j]*auxiliars.my_log(zp[k] + r)
+                          + yp[j]*zp[k]*auxiliars.my_log(xp[i] + r)
+                          + xp[i]*zp[k]*auxiliars.my_log(yp[j] + r)
                           - 0.5*xp[i]**2 *
-                          aux.my_atan(zp[k]*yp[j], xp[i]*r)
+                          auxiliars.my_atan(zp[k]*yp[j], xp[i]*r)
                           - 0.5*yp[j]**2 *
-                          aux.my_atan(zp[k]*xp[i], yp[j]*r)
-                          - 0.5*zp[k]**2*aux.my_atan(xp[i]*yp[j], zp[k]*r))
+                          auxiliars.my_atan(zp[k]*xp[i], yp[j]*r)
+                          - 0.5*zp[k]**2*auxiliars.my_atan(xp[i]*yp[j], zp[k]*r))
                 potential += ((-1.)**(i + j + k))*result*rho
     
     # Multiplying the values for 
@@ -67,7 +67,7 @@ def potential(x, y, z, prism, rho):
     # Return the final output
     return potential
 
-def prism_gx(x, y, z, prism, rho):
+def my_prism_gx(x, y, z, prism, rho):
     '''
     This function is a Python implementation for the X horizontal component for the gravity field due to 
     a rectangular prism, which has initial and final positions equals to xi and xf, yi and yf, for the X 
@@ -109,9 +109,9 @@ def prism_gx(x, y, z, prism, rho):
         for j in range(2):
             for i in range(2):
                 r = numpy.sqrt(xp[i]**2 + yp[j]**2 + zp[k]**2)
-                result = -(yp[j]*aux.my_log(zp[k] + r) + 
-                           zp[k]*aux.my_log(yp[j] + r) - 
-                           xp[i]*aux.my_atan(zp[k]*yp[j], xp[i]*r))
+                result = -(yp[j]*auxiliars.my_log(zp[k] + r) + 
+                           zp[k]*auxiliars.my_log(yp[j] + r) - 
+                           xp[i]*auxiliars.my_atan(zp[k]*yp[j], xp[i]*r))
                 gx += ((-1.)**(i + j + k))*result*rho
 
                 # Multiplication for all constants and conversion to mGal
@@ -120,7 +120,7 @@ def prism_gx(x, y, z, prism, rho):
     # Return the final output
     return gx
 
-def prism_gy(x, y, z, prism, rho):
+def my_prism_gy(x, y, z, prism, rho):
     '''
     This function is a Python implementation for the Y horizontal  component for the gravity field due 
     to a rectangular prism, which has initial and final positions equals to xi and xf, yi and yf, for 
@@ -163,9 +163,9 @@ def prism_gy(x, y, z, prism, rho):
         for j in range(2):
             for i in range(2):
                 r = numpy.sqrt(xp[i]**2 + yp[j]**2 + zp[k]**2)
-                result = -(zp[k]*aux.my_log(xp[i] + r) + 
-                           xp[i]*aux.my_log(zp[k] + r) - 
-                           yp[j]*aux.my_atan(xp[i]*zp[k], yp[j]*r))
+                result = -(zp[k]*auxiliars.my_log(xp[i] + r) + 
+                           xp[i]*auxiliars.my_log(zp[k] + r) - 
+                           yp[j]*auxiliars.my_atan(xp[i]*zp[k], yp[j]*r))
                 gy += ((-1.)**(i + j + k))*result*rho
                 
     # Multiplication for all constants and conversion to mGal
@@ -174,7 +174,7 @@ def prism_gy(x, y, z, prism, rho):
     # Return the final output
     return gy
 
-def prism_gz(x, y, z, prism, rho):
+def my_prism_gz(x, y, z, prism, rho):
     '''
     This function is a Python implementation for the vertical component for the gravity field due to a 
     rectangular prism, which has initial and final positions equals to xi and xf, yi and yf, for the X 
@@ -216,9 +216,9 @@ def prism_gz(x, y, z, prism, rho):
         for j in range(2):
             for i in range(2):
                 r = numpy.sqrt(xp[i]**2 + yp[j]**2 + zp[k]**2)
-                result = -(xp[i]*aux.my_log(yp[j] + r) + 
-                           yp[j]*aux.my_log(xp[i] + r) -
-                           zp[k]*aux.my_atan(xp[i]*yp[j], zp[k]*r))
+                result = -(xp[i]*auxiliars.my_log(yp[j] + r) + 
+                           yp[j]*auxiliars.my_log(xp[i] + r) -
+                           zp[k]*auxiliars.my_atan(xp[i]*yp[j], zp[k]*r))
                 gz += ((-1.)**(i + j + k))*result*rho
                 
     # Multiplication for all constants and conversion to mGal
@@ -227,7 +227,7 @@ def prism_gz(x, y, z, prism, rho):
     # Return the final output
     return gz
 
-def prism3D_potential(x, y, z, xprism, yprism, top, bottom, deltax, deltay, density):
+def my_3Dpotential(x, y, z, xprism, yprism, top, bottom, deltax, deltay, density):
     '''
     It calculates the gravitational potential due to a set of prisms. Xp and Yp represent 
     the horizontal positions of all prisms; Zt and Zb repesent the depth of top 
@@ -271,7 +271,7 @@ def prism3D_potential(x, y, z, xprism, yprism, top, bottom, deltax, deltay, dens
     # Return the final output
     return pot
 
-def prism3D_gx(x, y, z, xprism, yprism, top, bottom, deltax, deltay, density):
+def my_3Dgx(x, y, z, xprism, yprism, top, bottom, deltax, deltay, density):
     '''
     It calculates the gravity signal due to a set of prisms. Xp and Yp represent 
     the horizontal positions of all prisms; Zt and Zb repesent the depth of top 
@@ -316,7 +316,7 @@ def prism3D_gx(x, y, z, xprism, yprism, top, bottom, deltax, deltay, density):
     # Return the final output
     return gx
 
-def prism3D_gy(x, y, z, xprism, yprism, top, bottom, deltax, deltay, density):
+def my_3Dgy(x, y, z, xprism, yprism, top, bottom, deltax, deltay, density):
     '''
     It calculates the gravity signal due to a set of prisms. Xp and Yp represent 
     the horizontal positions of all prisms; Zt and Zb repesent the depth of top 
@@ -360,7 +360,7 @@ def prism3D_gy(x, y, z, xprism, yprism, top, bottom, deltax, deltay, density):
     # Return the final output
     return gz
 
-def prism3D_gz(x, y, z, xprism, yprism, top, bottom, deltax, deltay, density):
+def my_3Dgz(x, y, z, xprism, yprism, top, bottom, deltax, deltay, density):
     '''
     It calculates the gravity signal due to a set of prisms. Xp and Yp represent 
     the horizontal positions of all prisms; Zt and Zb repesent the depth of top 
@@ -405,13 +405,12 @@ def prism3D_gz(x, y, z, xprism, yprism, top, bottom, deltax, deltay, density):
     # Return the final output
     return gz
 
-#------------------------------------------------------------------------------------
-def prism_tf(x, y, z, prism, mag, incf, decf, incs = None, decs = None, azim = 0.):
+def my_prism_tf(x, y, z, prism, mag, inc, dec, incs = None, decs = None, azim = 0.):
     '''
     This function calculates the total field anomaly produced by a rectangular prism located under 
     surface; it is a Python implementation for the Subroutin MBox which is contained on Blakely (1995). 
     It recieves: the coordinates of the positions in all directions, the elements of the prims, the 
-    angle directions and the elements of the field. That function also uses the auxilary function 
+    angle directions and the elements of the field. That function also uses the auxiliarsilary function 
     DIR_COSSINE to calculate the projections due to the field F and the source S.
     
     Inputs:
@@ -445,13 +444,13 @@ def prism_tf(x, y, z, prism, mag, incf, decf, incs = None, decs = None, azim = 0
     cm = 1.e-7  # Magnetization constant
     
     if incs == None:
-        incs = incf
+        incs = inc
     if decs == None:
-        decs = decf
+        decs = dec
   
     # Calculate the directions for the source magnetization and for the field
-    Ma, Mb, Mc = aux.dircos(incs, decs, azim) # s -> source
-    Fa, Fb, Fc = aux.dircos(incf, decf, azim) # f -> field
+    Ma, Mb, Mc = auxiliars.my_dircos(incs, decs, azim) # s -> source
+    Fa, Fb, Fc = auxiliars.my_dircos(inc, dec, azim) # f -> field
 
     # Aranges all values as a vector
     MF = [Ma*Fb + Mb*Fa, 
@@ -481,18 +480,18 @@ def prism_tf(x, y, z, prism, mag, incf, decf, incs = None, decs = None, azim = 0
                 R2 = X2 + Y2 + H2
                 R = numpy.sqrt(R2)
                 HxR = H[k]*R
-                tfa += ((-1.)**(i + j))*mag*(0.5*(MF[2])*aux.my_log((R - A[i])/(R + A[i])) + 0.5*(MF[1])*
-                                             aux.my_log((R - B[j])/(R + B[j])) - (MF[0])*aux.my_log(R + H[k]) -
-                                             (MF[3])*aux.my_atan(AxB, X2 + HxR + H2) -
-                                             (MF[4])*aux.my_atan(AxB, R2 + HxR - X2) +
-                                             (MF[5])*aux.my_atan(AxB, HxR))
+                tfa += ((-1.)**(i + j))*mag*(0.5*(MF[2])*auxiliars.my_log((R - A[i])/(R + A[i])) + 0.5*(MF[1])*
+                                             auxiliars.my_log((R - B[j])/(R + B[j])) - (MF[0])*auxiliars.my_log(R + H[k]) -
+                                             (MF[3])*auxiliars.my_atan(AxB, X2 + HxR + H2) -
+                                             (MF[4])*auxiliars.my_atan(AxB, R2 + HxR - X2) +
+                                             (MF[5])*auxiliars.my_atan(AxB, HxR))
     # Multiplying for constants conversion
     tfa *= t2nt*cm
     
     # Return the final output
     return tfa
 
-def prism_bx(x, y, z, prism, incf, decf, incs = None, decs = None, azim = 0.):
+def prism_bx(x, y, z, prism, inc, dec, incs = None, decs = None, azim = 0.):
     if x.shape != y.shape:
         raise ValueError("All inputs must have same shape!")
         
@@ -502,12 +501,12 @@ def prism_bx(x, y, z, prism, incf, decf, incs = None, decs = None, azim = 0.):
     
     # Condition for directions
     if incs == None:
-        incs = incf
+        incs = inc
     if decs == None:
-        decs = decf
+        decs = dec
   
     # Calculate the directions for the source magnetization
-    mx, my, mz = aux.dircos(incs, decs, azim)
+    mx, my, mz = auxiliars.my_dircos(incs, decs, azim)
     
     # Create the zero array
     bx = numpy.zeros_like(x)
@@ -523,7 +522,7 @@ def prism_bx(x, y, z, prism, incf, decf, incs = None, decs = None, azim = 0.):
     return bx
 
 
-def prism_by(x, y, z, prism, incf, decf, incs = None, decs = None, azim = 0.):
+def prism_by(x, y, z, prism, inc, dec, incs = None, decs = None, azim = 0.):
     # Shape condition
     if x.shape != y.shape:
         raise ValueError("All inputs must have same shape!")
@@ -534,12 +533,12 @@ def prism_by(x, y, z, prism, incf, decf, incs = None, decs = None, azim = 0.):
     
     # Condition for directions
     if incs == None:
-        incs = incf
+        incs = inc
     if decs == None:
-        decs = decf
+        decs = dec
   
     # Calculate the directions for the source magnetization
-    mx, my, mz = aux.dircos(incs, decs, azim)
+    mx, my, mz = auxiliars.my_dircos(incs, decs, azim)
     
     # Create the zero array
     by = numpy.zeros_like(x)
@@ -553,7 +552,7 @@ def prism_by(x, y, z, prism, incf, decf, incs = None, decs = None, azim = 0.):
     # Return the final output
     return by
 
-def prism_bz(x, y, z, prism, incf, decf, incs = None, decs = None, azim = 0.):
+def prism_bz(x, y, z, prism, inc, dec, incs = None, decs = None, azim = 0.):
     # Shape condition
     if x.shape != y.shape:
         raise ValueError("All inputs must have same shape!")
@@ -564,12 +563,12 @@ def prism_bz(x, y, z, prism, incf, decf, incs = None, decs = None, azim = 0.):
     
     # Condition for directions
     if incs == None:
-        incs = incf
+        incs = inc
     if decs == None:
-        decs = decf
+        decs = dec
   
     # Calculate the directions for the source magnetization
-    mx, my, mz = aux.dircos(incs, decs, azim)
+    mx, my, mz = auxiliars.my_dircos(incs, decs, azim)
     
     # Create the zero array
     bz = numpy.zeros_like(x)
@@ -582,9 +581,8 @@ def prism_bz(x, y, z, prism, incf, decf, incs = None, decs = None, azim = 0.):
     bz *= cm*t2nt
     # Return the final output
     return bz
-
 #------------------------------------------------------------------------------------
-def kernelxx(x, y, z, prism):
+def my_kernelxx(x, y, z, prism):
     result = numpy.zeros_like(x)
     # Defines computation points
     xp = [prism[1] - x, prism[0] - x]
@@ -595,11 +593,11 @@ def kernelxx(x, y, z, prism):
         for j in range(2):
             for i in range(2):
                 r = numpy.sqrt(xp[i]**2 + yp[j]**2 + zp[k]**2)
-                kernel = -aux.my_atan(zp[k]*yp[j], xp[i]*r)
+                kernel = -auxiliars.my_atan(zp[k]*yp[j], xp[i]*r)
                 result += ((-1.)**(i + j + k))*kernel
     return result
 
-def kernelyy(x, y, z, prism):
+def my_kernelyy(x, y, z, prism):
     result = numpy.zeros_like(x)
     # Defines computation points
     xp = [prism[1] - x, prism[0] - x]
@@ -610,11 +608,11 @@ def kernelyy(x, y, z, prism):
         for j in range(2):
             for i in range(2):
                 r = numpy.sqrt(xp[i]**2 + yp[j]**2 + zp[k]**2)
-                kernel = -aux.my_atan(zp[k]*xp[i], yp[j]*r)
+                kernel = -auxiliars.my_atan(zp[k]*xp[i], yp[j]*r)
                 result += ((-1.)**(i + j + k))*kernel
     return result
 
-def kernelzz(x, y, z, prism):
+def my_kernelzz(x, y, z, prism):
     result = numpy.zeros_like(x)
     # Defines computation points
     xp = [prism[1] - x, prism[0] - x]
@@ -625,11 +623,11 @@ def kernelzz(x, y, z, prism):
         for j in range(2):
             for i in range(2):
                 r = numpy.sqrt(xp[i]**2 + yp[j]**2 + zp[k]**2)
-                kernel = -aux.my_atan(yp[j]*xp[i], zp[k]*r)
+                kernel = -auxiliars.my_atan(yp[j]*xp[i], zp[k]*r)
                 result += ((-1.)**(i + j + k))*kernel
     return result
 
-def kernelxy(x, y, z, prism):
+def my_kernelxy(x, y, z, prism):
     result = numpy.zeros_like(x)
     # Defines computation points
     xp = [prism[1] - x, prism[0] - x]
@@ -640,11 +638,11 @@ def kernelxy(x, y, z, prism):
         for j in range(2):
             for i in range(2):
                 r = numpy.sqrt(xp[i]**2 + yp[j]**2 + zp[k]**2)
-                kernel = aux.my_log(zp[k] + r)
+                kernel = auxiliars.my_log(zp[k] + r)
                 result += ((-1.)**(i + j + k))*kernel
     return result
 
-def kernelxz(x, y, z, prism):
+def my_kernelxz(x, y, z, prism):
     result = numpy.zeros_like(x)
     # Defines computation points
     xp = [prism[1] - x, prism[0] - x]
@@ -655,11 +653,11 @@ def kernelxz(x, y, z, prism):
         for j in range(2):
             for i in range(2):
                 r = numpy.sqrt(xp[i]**2 + yp[j]**2 + zp[k]**2)
-                kernel = aux.my_log(yp[j] + r)
+                kernel = auxiliars.my_log(yp[j] + r)
                 result += ((-1.)**(i + j + k))*kernel
     return result
 
-def kernelyz(x, y, z, prism):
+def my_kernelyz(x, y, z, prism):
     result = numpy.zeros_like(x)
     # Defines computation points
     xp = [prism[1] - x, prism[0] - x]
@@ -670,6 +668,6 @@ def kernelyz(x, y, z, prism):
         for j in range(2):
             for i in range(2):
                 r = numpy.sqrt(xp[i]**2 + yp[j]**2 + zp[k]**2)
-                kernel = aux.my_log(xp[i] + r)
+                kernel = auxiliars.my_log(xp[i] + r)
                 result += ((-1.)**(i + j + k))*kernel
     return result 

@@ -6,11 +6,11 @@
 # --------------------------------------------------------------------------------------------------
 
 # Import Python libraries
-import numpy as np
+import numpy
 # Import my libraries
-import auxiliars as aux
+from codes import auxiliars
 
-def sphere_bx(x, y, z, sphere, mag, incs, decs):
+def my_sphere_bx(x, y, z, sphere, mag, incs, decs):
 
     '''    
     It is a Python implementation for a Fortran subroutine contained in Blakely (1995). 
@@ -56,11 +56,11 @@ def sphere_bx(x, y, z, sphere, mag, incs, decs):
     r2 = rx**2 + ry**2 + rz**2
         
     # Computes the magnetization values for all directions
-    mx, my, mz = aux.dircos(incs, decs)
+    mx, my, mz = auxiliars.my_dircos(incs, decs)
     
     # Auxiliar calculation
     dot = rx*mx + ry*my + rz*mz  # Scalar product
-    m = (4.*np.pi*(radius**3)*mag)/3.    # Magnetic moment
+    m = (4.*numpy.pi*(radius**3)*mag)/3.    # Magnetic moment
     
     # Component calculation - Bx
     bx = m*(3.*dot*rx - (r2*mx))/(r2**(2.5))
@@ -71,7 +71,7 @@ def sphere_bx(x, y, z, sphere, mag, incs, decs):
     # Return the final output
     return bx
 
-def sphere_by(x, y, z, sphere, mag, incs, decs):
+def my_sphere_by(x, y, z, sphere, mag, incs, decs):
 
     '''    
     It is a Python implementation for a Fortran subroutine contained in Blakely (1995). It 
@@ -117,11 +117,11 @@ def sphere_by(x, y, z, sphere, mag, incs, decs):
     r2 = rx**2 + ry**2 + rz**2
         
     # Computes the magnetization values for all directions
-    mx, my, mz = aux.dircos(incs, decs)
+    mx, my, mz = auxiliars.my_dircos(incs, decs)
     
     # Auxiliars calculations
     dot = rx*mx + ry*my + rz*mz  # Scalar product
-    m = (4.*np.pi*(radius**3)*mag)/3.    # Magnetic moment
+    m = (4.*numpy.pi*(radius**3)*mag)/3.    # Magnetic moment
     
     # Component calculation - By
     by = m*(3.*dot*ry - (r2*my))/(r2**(2.5))
@@ -132,7 +132,7 @@ def sphere_by(x, y, z, sphere, mag, incs, decs):
     # Return the final output
     return by
 
-def sphere_bz(x, y, z, sphere, mag, incs, decs):
+def my_sphere_bz(x, y, z, sphere, mag, incs, decs):
 
     '''    
     It is a Python implementation for a Fortran subroutine contained in Blakely (1995). It 
@@ -178,11 +178,11 @@ def sphere_bz(x, y, z, sphere, mag, incs, decs):
     r2 = rx**2 + ry**2 + rz**2
     
     # Computes the magnetization values for all directions
-    mx, my, mz = aux.dircos(incs, decs)
+    mx, my, mz = auxiliars.my_dircos(incs, decs)
     
     # Auxiliars calculations
     dot = (rx*mx) + (ry*my) + (rz*mz)  # Scalar product
-    m = (4.*np.pi*(radius**3)*mag)/3.    # Magnetic moment
+    m = (4.*numpy.pi*(radius**3)*mag)/3.    # Magnetic moment
     
     # Component calculation - Bz
     bz = m*(3.*dot*rz - (r2*mz))/(r2**(2.5))
@@ -193,7 +193,7 @@ def sphere_bz(x, y, z, sphere, mag, incs, decs):
     # Return the final output
     return bz
 
-def sphere_tf(x, y, z, sphere, mag, F, incf, decf, incs = None, decs = None):
+def my_sphere_tf(x, y, z, sphere, mag, field, inc, dec, incs = None, decs = None):
     
     '''    
     This function computes the total field anomaly produced due to a solid sphere, which has 
@@ -216,31 +216,26 @@ def sphere_tf(x, y, z, sphere, mag, F, incf, decf, incs = None, decs = None):
     
     Ps. The value for Z can be a scalar in the case of one depth, otherwise it can be a set of points.    
     '''
-    
     # Stablishing some conditions
     if x.shape != y.shape:
-        raise ValueError("All inputs must have same shape!")
-       
+        raise ValueError("All inputs must have same shape!")       
     # Compute de regional field    
-    Fx, Fy, Fz = aux.regional(F, incf, decf)
-    
+    Fx, Fy, Fz = auxiliars.my_regional(field, inc, dec)
+    # Condition
     if incs == None:
-        incs = incf
+        incs = inc
     if decs == None:
-        decs = decf
-    
+        decs = dec    
     # Computing the components and the regional field
-    bx = sphere_bx(x, y, z, sphere, mag, incs, decs) + Fx
-    by = sphere_by(x, y, z, sphere, mag, incs, decs) + Fy
-    bz = sphere_bz(x, y, z, sphere, mag, incs, decs) + Fz
-    
+    bx = my_sphere_bx(x, y, z, sphere, mag, incs, decs) + Fx
+    by = my_sphere_by(x, y, z, sphere, mag, incs, decs) + Fy
+    bz = my_sphere_bz(x, y, z, sphere, mag, incs, decs) + Fz    
     # Final value for the total field anomaly
-    tf = np.sqrt(bx**2 + by**2 + bz**2) - F
-    
+    tf = numpy.sqrt(bx**2 + by**2 + bz**2) - F    
     # Return the final output
     return tf
 
-def sphere_tfa(x, y, z, sphere, mag, incf, decf, incs = None, decs = None):
+def my_tfa(x, y, z, sphere, mag, inc, dec, incs = None, decs = None):
 
     '''    
     This function computes the total field anomaly produced due to a solid sphere, which has 
@@ -267,28 +262,24 @@ def sphere_tfa(x, y, z, sphere, mag, incf, decf, incs = None, decs = None):
     
     # Stablishing some conditions
     if x.shape != y.shape:
-        raise ValueError("All inputs must have same shape!")
-    
+        raise ValueError("All inputs must have same shape!")    
     # Compute de regional field    
-    fx, fy, fz = aux.dircos(incf, decf)
-    
+    fx, fy, fz = auxiliars.my_dircos(inc, dec)
+    # Conditions
     if incs == None:
-        incs = incf
+        incs = inc
     if decs == None:
-        decs = decf
-    
+        decs = dec    
     # Computing the components and the regional field
-    bx = sphere_bx(x, y, z, sphere, mag, incs, decs)
-    by = sphere_by(x, y, z, sphere, mag, incs, decs)
-    bz = sphere_bz(x, y, z, sphere, mag, incs, decs)
-    
+    bx = my_sphere_bx(x, y, z, sphere, mag, incs, decs)
+    by = my_sphere_by(x, y, z, sphere, mag, incs, decs)
+    bz = my_sphere_bz(x, y, z, sphere, mag, incs, decs)    
     # Final value for the total field anomaly
-    tf_aprox = fx*bx + fy*by + fz*bz
-    
+    tfa = fx*bx + fy*by + fz*bz    
     # Return the final output
-    return tf_aprox
+    return tfa
 
-def sphere_gz(x, y, z, sphere, rho):
+def my_sphere_gz(x, y, z, sphere, rho):
     '''    
     This function calculates the gravity contribution due to a solid sphere. This is a Python 
     implementation for the subroutine presented in Blakely (1995). On this function, there are 
@@ -307,30 +298,23 @@ def sphere_gz(x, y, z, sphere, rho):
     
     # Stablishing some conditions
     if x.shape != y.shape:
-        raise ValueError("All inputs must have same shape!")
-    
+        raise ValueError("All inputs must have same shape!")    
     # Setting the initial value
-    gz = 0.
-    
+    gz = 0.    
     # Setting coordinate values
     dx = sphere[0] - x
     dy = sphere[1] - y
     dz = sphere[2] - z
-    radius = sphere[3]
-    
+    radius = sphere[3]    
     # Definition for some constants
     G = 6.673e-11
-    si2mGal = 100000.0
-    
+    si2mGal = 100000.0    
     # Compute the constant which is result due to the product
-    const = (4./3)*np.pi*rho*(radius**3)
-    
+    const = (4./3)*numpy.pi*rho*(radius**3)    
     # Compute the distance
-    r = np.sqrt(dx**2 + dy**2 + dz**2)
-    
+    r = numpy.sqrt(dx**2 + dy**2 + dz**2)    
     # Compute the vertical component 
     gz += const*dz/(r**3)
-    gz *= G*si2mGal
-    
+    gz *= G*si2mGal    
     # Return the final outpu
     return gz

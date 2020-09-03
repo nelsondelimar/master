@@ -9,9 +9,9 @@
 from __future__ import division
 import warnings
 import numpy
-import auxiliars
+from codes import auxiliars
 
-def xderiv(x, y, data, n = 1):
+def my_xderiv(x, y, data, n = 1):
     
     '''
     Return the horizontal derivative in x direction for n order in Fourier domain.
@@ -38,7 +38,7 @@ def xderiv(x, y, data, n = 1):
         res = data
     else:    
         # Calculate the wavenuber in x direction
-        _, kx = auxiliars.make_wavenumber(y, x)
+        _, kx = auxiliars.my_wavenumber(y, x)
         # Apply the Fourier transform
         xder = numpy.fft.fft2(data)*((kx*1j)**(n))
         # Calculating the inverse transform
@@ -46,7 +46,7 @@ def xderiv(x, y, data, n = 1):
     # Return the final output
     return res
 
-def yderiv(x, y, data, n = 1):
+def my_yderiv(x, y, data, n = 1):
     
     '''
     Return the horizontal derivative in y direction for n order in Fourier domain.
@@ -83,7 +83,7 @@ def yderiv(x, y, data, n = 1):
     # Return the final output
     return res
 
-def zderiv(x, y, data, n = 1):
+def my_zderiv(x, y, data, n = 1):
     
     '''
     Return the vertical derivative in z direction for n order in Fourier domain.
@@ -121,7 +121,7 @@ def zderiv(x, y, data, n = 1):
     # Return the final output
     return res
 
-def horzgrad(x, y, data):
+def my_hgrad(x, y, data):
     
     '''
     Return the horizontal gradient amplitude (HGA) for a potential data on a regular 
@@ -141,16 +141,16 @@ def horzgrad(x, y, data):
         raise ValueError("All inputs must have same shape!")
     
     # Computes the horizontal derivatives
-    diffx = xderiv(x, y, data)
-    diffy = yderiv(x, y, data)
+    diffx = my_xderiv(x, y, data)
+    diffy = my_yderiv(x, y, data)
     
     # Calculates the total gradient
-    hga = (diffx**2 + diffy**2)**(0.5)
+    hgrad = (diffx**2 + diffy**2)**(0.5)
     
     # Return the final output
-    return hga
+    return hgrad
 
-def totalgrad(x, y, data):
+def tgrad(x, y, data):
     
     '''
     Return the total gradient amplitude (TGA) for a potential data on a regular grid.
@@ -169,11 +169,11 @@ def totalgrad(x, y, data):
         raise ValueError("All inputs must have same shape!")
 
     # Calculates the x derivative
-    diffx = xderiv(x, y, data)
+    diffx = my_xderiv(x, y, data)
     # Calculates the y derivative
-    diffy = yderiv(x, y, data)
+    diffy = my_yderiv(x, y, data)
     # Calculates the z derivative
-    diffz = zderiv(x, y, data)
+    diffz = my_zderiv(x, y, data)
 
     # Calculates the total gradient
     tga = (diffx**2 + diffy**2 + diffz**2)**(0.5)

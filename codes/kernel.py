@@ -1,6 +1,7 @@
+# Kernel functions for a solid sphere
 import numpy
 
-def kernelx(x, y, z, model):
+def my_kernelx(x, y, z, model):
     '''
     Calculate the first x-derivative of a 1/r function.
 
@@ -27,7 +28,7 @@ def kernelx(x, y, z, model):
     # Return the final output
     return diffx
 
-def kernely(x, y, z, model):
+def my_kernely(x, y, z, model):
     '''
     Calculate the first y-derivative of a 1/r function.
 
@@ -54,7 +55,7 @@ def kernely(x, y, z, model):
     # Return the final output
     return diffy
 
-def kernelz(x, y, z, model):
+def my_kernelz(x, y, z, model):
     '''
     Calculate the first z-derivative of a 1/r function.
 
@@ -81,7 +82,7 @@ def kernelz(x, y, z, model):
     # Return the final output
     return diffz
 
-def kernelxx(x, y, z, model):
+def my_kernelxx(x, y, z, model):
     '''
     Calculate the second x-derivative of a 1/r function.
 
@@ -109,7 +110,7 @@ def kernelxx(x, y, z, model):
     # Return the final outpu
     return diffxx
 
-def kernelxy(x, y, z, model):
+def my_kernelxy(x, y, z, model):
     '''
     Calculate the second xy-derivative of a 1/r function.
 
@@ -136,7 +137,7 @@ def kernelxy(x, y, z, model):
     return diffxy
 
 
-def kernelxz(x, y, z, model):
+def my_kernelxz(x, y, z, model):
     '''
     Calculate the second xz-derivative of a 1/r function.
 
@@ -164,7 +165,7 @@ def kernelxz(x, y, z, model):
     # Return the final output
     return diffxz
 
-def kernelyy(x, y, z, model):
+def my_kernelyy(x, y, z, model):
     '''
     Calculate the second y-derivative of a 1/r function.
 
@@ -192,7 +193,7 @@ def kernelyy(x, y, z, model):
     # Return the final output
     return diffyy
 
-def kernelyz(x, y, z, model):
+def my_kernelyz(x, y, z, model):
     '''
     Calculate the second yz-derivative of a 1/r function.
 
@@ -220,7 +221,7 @@ def kernelyz(x, y, z, model):
     # Return the final output
     return diffyz
 
-def kernelzz(x, y, z, model):
+def my_kernelzz(x, y, z, model):
     '''
     Calculate the second xy-derivative of a 1/r function.
 
