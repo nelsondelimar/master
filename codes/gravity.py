@@ -13,9 +13,27 @@ def my_WGS84():
     '''
     a = 6378137.0
     f = 1.0/298.257223563
-    GM = 3986004.418*(10**8)
-    omega = 7292115*(10**-11)
+    GM = 3986004.418e8
+    omega = 7292115e-11
     
+    return a, f, GM, omega
+
+def my_GRS80():
+    '''    
+    This function returns the following parameters defining the reference elipsoid GRS80:
+    a = semimajor axis [m]
+    f = flattening
+    GM = geocentric gravitational constant of the Earth (including the atmosphere) [m**3/s**2]
+    omega = angular velocity [rad/s]
+    
+    Output:
+    a, f, GM, omega    
+    '''
+    a = 6378137.0
+    f = 1.0/298.257222101
+    GM = 3986005.0e8
+    omega = 7292115e-11
+    # Return the final output
     return a, f, GM, omega
 
 def my_somigliana(phi, a = None, f = None, GM = None, omega = None):
