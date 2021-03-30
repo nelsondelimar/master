@@ -1,6 +1,7 @@
 import numpy
 import warnings
 from scipy.interpolate import griddata
+from scipy.interpolate import interp1d
 
 def my_regular(area, shape, level = None):
     '''
@@ -143,7 +144,40 @@ def my_padones(vector, width, ax, kwargs):
     
     # Return the final output
     return vector
+
+def my_1Dinterpolation(x,y,n):
+    '''
+    It returns a 1D interpolation of an array.
     
+    Inputs
+    x - numpy array - 1D array of variable x
+    y - numpy array - 1D array of function y
+    n - scalar - number of points to interpolate
+    
+    Output
+    xi - numpy array - N dimensional 1D array of interpolate variable x
+    yi - numpy array - N dimensional 1D array of interpolate function y(x)
+    '''
+    
+    # Condition 1 - Shape of x and y
+    if x.shape != y.shape:
+        raise ValueError('Final values must be greater than initial values!')
+    # Condition 2 - Number of interpolated points	         
+    if n <= 0.:
+        raise ValueError('Number of interpolated points must be non-zero!')
+    
+    # Function of interpolation
+    f = interp1d(x,y)
+    
+    # Create the new arrange of x
+    xi = numpy.linspace(x.min(), x.max(), n)
+    
+    # Calculate the interpolated y data
+    yi = f(xi)
+    
+    # Return the final output
+    return xi, yi  
+        
 def my_griddata(x, y, values, datashape):
     '''
     This function creates a grid for the data input and interpolate the values using a 

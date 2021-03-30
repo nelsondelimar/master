@@ -146,7 +146,9 @@ def my_LU(mat):
     It returns the safe value for the LU decomposition.
     '''
     
-    return mat
+    p,l,u = scipy.linalg.lu(mat)
+   
+    return p,l,u
 
 def my_xrotation(angle):
     '''    
@@ -172,7 +174,6 @@ def my_yrotation(angle):
     
     Inputs: 
     angle - numpy float - angle of rotation
-
     Output:
     ry - numpy array 2D - matrix of rotation at y direction    
     ''' 

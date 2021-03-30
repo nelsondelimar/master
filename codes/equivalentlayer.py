@@ -110,7 +110,7 @@ def my_gxyz_layer(xo, yo, zo, layer):
     # Return the final output
     return gzx, gzy, gzz
 
-def fitdata_grav(dataset, datashape, layermodel, layershape, regulator):
+def my_fitdata_grav(dataset, datashape, layermodel, layershape, regulator):
     '''
     It returns the predicted data by using classical equivalent layer technique. This function must receive 
     all data as a list with all positions for x, y and z, and also the potential data. It receives the 
@@ -211,7 +211,7 @@ def my_totalfield_layer(xo, yo, zo, layer, inc, dec, incs, decs):
     # Return the final output
     return mat
 
-def fitdata_mag(dataset, datashape, layermodel, layershape, regulator, inc, dec, incl = None, decl = None):
+def my_fitdata_mag(dataset, datashape, layermodel, layershape, regulator, inc, dec, incl = None, decl = None):
     '''
     It returns the predicted data by using classical equivalent layer technique. This function must receive 
     all data as a list with all positions for x, y and z, and also the potential data. It receives the 
@@ -271,7 +271,7 @@ def fitdata_mag(dataset, datashape, layermodel, layershape, regulator, inc, dec,
     # Return the final output
     return pvec, predicted
 
-def my_rtp(datasets, datashape, layermodel, layershape, regulator, inc, dec, incl = None, decl = None):
+def my_rtp_layer(datasets, datashape, layermodel, layershape, regulator, inc, dec, incl = None, decl = None):
     '''
     It returns the reduce to Pole data by using the equivalent layer technique. This functions 
     must receives all data as a list with all positions for x, y and z, and also the potential 
@@ -333,7 +333,7 @@ def my_rtp(datasets, datashape, layermodel, layershape, regulator, inc, dec, inc
     # Return the final output
     return rtp
 
-def rte_layer(datasets, datashape, layermodel, layershape, regulator, incf, decf, inceql = None, deceql = None):
+def my_rte_layer(datasets, datashape, layermodel, layershape, regulator, incf, decf, inceql = None, deceql = None):
     '''
     It returns the reduce to Pole data by using the equivalent layer technique. This functions 
     must receives all data as a list with all positions for x, y and z, and also the potential 

@@ -1,4 +1,6 @@
+from __future__ import division
 import numpy
+import scipy
 
 def my_WGS84():
     '''    
@@ -15,7 +17,7 @@ def my_WGS84():
     f = 1.0/298.257223563
     GM = 3986004.418e8
     omega = 7292115e-11
-    
+    # Return the final output
     return a, f, GM, omega
 
 def my_GRS80():
@@ -33,6 +35,7 @@ def my_GRS80():
     f = 1.0/298.257222101
     GM = 3986005.0e8
     omega = 7292115e-11
+    
     # Return the final output
     return a, f, GM, omega
 
@@ -83,6 +86,8 @@ def my_somigliana(phi, a = None, f = None, GM = None, omega = None):
 def my_closedform(phi, h, a = None, f = None, GM = None, omega = None):
     '''    
     This function calculates the normal gravity by using a closed-form formula.
+    
+    Reference: Li, X., & Götze, H. J. (2001). Ellipsoid, geoid, gravity, geodesy, and geophysics. Geophysics, 66(6), 1660-1668.
     
     Inputs: 
     a: float containing the semimajor axis [m]
@@ -182,9 +187,11 @@ def my_bouguer_correction(topography, rho_crust = 2673., rho_oceanic = 2950., rh
     # Final output
     return bgc_ocean + bgc_cont
 
-def my_Airy(topography, depth_ref = 40000.0, rho_mantle = 3270., rho_crust = 2673., rho_oceanic = 2950., rho_water = 1040.):
+def my_Airy(topography, rho_mantle = 3270., rho_crust = 2673., rho_oceanic = 2950., rho_water = 1040.):
     '''
-    It calculates the isostatic Moho depth based on Airy's hypothesis.
+    It calculates the isostatic crustal root depth based on Airy's hypothesis.
+    If user wants to calculate the Moho depth, it should be added a reference depth.
+    Hint: Use 30000 m.
     
     Input: 
     topography - 1D array - topography data
@@ -194,7 +201,7 @@ def my_Airy(topography, depth_ref = 40000.0, rho_mantle = 3270., rho_crust = 267
     rho_water - float - density of the water
     
     Output:
-    depth - 1D array - isostatic Moho depth
+    rooth - 1D array - isostatic Moho depth
     '''
     # Setting positive and negative topography
     ocean = numpy.array(topography < 0)
@@ -207,7 +214,7 @@ def my_Airy(topography, depth_ref = 40000.0, rho_mantle = 3270., rho_crust = 267
     oceanic_thickness = numpy.zeros_like(topography)
     oceanic_thickness[ocean] = (rho_oceanic - rho_water)*topography[ocean]/(rho_mantle - rho_oceanic)
     # Final output
-    return depth_ref + continental_thickness + oceanic_thickness
+    return continental_thickness + oceanic_thickness
 
 def my_isostatic_correction(topography, rho_crust = 2673., rho_oceanic = 2950., rho_water = 1040.):
     '''

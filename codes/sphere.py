@@ -1,11 +1,3 @@
-# --------------------------------------------------------------------------------------------------
-# Title: Grav-Mag Codes
-# Author: Nelson Ribeiro Filho
-# Description: Source codes that will be necessary during the masters course.
-# Collaborator: Rodrigo Bijani
-# --------------------------------------------------------------------------------------------------
-
-# Import Python libraries
 import numpy
 # Import my libraries
 from codes import auxiliars

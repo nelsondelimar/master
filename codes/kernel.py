@@ -4,11 +4,9 @@ import numpy
 def my_kernelx(x, y, z, model):
     '''
     Calculate the first x-derivative of a 1/r function.
-
     Inputs:
     x, y, z - numpy arrays - observation points (meters)
     model - list - values of x, y, z and r of a sphere
-
     Output:
     diffx - numpy array - first z derivative
     '''
@@ -31,11 +29,9 @@ def my_kernelx(x, y, z, model):
 def my_kernely(x, y, z, model):
     '''
     Calculate the first y-derivative of a 1/r function.
-
     Inputs:
     x, y, z - numpy arrays - observation points (meters)
     model - list - values of x, y, z and r of a sphere
-
     Output:
     diffy - numpy array - first z derivative
     '''
@@ -58,11 +54,9 @@ def my_kernely(x, y, z, model):
 def my_kernelz(x, y, z, model):
     '''
     Calculate the first z-derivative of a 1/r function.
-
     Inputs:
     x, y, z - numpy arrays - observation points (meters)
     model - list - values of x, y, z and r of a sphere
-
     Output:
     diffz - numpy array - first z derivative
     '''
@@ -85,11 +79,9 @@ def my_kernelz(x, y, z, model):
 def my_kernelxx(x, y, z, model):
     '''
     Calculate the second x-derivative of a 1/r function.
-
     Inputs:
     x, y, z - numpy arrays - observation points (meters)
     model - list - values of x, y, z and r of a sphere
-
     Output:
     diffxx - numpy array - first z derivative
     '''
@@ -113,11 +105,9 @@ def my_kernelxx(x, y, z, model):
 def my_kernelxy(x, y, z, model):
     '''
     Calculate the second xy-derivative of a 1/r function.
-
     Inputs:
     x, y, z - numpy arrays - observation points (meters)
     model - list - values of x, y, z and r of a sphere
-
     Output:
     diffxy - numpy array - first z derivative
     '''
@@ -140,11 +130,9 @@ def my_kernelxy(x, y, z, model):
 def my_kernelxz(x, y, z, model):
     '''
     Calculate the second xz-derivative of a 1/r function.
-
     Inputs:
     x, y, z - numpy arrays - observation points (meters)
     model - list - values of x, y, z and r of a sphere
-
     Output:
     diffxz - numpy array - first z derivative
     '''
@@ -168,11 +156,9 @@ def my_kernelxz(x, y, z, model):
 def my_kernelyy(x, y, z, model):
     '''
     Calculate the second y-derivative of a 1/r function.
-
     Inputs:
     x, y, z - numpy arrays - observation points (meters)
     model - list - values of x, y, z and r of a sphere
-
     Output:
     diffz - numpy array - first z derivative
     '''
@@ -196,11 +182,9 @@ def my_kernelyy(x, y, z, model):
 def my_kernelyz(x, y, z, model):
     '''
     Calculate the second yz-derivative of a 1/r function.
-
     Inputs:
     x, y, z - numpy arrays - observation points (meters)
     model - list - values of x, y, z and r of a sphere
-
     Output:
     diffyz - numpy array - first z derivative
     '''
@@ -224,11 +208,9 @@ def my_kernelyz(x, y, z, model):
 def my_kernelzz(x, y, z, model):
     '''
     Calculate the second xy-derivative of a 1/r function.
-
     Inputs:
     x, y, z - numpy arrays - observation points (meters)
     model - list - values of x, y, z and r of a sphere
-
     Output:
     diffzz - numpy array - first z derivative
     '''

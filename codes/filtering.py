@@ -1,14 +1,10 @@
-# Title: Filtering
-# Author: Nelson Ribeiro Filho / Rodrido Bijani
-
-# Import Python libraries
 from __future__ import division
 import warnings
 import time
 import numpy
 from codes import auxiliars, derivative
 
-def my_continuation(x, y, data, H):
+def my_continuation(x, y, data, level):
     '''
     This function compute the upward or downward continuation for a potential field 
     data, which can be gravity or magnetic signal. The value for H represents the 
@@ -20,7 +16,7 @@ def my_continuation(x, y, data, H):
     x - numpy 2D array - observation points on the grid in X direction
     y - numpy 2D array - observation points on the grid in Y direction
     data - 2D array - gravity or magnetic data
-    H - float - value for the new observation level
+    level - float - value for the new observation level
     '''
     
     # Conditions for all inputs
@@ -33,12 +29,12 @@ def my_continuation(x, y, data, H):
     else:
         # Calculate the wavenumbers
         ky, kx = auxiliars.my_wavenumber(y, x)
-        kcont = numpy.exp((-H) * numpy.sqrt(kx**2 + ky**2))
+        kcont = numpy.exp((-level) * numpy.sqrt(kx**2 + ky**2))
         result = kcont * numpy.fft.fft2(data)
         res = numpy.real(numpy.fft.ifft2(result))
 
     # Return the final output
-    return res
+    return res.reshape(res.size)
 
 def reduction(x, y, data, inc, dec, incs = None, decs = None, newinc = None, newdec = None, 
               newincs = None, newdecs = None):
@@ -104,15 +100,13 @@ def reduction(x, y, data, inc, dec, incs = None, decs = None, newinc = None, new
     operator[0, 0] = 0.
     
     # Calculate the result by multiplying the filter and the data on Fourier domain
-    res = operator*numpy.fft.fft2(data)
-    
+    res = numpy.real(numpy.fft.ifft2(operator*numpy.fft.fft2(data)))    
     # Return the final output
-    return numpy.real(numpy.fft.ifft2(res))
+    return res.reshape(res.size)
 
 def my_tilt(x, y, data):
     '''
     Return the tilt angle for a potential data on a regular grid.
-
     Inputs:
     x - numpy 2D array - grid values in x direction
     y - numpy 2D array - grid values in y direction
@@ -134,12 +128,11 @@ def my_tilt(x, y, data):
     tilt = auxiliars.my_atan(diffz, hgrad)
     
     # Return the final output
-    return tilt
+    return tilt.reshape(tilt.size)
 
 def my_thdr(x, y, data):
      '''
     Return the total horizontal derivative of tilt angle data.
-
     Inputs:
     x - numpy 2D array - grid values in x direction
     y - numpy 2D array - grid values in y direction
@@ -163,7 +156,7 @@ def my_thdr(x, y, data):
     # Calculate the total horizontal derivative of tilt angle
     thdr = (dx**2 + dy**2)**(0.5)
     # Return the final output
-    return thdr
+    return thdr.reshape(thdr.size)
 
 def my_hyperbolictilt(x, y, data):
     '''
@@ -188,9 +181,9 @@ def my_hyperbolictilt(x, y, data):
     
     # Compute the tilt derivative
     hyptilt = auxiliars.my_atan(diffz, hgrad)
-    
+    res = numpy.real(hyptilt)
     # Return the final output
-    return numpy.real(hyptilt)
+    return res.reshape(res.size)
 
 def my_thetamap(x, y, data):
     '''
@@ -212,11 +205,14 @@ def my_thetamap(x, y, data):
     # Calculate the horizontal and total gradients
     hgrad = derivative.horzgrad(x, y, data)
     tgrad = derivative.totalgrad(x, y, data)
+    
+    # Theta map calculation
+    res = numpy.arccos(hgrad/tgrad)
    
     # Return the final output
-    return numpy.arccos(hgrad/tgrad)
+    return res.reshape(res.size)
 
-def my_pgrav(x, y, data, inc, dec, incs, decs, rho = 1000., mag = 1.):
+def my_pseudograv(x, y, data, inc, dec, incs, decs, rho = 1000., mag = 1.):
     '''
     This function calculates the pseudogravity anomaly transformation due to a total 
     field anomaly grid. It recquires the X and Y coordinates (respectively North and 
@@ -233,7 +229,6 @@ def my_pgrav(x, y, data, inc, dec, incs, decs, rho = 1000., mag = 1.):
     source - numpy 1D array - inclination and declination for the magnetic source
         source[0] -> inclination
         source[1] -> declination
-
     Output:
     pgrav - numpy array - pseudo gravity anomaly
     '''
@@ -270,10 +265,13 @@ def my_pgrav(x, y, data, inc, dec, incs, decs, rho = 1000., mag = 1.):
     prod[0, 0] = 0.
     
     # Calculate the pseudo gravity anomaly
-    res = numpy.fft.fft2(data)*prod
+    pseudo = numpy.fft.fft2(data)*prod
     
     # Converting to mGal as a product by C:
-    res *= C
+    pseudo *= C
+    
+    # Final calculation to space domain
+    res = numpy.real(numpy.fft.ifft2(pseudo))
     
     # Return the final output
-    return numpy.real(numpy.fft.ifft2(res))
+    return res.reshape(res.size)

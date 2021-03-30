@@ -1,11 +1,3 @@
-# -----------------------------------------------------------------------------------
-# Title: Data Filtering
-# Author: Nelson Ribeiro Filho
-# Description: Source codes for potential field filtering
-# Collaborator: Rodrigo Bijani
-# -----------------------------------------------------------------------------------
-
-# Import Python libraries
 from __future__ import division
 import warnings
 import numpy
@@ -44,13 +36,12 @@ def my_xderiv(x, y, data, n = 1):
         # Calculating the inverse transform
         res = numpy.real(numpy.fft.ifft2(xder))
     # Return the final output
-    return res
+    return res.reshape(res.size)
 
 def my_yderiv(x, y, data, n = 1):
     
     '''
     Return the horizontal derivative in y direction for n order in Fourier domain.
-
     Inputs:
     x - numpy 2D array - grid values in x direction
     y - numpy 2D array - grid values in y direction
@@ -81,8 +72,8 @@ def my_yderiv(x, y, data, n = 1):
         res = numpy.real(numpy.fft.ifft2(yder))
     
     # Return the final output
-    return res
-
+    return res.reshape(res.size)
+    
 def my_zderiv(x, y, data, n = 1):
     
     '''
@@ -119,8 +110,8 @@ def my_zderiv(x, y, data, n = 1):
         res = numpy.real(numpy.fft.ifft2(zder))
     
     # Return the final output
-    return res
-
+    return res.reshape(res.size)
+    
 def my_hgrad(x, y, data):
     
     '''
@@ -150,7 +141,7 @@ def my_hgrad(x, y, data):
     # Return the final output
     return hgrad
 
-def tgrad(x, y, data):
+def my_totalgrad(x, y, data):
     
     '''
     Return the total gradient amplitude (TGA) for a potential data on a regular grid.
@@ -176,7 +167,7 @@ def tgrad(x, y, data):
     diffz = my_zderiv(x, y, data)
 
     # Calculates the total gradient
-    tga = (diffx**2 + diffy**2 + diffz**2)**(0.5)
+    res = (diffx**2 + diffy**2 + diffz**2)**(0.5)
     
     # Return the final output
-    return tga
+    return res.reshape(res.size)
